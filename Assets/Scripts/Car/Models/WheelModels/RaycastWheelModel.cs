@@ -18,15 +18,9 @@ namespace Car.Models.WheelModels
             m_raycastLayer = wheelInfo.raycastLayer;
         }
         
-        public bool isWheelHit
-        {
-            get { return m_isWheelHit; }
-        }
+        public bool isWheelHit => m_isWheelHit;
 
-        public RaycastHit wheelHit
-        {
-            get { return m_wheelHit; }
-        }
+        public RaycastHit wheelHit => m_wheelHit;
 
         private void Raycast(Transform wheelRoot)
         {

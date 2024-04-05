@@ -14,10 +14,7 @@ namespace Car.Models
         private float m_angularVelocityR;
         private float m_wheelInertia;
         
-        public float[] outputTorque
-        {
-            get { return m_outputTorque; }
-        }
+        public float[] outputTorque => m_outputTorque;
 
         public DifferentialModel(CarDesc.DifferentialInfo differentialInfo, CarDesc.WheelInfo wheelInfo)
         {

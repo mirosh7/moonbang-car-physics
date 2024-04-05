@@ -27,10 +27,7 @@ namespace Car.Models
         private float m_startFriction;
         private float m_engineInertia;
 
-        public float engineAngularVelocity
-        {
-            get { return m_engineAngularVelocity; }
-        }
+        public float engineAngularVelocity => m_engineAngularVelocity;
 
         public EngineModel(Rigidbody rb, CarDesc.EngineInfo engineInfo)
         {

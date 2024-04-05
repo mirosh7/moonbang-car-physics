@@ -14,10 +14,7 @@ namespace Car.Models
 
         public float currentGearRatio => m_gearBoxRatios[m_currentGear];
         
-        public int currentGear
-        {
-            get { return m_currentGear; }
-        }
+        public int currentGear => m_currentGear;
 
         public GearShiftingModel(CarDesc.GearboxInfo gearboxInfo)
         {

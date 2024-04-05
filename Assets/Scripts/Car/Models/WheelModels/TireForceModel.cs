@@ -9,10 +9,7 @@ namespace Car.Models.WheelModels
         private float m_lateralCoeff;
         private float m_fx;
 
-        public float fx
-        {
-            get { return m_fx; }
-        }
+        public float fx => m_fx;
 
         public TireForceModel(CarDesc.WheelInfo wheelInfo)
         {

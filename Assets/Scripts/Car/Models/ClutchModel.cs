@@ -12,10 +12,7 @@ namespace Car.Models
         
         private float m_clutchTorque;
 
-        public float clutchTorque
-        {
-            get { return m_clutchTorque; }
-        }
+        public float clutchTorque => m_clutchTorque;
 
         private float m_clutchMaxTorque;
         private float m_clutchLock;

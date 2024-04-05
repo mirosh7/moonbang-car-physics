@@ -22,16 +22,12 @@ namespace Car.Models.WheelModels
             m_wheelRadius = wheelInfo.wheelRadius;
         }
 
-        public Vector3 linearVelocity
-        {
-            get { return m_linearVelocity; }
-        }
+        public Vector3 linearVelocity => m_linearVelocity;
 
-        public float suspensionForce
-        {
-            get { return m_suspensionForce; }
-        }
-        
+        public float suspensionForce => m_suspensionForce;
+
+        public float currentLength => m_currentLength;
+
         public void ApplySuspensionForce(RaycastHit hit, Rigidbody rb, Transform wheelRoot)
         {
             var up = wheelRoot.up;

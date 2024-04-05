@@ -15,10 +15,7 @@ namespace Car.Models.WheelModels
             m_wheelInertia = wheelInfo.wheelInertia;
         }
         
-        public float angularVelocity
-        {
-            get { return m_angularVelocity; }
-        }
+        public float angularVelocity => m_angularVelocity;
 
         public void UpdateWheelAcceleration(float fX, float driveTorque, float brakeTorque)
         {

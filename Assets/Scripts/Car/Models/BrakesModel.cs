@@ -11,10 +11,7 @@ namespace Car.Models
         private AnimationCurve m_brakeTorqueCurve;
         private float m_maxTorque;
 
-        public float[] brakeTorque
-        {
-            get { return m_brakeTorque; }
-        }
+        public float[] brakeTorque => m_brakeTorque;
 
         public BrakesModel(CarDesc.BrakesInfo brakesInfo)
         {
