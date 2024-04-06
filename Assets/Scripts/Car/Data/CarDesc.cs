@@ -6,6 +6,7 @@ using UnityEngine.Serialization;
 
 namespace Car.Data
 {
+    [CreateAssetMenu(fileName = "Car Description",menuName = "Scriptable Objects/Car Description")]
     public class CarDesc : ScriptableObject
     {
         [SerializeField] private EngineInfo m_engineInfo;

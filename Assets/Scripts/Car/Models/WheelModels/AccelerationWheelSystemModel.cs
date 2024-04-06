@@ -14,11 +14,11 @@ namespace Car.Models.WheelModels
         
         public AccelerationWheelSystemModel(List<CarDesc.WheelInfo> wheelInfos)
         {
-            for (int i = 0; i <= 4; i++)
+            foreach (var wheelInfo in wheelInfos)
             {
-                m_accelerationWheelComponents.Add(new AccelerationWheelComponent(wheelInfos[i]));
+                m_accelerationWheelComponents.Add(new AccelerationWheelComponent(wheelInfo));
             }
-            
+
             foreach (var wheelComponent in m_accelerationWheelComponents)
             {
                 m_angularVelocities.Add(wheelComponent.angularVelocity);

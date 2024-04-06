@@ -14,9 +14,9 @@ namespace Car.Models.WheelModels
 
         public SlipForcesSystemModel(List<CarDesc.WheelInfo> wheelInfos)
         {
-            for (int i = 0; i <= 4; i++)
+            foreach (var wheelInfo in wheelInfos)
             {
-                m_slipForceComponents.Add(new SlipForceComponent(wheelInfos[i]));
+                m_slipForceComponents.Add(new SlipForceComponent(wheelInfo));
             }
            
             foreach (var slipForceComponent in m_slipForceComponents)

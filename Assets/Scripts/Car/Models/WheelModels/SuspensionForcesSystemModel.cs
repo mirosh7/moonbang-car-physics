@@ -18,9 +18,9 @@ namespace Car.Models.WheelModels
 
         public SuspensionForcesSystemModel(List<CarDesc.WheelInfo> wheelInfos, Rigidbody rb)
         {
-            for (int i = 0; i <= 4; i++)
+            foreach (var wheelInfo in wheelInfos)
             {
-                m_suspensionForceComponents.Add(new SuspensionForceComponent(wheelInfos[i], rb));
+                m_suspensionForceComponents.Add(new SuspensionForceComponent(wheelInfo, rb));
             }
             
             foreach (var suspensionForceComponent in m_suspensionForceComponents)

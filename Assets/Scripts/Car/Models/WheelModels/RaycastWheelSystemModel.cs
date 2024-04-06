@@ -16,9 +16,9 @@ namespace Car.Models.WheelModels
 
         public RaycastWheelSystemModel(List<CarDesc.WheelInfo> wheelInfos)
         {
-            for (int i = 0; i <= 4; i++)
+            foreach (var wheelInfo in wheelInfos)
             {
-                m_raycastWheelComponents.Add(new RaycastWheelComponent(wheelInfos[i]));
+                m_raycastWheelComponents.Add(new RaycastWheelComponent(wheelInfo));
             }
             
             foreach (var raycastWheelComponent in m_raycastWheelComponents)

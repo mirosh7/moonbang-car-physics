@@ -11,9 +11,9 @@ namespace Car.Models.WheelModels
         
         public VisualWheelSystemModel(List<CarDesc.WheelInfo> wheelInfos)
         {
-            for (int i = 0; i <= 4; i++)
+            foreach (var wheelInfo in wheelInfos)
             {
-                m_visualWheelComponents.Add(new VisualWheelComponent(wheelInfos[i]));
+                m_visualWheelComponents.Add(new VisualWheelComponent(wheelInfo));
             }
         } 
 

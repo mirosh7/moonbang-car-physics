@@ -14,9 +14,9 @@ namespace Car.Models.WheelModels
 
         public TireForceSystemModel(List<CarDesc.WheelInfo> wheelInfos, Rigidbody rb)
         {
-            for (int i = 0; i <= 4; i++)
+            foreach (var wheelInfo in wheelInfos)
             {
-                m_tireForceComponents.Add(new TireForceComponent(wheelInfos[i], rb));
+                m_tireForceComponents.Add(new TireForceComponent(wheelInfo, rb));
             }
             
             foreach (var tireForceComponent in m_tireForceComponents)

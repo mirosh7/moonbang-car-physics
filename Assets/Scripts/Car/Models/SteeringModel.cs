@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Car.Data;
 using UnityEngine;
 
@@ -13,7 +14,7 @@ namespace Car.Models
         private float[] m_steerAngle;
         private float m_steerForce;
 
-        public SteeringModel(CarDesc.SteeringInfo steeringInfo, Transform[] wheelTransform)
+        public SteeringModel(CarDesc.SteeringInfo steeringInfo, List<Transform> wheelTransform)
         {
             m_turnRadius = steeringInfo.turnRadius;
             m_steerForce = steeringInfo.steerForce;
@@ -44,7 +45,7 @@ namespace Car.Models
             m_steerAngle[1] = m_ackermannAngleR;
         }
         
-        private void InitializeAckermannParams(Transform[] wheelTransform)
+        private void InitializeAckermannParams(List<Transform> wheelTransform)
         {
             m_wheelBase = Vector3.Distance(wheelTransform[0].position, wheelTransform[2].position);
             m_rearTrack = Vector3.Distance(wheelTransform[2].position, wheelTransform[3].position);  
