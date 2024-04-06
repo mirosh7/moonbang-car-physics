@@ -1,23 +1,19 @@
 using System.Collections.Generic;
+using Car.Models.WheelComponents;
+using UnityEngine;
 
 namespace Car.Models.WheelModels
 {
     public class AccelerationWheelSystemModel
     {
         private List<AccelerationWheelComponent> m_accelerationWheelComponents;
-        private DifferentialModel m_differentialModel;
-        private TireForceModel m_tireForceModel;
-        private BrakesModel m_brakesModel;
         private List<float> m_angularVelocities = new List<float>();
 
         public List<float> angularVelocities => m_angularVelocities;
         
-        public AccelerationWheelSystemModel(List<AccelerationWheelComponent> accelerationWheelComponents, DifferentialModel differentialModel, TireForceModel tireForceModel, BrakesModel brakesModel)
+        public AccelerationWheelSystemModel(List<AccelerationWheelComponent> accelerationWheelComponents)
         {
             m_accelerationWheelComponents = accelerationWheelComponents;
-            m_differentialModel = differentialModel;
-            m_tireForceModel = tireForceModel;
-            m_brakesModel = brakesModel;
             
             foreach (var wheelComponent in m_accelerationWheelComponents)
             {
@@ -25,13 +21,18 @@ namespace Car.Models.WheelModels
             }
         }
 
-        public void UpdateWheelsAcceleration()
+        public void UpdateWheelsAcceleration(List<bool> wheelHits, float[] brakeTorques, float[] outputTorques, List<float> fxs)
         {
             for (int i = 0; i < m_accelerationWheelComponents.Count; i++)
             {
-                var driveTorque = m_differentialModel.outputTorque[i];
-                var brakeTorque = m_brakesModel.brakeTorque[i];
-                m_accelerationWheelComponents[i].UpdateWheelAcceleration(m_tireForceModel.fx, driveTorque, brakeTorque);
+                if (!wheelHits[i])
+                {
+                    return;
+                }
+                
+                var driveTorque = outputTorques[i];
+                var brakeTorque = brakeTorques[i];
+                m_accelerationWheelComponents[i].UpdateWheelAcceleration(fxs[i], driveTorque, brakeTorque);
                 m_angularVelocities[i] = m_accelerationWheelComponents[i].angularVelocity;
             }
         }

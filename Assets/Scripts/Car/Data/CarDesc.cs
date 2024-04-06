@@ -1,11 +1,31 @@
 using System;
 using System.Collections.Generic;
+using Car.Models;
 using UnityEngine;
 
 namespace Car.Data
 {
     public class CarDesc : ScriptableObject
     {
+        [SerializeField] private EngineInfo m_engineInfo;
+        [SerializeField] private GearboxInfo m_gearboxInfo;
+        [SerializeField] private ClutchInfo m_clutchInfo;
+        [SerializeField] private DifferentialInfo m_differentialInfo;
+        [SerializeField] private BrakesInfo m_brakesInfo;
+        [SerializeField] private List<WheelInfo> m_wheelInfo;
+        [SerializeField] private SteeringInfo m_steeringInfo;
+        [SerializeField] private AntirollBarInfo m_antirollBarInfo;
+
+        public AntirollBarInfo antirollBarInfo => m_antirollBarInfo;
+        public EngineInfo engineInfo => m_engineInfo;
+        public GearboxInfo gearboxInfo => m_gearboxInfo;
+        public ClutchInfo clutchInfo => m_clutchInfo;
+        public DifferentialInfo differentialInfo => m_differentialInfo;
+        public BrakesInfo brakesInfo => m_brakesInfo;
+        public List<WheelInfo> wheelInfo => m_wheelInfo;
+        public SteeringInfo steeringInfo => m_steeringInfo;
+     
+            
         [Serializable]
         public class EngineInfo
         {
@@ -137,6 +157,16 @@ namespace Car.Data
         }
         
         [Serializable]
+        public class SteeringInfo
+        {
+            private float m_turnRadius;
+            private float m_steerForce;
+
+            public float turnRadius => m_turnRadius;
+            public float steerForce => m_steerForce;
+        }
+        
+        [Serializable]
         public class BrakesInfo
         {
             private AnimationCurve m_brakeTorqueCurve;
@@ -145,6 +175,18 @@ namespace Car.Data
             public AnimationCurve brakeTorqueCurve => m_brakeTorqueCurve;
 
             public float maxTorque => m_maxTorque;
+        }
+        
+        [Serializable]
+        public class AntirollBarInfo
+        {
+            private bool m_isEnabled;
+            private float m_stiffnessFront;
+            private float m_stiffnessRear;
+
+            public bool isEnabled => m_isEnabled;
+            public float stiffnessFront => m_stiffnessFront;
+            public float stiffnessRear => m_stiffnessRear;
         }
     }
 }

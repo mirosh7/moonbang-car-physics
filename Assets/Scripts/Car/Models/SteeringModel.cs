@@ -1,3 +1,4 @@
+using Car.Data;
 using UnityEngine;
 
 namespace Car.Models
@@ -12,10 +13,10 @@ namespace Car.Models
         private float[] m_steerAngle;
         private float m_steerForce;
 
-        public SteeringModel(float turnRadius, float steerForce, Transform[] wheelTransform)
+        public SteeringModel(CarDesc.SteeringInfo steeringInfo, Transform[] wheelTransform)
         {
-            m_turnRadius = turnRadius;
-            m_steerForce = steerForce;
+            m_turnRadius = steeringInfo.turnRadius;
+            m_steerForce = steeringInfo.steerForce;
             InitializeAckermannParams(wheelTransform);
         }
 

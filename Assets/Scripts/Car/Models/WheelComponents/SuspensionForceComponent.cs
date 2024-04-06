@@ -1,9 +1,9 @@
 using Car.Data;
 using UnityEngine;
 
-namespace Car.Models.WheelModels
+namespace Car.Models.WheelComponents
 {
-    public class SuspensionForceModel
+    public class SuspensionForceComponent
     {
         private Rigidbody m_rb;
         private float m_restLength;
@@ -15,7 +15,7 @@ namespace Car.Models.WheelModels
         private float m_lastLength;
         private float m_wheelRadius;
 
-        public SuspensionForceModel(CarDesc.WheelInfo wheelInfo, Rigidbody rb)
+        public SuspensionForceComponent(CarDesc.WheelInfo wheelInfo, Rigidbody rb)
         {
             m_rb = rb;
             m_restLength = wheelInfo.restLength;
@@ -30,7 +30,7 @@ namespace Car.Models.WheelModels
 
         public float currentLength => m_currentLength;
 
-        public void ApplySuspensionForce(RaycastHit hit, Transform wheelRoot)
+        public void UpdateSuspensionForce(RaycastHit hit, Transform wheelRoot)
         {
             var up = wheelRoot.up;
             m_currentLength = (wheelRoot.position - (hit.point + (up * m_wheelRadius))).magnitude;

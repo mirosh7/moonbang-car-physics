@@ -1,3 +1,5 @@
+using Car.Data;
+
 namespace Car.Models
 {
     public class AntirollBarModel
@@ -8,11 +10,11 @@ namespace Car.Models
         private float[] m_lengthDifference = new float[2];
         private float[] m_force = new float[2];
 
-        public AntirollBarModel(bool isAntirollBarEnabled, float stiffnessFront, float stiffnessRear)
+        public AntirollBarModel(CarDesc.AntirollBarInfo antirollBarInfo)
         {
-            m_isAntirollBarEnabled = isAntirollBarEnabled;
-            m_stiffnessFront = stiffnessFront;
-            m_stiffnessRear = stiffnessRear;
+            m_isAntirollBarEnabled = antirollBarInfo.isEnabled;
+            m_stiffnessFront = antirollBarInfo.stiffnessFront;
+            m_stiffnessRear = antirollBarInfo.stiffnessRear;
         }
     }
 }

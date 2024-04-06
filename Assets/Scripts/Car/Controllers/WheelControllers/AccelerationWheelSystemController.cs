@@ -1,17 +1,24 @@
 using Car.Models;
+using Car.Models.WheelComponents;
 using Car.Models.WheelModels;
 
 namespace Car.Controllers.WheelControllers
 {
     public class AccelerationWheelSystemController : ICarController
     {
-        private AccelerationWheelSystemModel m_accelerationWheelModel;
-        private RaycastWheelModel m_raycastWheelModel;
-
-        public AccelerationWheelSystemController(AccelerationWheelSystemModel accelerationWheelModel, RaycastWheelModel raycastWheelModel)
+        private AccelerationWheelSystemModel m_accelerationWheelSystemModel;
+        private BrakesModel m_brakesModel;
+        private DifferentialModel m_differentialModel;
+        private TireForceSystemModel m_tireForceSystemModel;
+        private RaycastWheelSystemModel m_raycastWheelSystemModel;
+        
+        public AccelerationWheelSystemController(AccelerationWheelSystemModel accelerationWheelSystemModel, BrakesModel brakesModel, DifferentialModel differentialModel, TireForceSystemModel tireForceSystemModel, RaycastWheelSystemModel raycastWheelSystemModel)
         {
-            m_raycastWheelModel = raycastWheelModel;
-            m_accelerationWheelModel = accelerationWheelModel;
+            m_accelerationWheelSystemModel = accelerationWheelSystemModel;
+            m_brakesModel = brakesModel;
+            m_differentialModel = differentialModel;
+            m_tireForceSystemModel = tireForceSystemModel;
+            m_raycastWheelSystemModel = raycastWheelSystemModel;
         }
 
         public void OnUpdate()
@@ -21,12 +28,7 @@ namespace Car.Controllers.WheelControllers
 
         private void UpdateWheelsAcceleration()
         {
-            if (!m_raycastWheelModel.isWheelHit)
-            {
-                return;
-            }
-            
-            m_accelerationWheelModel.UpdateWheelsAcceleration();
+            m_accelerationWheelSystemModel.UpdateWheelsAcceleration(m_raycastWheelSystemModel.wheelHitStates, m_brakesModel.brakeTorque, m_differentialModel.outputTorque, m_tireForceSystemModel.fxVelocities);
         }
     }
 }

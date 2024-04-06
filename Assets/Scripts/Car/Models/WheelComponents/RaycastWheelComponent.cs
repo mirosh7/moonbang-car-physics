@@ -1,9 +1,9 @@
 using Car.Data;
 using UnityEngine;
 
-namespace Car.Models.WheelModels
+namespace Car.Models.WheelComponents
 {
-    public class RaycastWheelModel
+    public class RaycastWheelComponent
     {
         private RaycastHit m_wheelHit;
         private bool m_isWheelHit;
@@ -11,7 +11,7 @@ namespace Car.Models.WheelModels
         private float m_wheelRadius;
         private float m_restLength;
 
-        public RaycastWheelModel(CarDesc.WheelInfo wheelInfo)
+        public RaycastWheelComponent(CarDesc.WheelInfo wheelInfo)
         {
             m_wheelRadius = wheelInfo.wheelRadius;
             m_restLength = wheelInfo.restLength;
@@ -22,7 +22,7 @@ namespace Car.Models.WheelModels
 
         public RaycastHit wheelHit => m_wheelHit;
 
-        private void Raycast(Transform wheelRoot)
+        public void UpdateRaycast(Transform wheelRoot)
         {
             m_isWheelHit = Physics.Raycast(wheelRoot.position,
                 -wheelRoot.up,

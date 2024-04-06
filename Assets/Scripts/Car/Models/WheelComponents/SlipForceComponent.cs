@@ -1,16 +1,19 @@
 using Car.Data;
 using UnityEngine;
 
-namespace Car.Models.WheelModels
+namespace Car.Models.WheelComponents
 {
-    public class SlipForceModel
+    public class SlipForceComponent
     {
         private float m_slipAnglePeak;
         private float m_wheelInertia;
         private float m_wheelRadius;
         private float m_longFrictionCoeff;
+        private Vector2 m_slipForce;
+        
+        public Vector2 slipForce => m_slipForce;
 
-        public SlipForceModel(CarDesc.WheelInfo wheelInfo)
+        public SlipForceComponent(CarDesc.WheelInfo wheelInfo)
         {
             m_slipAnglePeak = wheelInfo.slipAnglePeak;
             m_wheelInertia = wheelInfo.wheelInertia;
@@ -18,7 +21,7 @@ namespace Car.Models.WheelModels
             m_longFrictionCoeff = wheelInfo.longFrictionCoeff;
         }
 
-        public float GetLongitudinalForce(Vector3 linearVelocity, float suspensionForce, float angularVelocity)
+        private float GetLongitudinalForce(Vector3 linearVelocity, float suspensionForce, float angularVelocity)
         {
             var targetAngularVelocity = linearVelocity.z / m_wheelRadius;
             var targetAngularAcceleration = (angularVelocity - targetAngularVelocity) / Time.fixedDeltaTime;
@@ -27,7 +30,7 @@ namespace Car.Models.WheelModels
             return suspensionForce == 0 ? 0 : targetFrictionTorque / maximumFrictionTorque;
         }
 
-        public float GetLateralForce(Vector3 linearVelocity)
+        private float GetLateralForce(Vector3 linearVelocity)
         {
             var slipAngle = Mathf.Abs(linearVelocity.z) <= 0.5  ? 0 : Mathf.Atan(-linearVelocity.x / Mathf.Abs(linearVelocity.z)) * Mathf.Rad2Deg;
             return slipAngle / m_slipAnglePeak;
@@ -37,6 +40,12 @@ namespace Car.Models.WheelModels
              SADyn += (slipAngle - SADyn) * coeff;
              SADyn = Mathf.Clamp(SADyn, -90f, 90f);
              return Mathf.Clamp(SADyn / slipAnglePeak, -1, 1);*/ 
+        }
+
+        public void UpdateSlipForces(Vector3 linearVelocity, float suspensionForce, float angularVelocity)
+        {
+            m_slipForce = new Vector2(GetLongitudinalForce(linearVelocity, suspensionForce, angularVelocity),
+                GetLateralForce(linearVelocity));
         }
     }
 }

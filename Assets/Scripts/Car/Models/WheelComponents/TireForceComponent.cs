@@ -1,9 +1,9 @@
 using Car.Data;
 using UnityEngine;
 
-namespace Car.Models.WheelModels
+namespace Car.Models.WheelComponents
 {
-    public class TireForceModel
+    public class TireForceComponent
     {
         private float m_longitudinalCoeff;
         private float m_lateralCoeff;
@@ -11,7 +11,7 @@ namespace Car.Models.WheelModels
 
         public float fx => m_fx;
 
-        public TireForceModel(CarDesc.WheelInfo wheelInfo)
+        public TireForceComponent(CarDesc.WheelInfo wheelInfo)
         {
             m_longitudinalCoeff = wheelInfo.longitudinalCoeff;
             m_lateralCoeff = wheelInfo.lateralCoeff;

@@ -1,14 +1,14 @@
 using Car.Data;
 using UnityEngine;
 
-namespace Car.Models.WheelModels
+namespace Car.Models.WheelComponents
 {
-    public class VisualWheelModel
+    public class VisualWheelComponent
     {
         private float m_camber;
         private float m_caster;
         
-        public VisualWheelModel(CarDesc.WheelInfo wheelInfo)
+        public VisualWheelComponent(CarDesc.WheelInfo wheelInfo)
         {
             m_camber = wheelInfo.camber;
             m_caster = wheelInfo.caster;

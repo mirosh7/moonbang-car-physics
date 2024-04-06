@@ -1,7 +1,7 @@
 using Car.Data;
 using UnityEngine;
 
-namespace Car.Models.WheelModels
+namespace Car.Models.WheelComponents
 {
     public class AccelerationWheelComponent
     {
