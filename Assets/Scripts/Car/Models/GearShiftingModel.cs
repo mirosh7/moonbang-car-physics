@@ -1,7 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Car.Data;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
+using YieldAwaitable = System.Runtime.CompilerServices.YieldAwaitable;
 
 namespace Car.Models
 {
@@ -22,19 +25,19 @@ namespace Car.Models
             m_shiftTime = gearboxInfo.shiftTime;
         }
         
-        public void ShiftUp(RaceCar car)
+        public async void ShiftUp(RaceCar car)
         {
             if (!m_isShifting && m_currentGear < m_gearBoxRatios.Count - 1)
             {
-                car.StartCoroutine(ChangeGearAsync(m_currentGear++));
+                await ChangeGearAsync(m_currentGear++);
             }
         }
     
-        public void ShiftDown(RaceCar car)
+        public async void ShiftDown(RaceCar car)
         {
             if (!m_isShifting && m_currentGear != 0)
             {
-                car.StartCoroutine(ChangeGearAsync(m_currentGear--));
+                await ChangeGearAsync(m_currentGear--);
             }
         }
     
@@ -49,13 +52,13 @@ namespace Car.Models
             float outputTorque = inputTorque * m_gearBoxRatios[m_currentGear];
             return outputTorque; 
         }
-
-        private IEnumerator ChangeGearAsync(int nextGear)
+        
+        private async UniTask ChangeGearAsync(int nextGear)
         {
             m_isShifting = true;
             m_currentGear = 1;
-        
-            yield return new WaitForSeconds(m_shiftTime);
+            
+            await UniTask.Delay(TimeSpan.FromSeconds(m_shiftTime));
 
             m_currentGear = nextGear;
             m_isShifting = false;

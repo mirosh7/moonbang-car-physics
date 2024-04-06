@@ -9,22 +9,29 @@ namespace Car.Models
         private float m_turnRadius;
         private float m_ackermannAngleL;
         private float m_ackermannAngleR;
-        private readonly float[] steerAngle;
-        private readonly float steerForce;
+        private float[] m_steerAngle;
+        private float m_steerForce;
 
-        public float[] steerAngle1 => steerAngle;
+        public SteeringModel(float turnRadius, float steerForce, Transform[] wheelTransform)
+        {
+            m_turnRadius = turnRadius;
+            m_steerForce = steerForce;
+            InitializeAckermannParams(wheelTransform);
+        }
 
-        private void UpdateAckermann(float inputSteering)
+        public float[] steerAngle => m_steerAngle;
+
+        public void UpdateAckermann(float inputSteering)
         {
             if (inputSteering > 0)
             {
-                m_ackermannAngleL = Mathf.Rad2Deg * Mathf.Atan(m_wheelBase / (m_turnRadius + m_rearTrack / 2)) * inputSteering * steerForce;
-                m_ackermannAngleR = Mathf.Rad2Deg * Mathf.Atan(m_wheelBase / (m_turnRadius - m_rearTrack / 2)) * inputSteering * steerForce;
+                m_ackermannAngleL = Mathf.Rad2Deg * Mathf.Atan(m_wheelBase / (m_turnRadius + m_rearTrack / 2)) * inputSteering * m_steerForce;
+                m_ackermannAngleR = Mathf.Rad2Deg * Mathf.Atan(m_wheelBase / (m_turnRadius - m_rearTrack / 2)) * inputSteering * m_steerForce;
             }
             else if (inputSteering < 0)
             {
-                m_ackermannAngleL = Mathf.Rad2Deg * Mathf.Atan(m_wheelBase / (m_turnRadius - m_rearTrack / 2)) * inputSteering * steerForce;
-                m_ackermannAngleR = Mathf.Rad2Deg * Mathf.Atan(m_wheelBase / (m_turnRadius + m_rearTrack / 2)) * inputSteering * steerForce;
+                m_ackermannAngleL = Mathf.Rad2Deg * Mathf.Atan(m_wheelBase / (m_turnRadius - m_rearTrack / 2)) * inputSteering * m_steerForce;
+                m_ackermannAngleR = Mathf.Rad2Deg * Mathf.Atan(m_wheelBase / (m_turnRadius + m_rearTrack / 2)) * inputSteering * m_steerForce;
             }
             else
             {
@@ -32,8 +39,14 @@ namespace Car.Models
                 m_ackermannAngleR = 0f;
             }
             
-            steerAngle[0] = m_ackermannAngleL;
-            steerAngle[1] = m_ackermannAngleR;
+            m_steerAngle[0] = m_ackermannAngleL;
+            m_steerAngle[1] = m_ackermannAngleR;
+        }
+        
+        private void InitializeAckermannParams(Transform[] wheelTransform)
+        {
+            m_wheelBase = Vector3.Distance(wheelTransform[0].position, wheelTransform[2].position);
+            m_rearTrack = Vector3.Distance(wheelTransform[2].position, wheelTransform[3].position);  
         }
     }
 }

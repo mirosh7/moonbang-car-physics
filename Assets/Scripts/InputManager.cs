@@ -8,5 +8,8 @@ public class InputManager
 
     private float m_brakes;
     public float brakes => m_brakes;
+
+    private float m_steering;
+    public float steering => m_steering;
 }
 

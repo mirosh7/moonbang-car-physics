@@ -8,19 +8,14 @@ namespace Car.Controllers
     {
         private InputManager m_inputManager;
         private BrakesModel m_brakesModel;
-        private List<AccelerationWheelModel> m_accelerationWheelModels;
+        private AccelerationWheelSystemModel m_accelerationWheelSystemModel;
         private List<float> m_accelerationVelocities = new List<float>();
 
-        public BrakesController(BrakesModel brakesModel, List<AccelerationWheelModel> accelerationWheelModels)
+        public BrakesController(BrakesModel brakesModel, AccelerationWheelSystemModel accelerationWheelSystemModel)
         {
             m_inputManager = InputManager.instance;
             m_brakesModel = brakesModel;
-            m_accelerationWheelModels = accelerationWheelModels;
-            
-            foreach (var wheelModel in m_accelerationWheelModels)
-            {
-                m_accelerationVelocities.Add(wheelModel.angularVelocity);
-            }
+            m_accelerationWheelSystemModel = accelerationWheelSystemModel;
         }
 
         public void OnUpdate()
@@ -30,17 +25,7 @@ namespace Car.Controllers
 
         private void UpdateBrakes()
         {
-            UpdateAccelerationVelocities();
-            m_brakesModel.UpdateBrakes(m_inputManager.brakes, m_accelerationVelocities);
+            m_brakesModel.UpdateBrakes(m_inputManager.brakes, m_accelerationWheelSystemModel.angularVelocities);
         }
-        
-        private void UpdateAccelerationVelocities()
-        {
-            for (int i = 0; i < m_accelerationWheelModels.Count; i++)
-            {
-                m_accelerationVelocities[i] = m_accelerationWheelModels[i].angularVelocity;
-            }
-        }
-        
     }
 }

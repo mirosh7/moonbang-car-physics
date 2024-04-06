@@ -5,6 +5,7 @@ namespace Car.Models.WheelModels
 {
     public class SuspensionForceModel
     {
+        private Rigidbody m_rb;
         private float m_restLength;
         private float m_suspensionStiffness;
         private float m_damperStiffness;
@@ -14,8 +15,9 @@ namespace Car.Models.WheelModels
         private float m_lastLength;
         private float m_wheelRadius;
 
-        public SuspensionForceModel(CarDesc.WheelInfo wheelInfo)
+        public SuspensionForceModel(CarDesc.WheelInfo wheelInfo, Rigidbody rb)
         {
+            m_rb = rb;
             m_restLength = wheelInfo.restLength;
             m_suspensionStiffness = wheelInfo.suspensionStiffness;
             m_damperStiffness = wheelInfo.damperStiffness;
@@ -28,13 +30,13 @@ namespace Car.Models.WheelModels
 
         public float currentLength => m_currentLength;
 
-        public void ApplySuspensionForce(RaycastHit hit, Rigidbody rb, Transform wheelRoot)
+        public void ApplySuspensionForce(RaycastHit hit, Transform wheelRoot)
         {
             var up = wheelRoot.up;
             m_currentLength = (wheelRoot.position - (hit.point + (up * m_wheelRadius))).magnitude;
             CalculateSuspensionForce();
-            rb.AddForceAtPosition(m_suspensionForce * up, hit.point);
-            m_linearVelocity = wheelRoot.InverseTransformDirection(rb.GetPointVelocity(hit.point));
+            m_rb.AddForceAtPosition(m_suspensionForce * up, hit.point);
+            m_linearVelocity = wheelRoot.InverseTransformDirection(m_rb.GetPointVelocity(hit.point));
         }
         
         private void CalculateSuspensionForce()
