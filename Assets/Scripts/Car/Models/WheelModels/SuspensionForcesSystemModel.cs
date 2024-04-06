@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Car.Data;
 using Car.Models.WheelComponents;
 using UnityEngine;
 
@@ -6,7 +7,7 @@ namespace Car.Models.WheelModels
 {
     public class SuspensionForcesSystemModel
     {
-        private List<SuspensionForceComponent> m_suspensionForceComponents;
+        private List<SuspensionForceComponent> m_suspensionForceComponents = new List<SuspensionForceComponent>();
         private List<float> m_suspensionForces = new List<float>();
         private List<float> m_currentLengths = new List<float>();
         private List<Vector3> m_linearVelocities = new List<Vector3>();
@@ -15,9 +16,12 @@ namespace Car.Models.WheelModels
         public List<float> suspensionForces => m_suspensionForces;
         public List<float> currentLengths => m_currentLengths;
 
-        public SuspensionForcesSystemModel(List<SuspensionForceComponent> suspensionForceComponents)
+        public SuspensionForcesSystemModel(List<CarDesc.WheelInfo> wheelInfos, Rigidbody rb)
         {
-            m_suspensionForceComponents = suspensionForceComponents;
+            for (int i = 0; i <= 4; i++)
+            {
+                m_suspensionForceComponents.Add(new SuspensionForceComponent(wheelInfos[i], rb));
+            }
             
             foreach (var suspensionForceComponent in m_suspensionForceComponents)
             {

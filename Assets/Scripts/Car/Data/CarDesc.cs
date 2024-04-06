@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Car.Models;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Car.Data
 {
@@ -12,7 +13,7 @@ namespace Car.Data
         [SerializeField] private ClutchInfo m_clutchInfo;
         [SerializeField] private DifferentialInfo m_differentialInfo;
         [SerializeField] private BrakesInfo m_brakesInfo;
-        [SerializeField] private List<WheelInfo> m_wheelInfo;
+        [SerializeField] private List<WheelInfo> m_wheelInfos;
         [SerializeField] private SteeringInfo m_steeringInfo;
         [SerializeField] private AntirollBarInfo m_antirollBarInfo;
 
@@ -22,7 +23,7 @@ namespace Car.Data
         public ClutchInfo clutchInfo => m_clutchInfo;
         public DifferentialInfo differentialInfo => m_differentialInfo;
         public BrakesInfo brakesInfo => m_brakesInfo;
-        public List<WheelInfo> wheelInfo => m_wheelInfo;
+        public List<WheelInfo> wheelInfos => m_wheelInfos;
         public SteeringInfo steeringInfo => m_steeringInfo;
      
             

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Car.Data;
 using Car.Models.WheelComponents;
 using UnityEngine;
 
@@ -6,14 +7,17 @@ namespace Car.Models.WheelModels
 {
     public class AccelerationWheelSystemModel
     {
-        private List<AccelerationWheelComponent> m_accelerationWheelComponents;
+        private List<AccelerationWheelComponent> m_accelerationWheelComponents = new List<AccelerationWheelComponent>();
         private List<float> m_angularVelocities = new List<float>();
 
         public List<float> angularVelocities => m_angularVelocities;
         
-        public AccelerationWheelSystemModel(List<AccelerationWheelComponent> accelerationWheelComponents)
+        public AccelerationWheelSystemModel(List<CarDesc.WheelInfo> wheelInfos)
         {
-            m_accelerationWheelComponents = accelerationWheelComponents;
+            for (int i = 0; i <= 4; i++)
+            {
+                m_accelerationWheelComponents.Add(new AccelerationWheelComponent(wheelInfos[i]));
+            }
             
             foreach (var wheelComponent in m_accelerationWheelComponents)
             {

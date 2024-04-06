@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Car.Data;
 using Car.Models.WheelComponents;
 using UnityEngine;
 
@@ -6,16 +7,19 @@ namespace Car.Models.WheelModels
 {
     public class RaycastWheelSystemModel
     {
-        private List<RaycastWheelComponent> m_raycastWheelComponents;
+        private List<RaycastWheelComponent> m_raycastWheelComponents = new List<RaycastWheelComponent>();
         private List<RaycastHit> m_raycastHits = new List<RaycastHit>();
         private List<bool> m_wheelHits = new List<bool>();
         
         public List<RaycastHit> raycastHits => m_raycastHits;
         public List<bool> wheelHitStates => m_wheelHits;
 
-        public RaycastWheelSystemModel(List<RaycastWheelComponent> raycastWheelComponents)
+        public RaycastWheelSystemModel(List<CarDesc.WheelInfo> wheelInfos)
         {
-            m_raycastWheelComponents = raycastWheelComponents;
+            for (int i = 0; i <= 4; i++)
+            {
+                m_raycastWheelComponents.Add(new RaycastWheelComponent(wheelInfos[i]));
+            }
             
             foreach (var raycastWheelComponent in m_raycastWheelComponents)
             {

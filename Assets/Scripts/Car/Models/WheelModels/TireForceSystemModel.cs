@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Car.Data;
 using Car.Models.WheelComponents;
 using UnityEngine;
 
@@ -6,16 +7,17 @@ namespace Car.Models.WheelModels
 {
     public class TireForceSystemModel
     {
-        private Rigidbody m_rb;
-        private List<TireForceComponent> m_tireForceComponents;
+        private List<TireForceComponent> m_tireForceComponents = new List<TireForceComponent>();
         private List<float> m_fxVelocities = new List<float>();
 
         public List<float> fxVelocities => m_fxVelocities;
 
-        public TireForceSystemModel(List<TireForceComponent> tireForceComponents, Rigidbody rb)
+        public TireForceSystemModel(List<CarDesc.WheelInfo> wheelInfos, Rigidbody rb)
         {
-            m_rb = rb;
-            m_tireForceComponents = tireForceComponents;
+            for (int i = 0; i <= 4; i++)
+            {
+                m_tireForceComponents.Add(new TireForceComponent(wheelInfos[i], rb));
+            }
             
             foreach (var tireForceComponent in m_tireForceComponents)
             {
@@ -28,7 +30,6 @@ namespace Car.Models.WheelModels
             for (int i = 0; i <= m_tireForceComponents.Count; i++)
             {
                 m_tireForceComponents[i].UpdateTireForce(
-                    m_rb,
                     wheelRoots[i],
                     raycastHits[i],
                     slipForces[i].x,
@@ -39,6 +40,5 @@ namespace Car.Models.WheelModels
                 m_fxVelocities[i] = m_tireForceComponents[i].fx;
             }
         }
-
     }
 }

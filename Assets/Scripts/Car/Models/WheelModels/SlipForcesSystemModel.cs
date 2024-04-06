@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Car.Data;
 using Car.Models.WheelComponents;
 using UnityEngine;
 
@@ -6,14 +7,17 @@ namespace Car.Models.WheelModels
 {
     public class SlipForcesSystemModel
     {
-        private List<SlipForceComponent> m_slipForceComponents;
+        private List<SlipForceComponent> m_slipForceComponents = new List<SlipForceComponent>();
         private List<Vector2> m_slipForces = new List<Vector2>();
 
         public List<Vector2> slipForces => m_slipForces;
 
-        public SlipForcesSystemModel(List<SlipForceComponent> slipForceComponents, Transform[] wheelRoots)
+        public SlipForcesSystemModel(List<CarDesc.WheelInfo> wheelInfos)
         {
-            m_slipForceComponents = slipForceComponents;
+            for (int i = 0; i <= 4; i++)
+            {
+                m_slipForceComponents.Add(new SlipForceComponent(wheelInfos[i]));
+            }
            
             foreach (var slipForceComponent in m_slipForceComponents)
             {

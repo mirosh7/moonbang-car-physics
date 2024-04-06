@@ -5,19 +5,21 @@ namespace Car.Models.WheelComponents
 {
     public class TireForceComponent
     {
+        private Rigidbody m_rb;
         private float m_longitudinalCoeff;
         private float m_lateralCoeff;
         private float m_fx;
 
         public float fx => m_fx;
 
-        public TireForceComponent(CarDesc.WheelInfo wheelInfo)
+        public TireForceComponent(CarDesc.WheelInfo wheelInfo, Rigidbody rb)
         {
+            m_rb = rb;
             m_longitudinalCoeff = wheelInfo.longitudinalCoeff;
             m_lateralCoeff = wheelInfo.lateralCoeff;
         }
 
-        public void UpdateTireForce(Rigidbody rb, Transform wheelRoot, RaycastHit hit, float longitudinalForce, float lateralForce, float suspensionForce)
+        public void UpdateTireForce(Transform wheelRoot, RaycastHit hit, float longitudinalForce, float lateralForce, float suspensionForce)
         {
             Vector3 forwardForceVectorNormalized = Vector3.ProjectOnPlane(wheelRoot.forward, hit.normal).normalized;
             Vector3 sideForceVectorNormalized = Vector3.ProjectOnPlane(wheelRoot.right, hit.normal).normalized;
@@ -33,7 +35,7 @@ namespace Car.Models.WheelComponents
                 
             Vector3 combinedForceNorm = (forwardForceVectorNormalized * m_fx + sideForceVectorNormalized * fY);
             Debug.DrawRay(hit.point, combinedForceNorm, Color.red);
-            rb.AddForceAtPosition(combinedForceNorm, hit.point);
+            m_rb.AddForceAtPosition(combinedForceNorm, hit.point);
         }
     }
 }
