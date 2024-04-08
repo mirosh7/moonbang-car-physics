@@ -33,7 +33,7 @@ namespace Car.Models.WheelModels
 
         public void UpdateWheelsSuspension(List<RaycastHit> raycastHits, List<Transform> wheelRoots)
         {
-            for (int i = 0; i <= m_suspensionForceComponents.Count; i++)
+            for (int i = 0; i < m_suspensionForceComponents.Count; i++)
             {
                 m_suspensionForceComponents[i].UpdateSuspensionForce(raycastHits[i], wheelRoots[i]);
                 m_suspensionForces[i] = m_suspensionForceComponents[i].suspensionForce;

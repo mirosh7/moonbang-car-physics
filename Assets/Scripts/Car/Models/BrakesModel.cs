@@ -7,7 +7,7 @@ namespace Car.Models
     public class BrakesModel
     {
         private float[] m_brakeTorque = new float[2];
-        private float[] m_brakeBias;
+        private float[] m_brakeBias = new float[2];
         private AnimationCurve m_brakeTorqueCurve;
         private float m_maxTorque;
 

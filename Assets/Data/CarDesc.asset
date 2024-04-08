@@ -27,7 +27,13 @@ MonoBehaviour:
     m_startFriction: 0
     m_engineInertia: 0
   m_gearboxInfo:
-    m_gearBoxRatios: []
+    m_gearBoxRatios:
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
     m_shiftTime: 0
   m_clutchInfo:
     m_clutchStiffness: 0
@@ -45,6 +51,48 @@ MonoBehaviour:
       m_RotationOrder: 4
     m_maxTorque: 0
   m_wheelInfos:
+  - m_restLength: 0
+    m_suspensionStiffness: 0
+    m_damperStiffness: 0
+    m_slipAnglePeak: 0
+    m_camber: 0
+    m_caster: 0
+    m_longitudinalCoeff: 0
+    m_lateralCoeff: 0
+    m_wheelRadius: 0
+    m_raycastLayer:
+      serializedVersion: 2
+      m_Bits: 0
+    m_wheelMass: 0
+    m_longFrictionCoeff: 0
+  - m_restLength: 0
+    m_suspensionStiffness: 0
+    m_damperStiffness: 0
+    m_slipAnglePeak: 0
+    m_camber: 0
+    m_caster: 0
+    m_longitudinalCoeff: 0
+    m_lateralCoeff: 0
+    m_wheelRadius: 0
+    m_raycastLayer:
+      serializedVersion: 2
+      m_Bits: 0
+    m_wheelMass: 0
+    m_longFrictionCoeff: 0
+  - m_restLength: 0
+    m_suspensionStiffness: 0
+    m_damperStiffness: 0
+    m_slipAnglePeak: 0
+    m_camber: 0
+    m_caster: 0
+    m_longitudinalCoeff: 0
+    m_lateralCoeff: 0
+    m_wheelRadius: 0
+    m_raycastLayer:
+      serializedVersion: 2
+      m_Bits: 0
+    m_wheelMass: 0
+    m_longFrictionCoeff: 0
   - m_restLength: 0
     m_suspensionStiffness: 0
     m_damperStiffness: 0

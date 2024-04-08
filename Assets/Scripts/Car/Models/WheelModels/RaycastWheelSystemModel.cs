@@ -30,7 +30,7 @@ namespace Car.Models.WheelModels
 
         public void UpdateWheelsRaycast(List<Transform> wheelRoots)
         {
-            for (int i = 0; i <= m_raycastWheelComponents.Count; i++)
+            for (int i = 0; i < m_raycastWheelComponents.Count; i++)
             {
                 m_raycastWheelComponents[i].UpdateRaycast(wheelRoots[i]);
                 m_raycastHits[i] = m_raycastWheelComponents[i].wheelHit;

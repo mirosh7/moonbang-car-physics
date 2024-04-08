@@ -21,7 +21,8 @@ namespace Car.Models.WheelComponents
 
             wheelVisual.position = wheelRoot.position - wheelRoot.up * currentLength;
             wheelVisual.localRotation = Quaternion.Euler(currentAngle, steerAngle, 0f);
-            wheelVisual.parent.transform.localRotation = Quaternion.Euler(m_caster, 0, m_camber);
+            //wheelVisual.parent.transform.localRotation = Quaternion.Euler(m_caster, 0, m_camber);
+            wheelVisual.transform.localRotation = Quaternion.Euler(m_caster, 0, m_camber);
         }
     }
 }

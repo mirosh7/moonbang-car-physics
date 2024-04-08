@@ -17,7 +17,7 @@ namespace Car.Models.WheelModels
             }
         } 
 
-        public void UpdateWheelsVisual(List<Transform> wheelVisuals, List<Transform> wheelRoots, List<float> angularVelocities, List<float> currentLengths, float[] steerAngles)
+        public void UpdateWheelsVisual(List<Transform> wheelVisuals, List<Transform> wheelRoots, List<float> angularVelocities, List<float> currentLengths, List<float> steerAngles)
         {
             for (int i = 0; i < m_visualWheelComponents.Count; i++)
             {

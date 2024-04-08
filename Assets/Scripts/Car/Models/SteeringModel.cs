@@ -11,17 +11,23 @@ namespace Car.Models
         private float m_turnRadius;
         private float m_ackermannAngleL;
         private float m_ackermannAngleR;
-        private float[] m_steerAngle;
+        private List<float> m_steerAngle = new List<float>(4);
         private float m_steerForce;
 
         public SteeringModel(CarDesc.SteeringInfo steeringInfo, List<Transform> wheelTransform)
         {
             m_turnRadius = steeringInfo.turnRadius;
             m_steerForce = steeringInfo.steerForce;
+
+            foreach (var wheel in wheelTransform)
+            {
+                m_steerAngle.Add(0f);
+            }
+            
             InitializeAckermannParams(wheelTransform);
         }
 
-        public float[] steerAngle => m_steerAngle;
+        public List<float> steerAngle => m_steerAngle;
 
         public void UpdateAckermann(float inputSteering)
         {
