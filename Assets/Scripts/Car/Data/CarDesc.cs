@@ -9,14 +9,22 @@ namespace Car.Data
     [CreateAssetMenu(fileName = "Car Description",menuName = "Scriptable Objects/Car Description")]
     public class CarDesc : ScriptableObject
     {
-        [SerializeField] private EngineInfo m_engineInfo;
-        [SerializeField] private GearboxInfo m_gearboxInfo;
-        [SerializeField] private ClutchInfo m_clutchInfo;
-        [SerializeField] private DifferentialInfo m_differentialInfo;
-        [SerializeField] private BrakesInfo m_brakesInfo;
-        [SerializeField] private List<WheelInfo> m_wheelInfos;
-        [SerializeField] private SteeringInfo m_steeringInfo;
-        [SerializeField] private AntirollBarInfo m_antirollBarInfo;
+        [SerializeField]
+        private EngineInfo m_engineInfo;
+        [SerializeField]
+        private GearboxInfo m_gearboxInfo;
+        [SerializeField]
+        private ClutchInfo m_clutchInfo;
+        [SerializeField]
+        private DifferentialInfo m_differentialInfo;
+        [SerializeField]
+        private BrakesInfo m_brakesInfo;
+        [SerializeField]
+        private List<WheelInfo> m_wheelInfos;
+        [SerializeField]
+        private SteeringInfo m_steeringInfo;
+        [SerializeField]
+        private AntirollBarInfo m_antirollBarInfo;
 
         public AntirollBarInfo antirollBarInfo => m_antirollBarInfo;
         public EngineInfo engineInfo => m_engineInfo;
@@ -31,13 +39,21 @@ namespace Car.Data
         [Serializable]
         public class EngineInfo
         {
+            [SerializeField]
             private AnimationCurve m_torqueCurve;
+            [SerializeField]
             private Vector3 m_engineOrientation;
+            [SerializeField]
             private float m_engineIdleRpm;
+            [SerializeField]
             private float m_engineMaxRpm;
+            [SerializeField]
             private float m_engineMul;
+            [SerializeField]
             private float m_engineFrictionCoefficient;
+            [SerializeField]
             private float m_startFriction;
+            [SerializeField]
             private float m_engineInertia;
             
             public AnimationCurve torqueCurve => m_torqueCurve;
@@ -83,14 +99,18 @@ namespace Car.Data
 
             public float shiftTime => m_shiftTime;
 
+            [SerializeField]
             private List<float> m_gearBoxRatios = new List<float>();
+            [SerializeField]
             private float m_shiftTime;
         }
         
         [Serializable]
         public class DifferentialInfo
         {
+            [SerializeField]
             private bool m_isDiffLocked;
+            [SerializeField]
             private float m_differentialRatio;
 
             public bool isDiffLocked => m_isDiffLocked;
@@ -101,8 +121,11 @@ namespace Car.Data
         [Serializable]
         public class ClutchInfo
         {
+            [SerializeField]
             private float m_clutchStiffness;
+            [SerializeField]
             private float m_clutchCapacity;
+            [SerializeField]
             private float m_clutchDamping;
 
             public float clutchStiffness => m_clutchStiffness;
@@ -115,22 +138,29 @@ namespace Car.Data
         [Serializable]
         public class WheelInfo
         {
+            [SerializeField]
             private float m_restLength;
+            [SerializeField]
             private float m_suspensionStiffness;
+            [SerializeField]
             private float m_damperStiffness;
-            
+            [SerializeField]
             private float m_slipAnglePeak;
-
+            [SerializeField]
             private float m_camber;
+            [SerializeField]
             private float m_caster;
-            
+            [SerializeField]
             private float m_longitudinalCoeff;
+            [SerializeField]
             private float m_lateralCoeff;
-
+            [SerializeField]
             private float m_wheelRadius;
+            [SerializeField]
             private LayerMask m_raycastLayer;
-            
+            [SerializeField]
             private float m_wheelMass;
+            [SerializeField]
             private float m_longFrictionCoeff;
             
             public float longFrictionCoeff => m_longFrictionCoeff;
@@ -161,7 +191,9 @@ namespace Car.Data
         [Serializable]
         public class SteeringInfo
         {
+            [SerializeField]
             private float m_turnRadius;
+            [SerializeField]
             private float m_steerForce;
 
             public float turnRadius => m_turnRadius;
@@ -171,7 +203,9 @@ namespace Car.Data
         [Serializable]
         public class BrakesInfo
         {
+            [SerializeField]
             private AnimationCurve m_brakeTorqueCurve;
+            [SerializeField]
             private float m_maxTorque;
 
             public AnimationCurve brakeTorqueCurve => m_brakeTorqueCurve;
@@ -182,8 +216,11 @@ namespace Car.Data
         [Serializable]
         public class AntirollBarInfo
         {
+            [SerializeField]
             private bool m_isEnabled;
+            [SerializeField]
             private float m_stiffnessFront;
+            [SerializeField]
             private float m_stiffnessRear;
 
             public bool isEnabled => m_isEnabled;
