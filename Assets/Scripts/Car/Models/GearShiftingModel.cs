@@ -25,7 +25,7 @@ namespace Car.Models
             m_shiftTime = gearboxInfo.shiftTime;
         }
         
-        public async void ShiftUp(RaceCar car)
+        public async void ShiftUp()
         {
             if (!m_isShifting && m_currentGear < m_gearBoxRatios.Count - 1)
             {
@@ -33,7 +33,7 @@ namespace Car.Models
             }
         }
     
-        public async void ShiftDown(RaceCar car)
+        public async void ShiftDown()
         {
             if (!m_isShifting && m_currentGear != 0)
             {

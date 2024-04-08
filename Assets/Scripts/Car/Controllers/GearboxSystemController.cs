@@ -1,20 +1,28 @@
 using Car.Models;
+using Unity.VisualScripting;
 
 namespace Car.Controllers
 {
     public class GearboxSystemController : ICarController
     {
+        private InputManager m_inputManager;
         private GearShiftingModel m_gearShiftingModel;
         private ClutchModel m_clutchModel;
         private DifferentialModel m_differentialModel;
         private EngineModel m_engineModel;
         
-        public GearboxSystemController(GearShiftingModel gearShiftingModel, ClutchModel clutchModel, DifferentialModel differentialModel, EngineModel engineModel)
+        public GearboxSystemController(GearShiftingModel gearShiftingModel, ClutchModel clutchModel, DifferentialModel differentialModel, EngineModel engineModel, InputManager inputManager)
         {
+            m_inputManager = inputManager;
             m_gearShiftingModel = gearShiftingModel;
             m_clutchModel = clutchModel;
             m_differentialModel = differentialModel;
             m_engineModel = engineModel;
+
+            m_inputManager.gearUp -= m_gearShiftingModel.ShiftUp;
+            m_inputManager.gearDown -= m_gearShiftingModel.ShiftDown;
+            m_inputManager.gearUp += m_gearShiftingModel.ShiftUp;
+            m_inputManager.gearDown += m_gearShiftingModel.ShiftDown;
         }
 
         public void OnUpdate()

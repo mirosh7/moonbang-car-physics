@@ -24,7 +24,7 @@ namespace Car.Controllers
 
         private void UpdateEngine()
         {
-            m_engineModel.UpdateEngine(m_inputManager.throttle, m_clutchModel.clutchTorque, m_gearShiftingModel.currentGear);
+            m_engineModel.UpdateEngine(m_inputManager.acceleration, m_clutchModel.clutchTorque, m_gearShiftingModel.currentGear);
         }
         
     }

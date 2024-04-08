@@ -56,7 +56,7 @@ public class CarBuilder
 
     public void Build()
     {
-        m_inputManager = new InputManager();
+        m_inputManager = InputManager.instance;
         CreateCarModels();
         CreateCarControllers();
     }
@@ -84,7 +84,7 @@ public class CarBuilder
         m_steeringController = new SteeringController(m_steeringModel, m_inputManager);
         AddToControllersList(m_steeringController);
         
-        m_gearboxSystemController = new GearboxSystemController(m_gearShiftingModel, m_clutchModel, m_differentialModel, m_engineModel);
+        m_gearboxSystemController = new GearboxSystemController(m_gearShiftingModel, m_clutchModel, m_differentialModel, m_engineModel, m_inputManager);
         AddToControllersList(m_gearboxSystemController);
 
         m_engineController = new EngineController(m_engineModel, m_clutchModel, m_gearShiftingModel, m_inputManager);
