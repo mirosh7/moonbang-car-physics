@@ -7,10 +7,10 @@ namespace Car.Controllers
         private SteeringModel m_steeringModel;
         private InputManager m_inputManager;
 
-        public SteeringController(SteeringModel steeringModel)
+        public SteeringController(SteeringModel steeringModel, InputManager inputManager)
         {
             m_steeringModel = steeringModel;
-            m_inputManager = InputManager.instance;
+            m_inputManager = inputManager;
         }
 
         public void OnUpdate()

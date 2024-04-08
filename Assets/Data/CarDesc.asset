@@ -12,4 +12,57 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 976adcad29a84397ac125e708478a92e, type: 3}
   m_Name: CarDesc
   m_EditorClassIdentifier: 
-  m_wheelInfos: []
+  m_engineInfo:
+    m_torqueCurve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_engineOrientation: {x: 0, y: 0, z: 0}
+    m_engineIdleRpm: 0
+    m_engineMaxRpm: 0
+    m_engineMul: 0
+    m_engineFrictionCoefficient: 0
+    m_startFriction: 0
+    m_engineInertia: 0
+  m_gearboxInfo:
+    m_gearBoxRatios: []
+    m_shiftTime: 0
+  m_clutchInfo:
+    m_clutchStiffness: 0
+    m_clutchCapacity: 0
+    m_clutchDamping: 0
+  m_differentialInfo:
+    m_isDiffLocked: 0
+    m_differentialRatio: 0
+  m_brakesInfo:
+    m_brakeTorqueCurve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_maxTorque: 0
+  m_wheelInfos:
+  - m_restLength: 0
+    m_suspensionStiffness: 0
+    m_damperStiffness: 0
+    m_slipAnglePeak: 0
+    m_camber: 0
+    m_caster: 0
+    m_longitudinalCoeff: 0
+    m_lateralCoeff: 0
+    m_wheelRadius: 0
+    m_raycastLayer:
+      serializedVersion: 2
+      m_Bits: 0
+    m_wheelMass: 0
+    m_longFrictionCoeff: 0
+  m_steeringInfo:
+    m_turnRadius: 0
+    m_steerForce: 0
+  m_antirollBarInfo:
+    m_isEnabled: 0
+    m_stiffnessFront: 0
+    m_stiffnessRear: 0

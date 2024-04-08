@@ -42,6 +42,8 @@ public class CarBuilder
     private TireForcesSystemController m_tireForcesSystemController;
     private VisualWheelSystemController m_visualWheelSystemController;
 
+    private InputManager m_inputManager;
+
     public CarBuilder(CarDesc carDesc, List<Transform> wheelTransforms, List<Transform> wheelRootTransforms, Rigidbody rb)
     {
         m_rb = rb;
@@ -54,6 +56,7 @@ public class CarBuilder
 
     public void Build()
     {
+        m_inputManager = new InputManager();
         CreateCarModels();
         CreateCarControllers();
     }
@@ -78,19 +81,19 @@ public class CarBuilder
 
     private void CreateCarControllers()
     {
-        m_steeringController = new SteeringController(m_steeringModel);
+        m_steeringController = new SteeringController(m_steeringModel, m_inputManager);
         AddToControllersList(m_steeringController);
         
         m_gearboxSystemController = new GearboxSystemController(m_gearShiftingModel, m_clutchModel, m_differentialModel, m_engineModel);
         AddToControllersList(m_gearboxSystemController);
 
-        m_engineController = new EngineController(m_engineModel, m_clutchModel, m_gearShiftingModel);
+        m_engineController = new EngineController(m_engineModel, m_clutchModel, m_gearShiftingModel, m_inputManager);
         AddToControllersList(m_engineController);
 
         m_differentialController = new DifferentialController(m_differentialModel, m_gearShiftingModel, m_clutchModel, m_accelerationWheelSystemModel);
         AddToControllersList(m_differentialController);
 
-        m_brakesController = new BrakesController(m_brakesModel, m_accelerationWheelSystemModel);
+        m_brakesController = new BrakesController(m_brakesModel, m_accelerationWheelSystemModel, m_inputManager);
         AddToControllersList(m_brakesController);
 
         m_accelerationWheelSystemController = new AccelerationWheelSystemController(m_accelerationWheelSystemModel, m_brakesModel, m_differentialModel, m_tireForceSystemModel, m_raycastWheelSystemModel);

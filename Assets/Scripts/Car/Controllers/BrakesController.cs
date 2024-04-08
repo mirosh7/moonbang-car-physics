@@ -11,9 +11,9 @@ namespace Car.Controllers
         private AccelerationWheelSystemModel m_accelerationWheelSystemModel;
         private List<float> m_accelerationVelocities = new List<float>();
 
-        public BrakesController(BrakesModel brakesModel, AccelerationWheelSystemModel accelerationWheelSystemModel)
+        public BrakesController(BrakesModel brakesModel, AccelerationWheelSystemModel accelerationWheelSystemModel, InputManager inputManager)
         {
-            m_inputManager = InputManager.instance;
+            m_inputManager = inputManager;
             m_brakesModel = brakesModel;
             m_accelerationWheelSystemModel = accelerationWheelSystemModel;
         }

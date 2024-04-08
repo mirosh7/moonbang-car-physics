@@ -9,9 +9,9 @@ namespace Car.Controllers
         private ClutchModel m_clutchModel;
         private GearShiftingModel m_gearShiftingModel;
 
-        public EngineController(EngineModel engineModel, ClutchModel clutchModel, GearShiftingModel gearShiftingModel)
+        public EngineController(EngineModel engineModel, ClutchModel clutchModel, GearShiftingModel gearShiftingModel, InputManager inputManager)
         {
-            m_inputManager = InputManager.instance;
+            m_inputManager = inputManager;
             m_engineModel = engineModel;
             m_clutchModel = clutchModel;
             m_gearShiftingModel = gearShiftingModel;

@@ -15,10 +15,22 @@ namespace Car
         private List<Transform> m_wheelTransforms;
         [SerializeField]
         private List<Transform> m_wheelRootTransforms;
+
+        private List<ICarController> m_controllers;
         private void Start()
         {
             var carBuilder = new CarBuilder(m_carDesc, m_wheelTransforms, m_wheelRootTransforms, m_rb);
             carBuilder.Build();
+            m_controllers = carBuilder.carControllers;
+        }
+
+        private void FixedUpdate()
+        {
+            foreach (var controller in m_controllers)
+            {
+                controller.OnUpdate();
+            }
+            Debug.Log("Succesuful frame");
         }
     }
 }
