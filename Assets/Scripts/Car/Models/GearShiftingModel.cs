@@ -29,15 +29,18 @@ namespace Car.Models
         {
             if (!m_isShifting && m_currentGear < m_gearBoxRatios.Count - 1)
             {
-                await ChangeGearAsync(m_currentGear++);
+                await ChangeGearAsync(++m_currentGear);
+                Debug.Log($"GEAR UP {m_currentGear}");
             }
+            
         }
     
         public async void ShiftDown()
         {
             if (!m_isShifting && m_currentGear != 0)
             {
-                await ChangeGearAsync(m_currentGear--);
+                await ChangeGearAsync(--m_currentGear);
+                Debug.Log($"GEAR DOWN {m_currentGear}");
             }
         }
     

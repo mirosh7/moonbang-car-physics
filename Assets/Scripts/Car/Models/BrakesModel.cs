@@ -17,11 +17,11 @@ namespace Car.Models
         {
             m_brakeTorqueCurve = brakesInfo.brakeTorqueCurve;
             m_maxTorque = brakesInfo.maxTorque;
+            m_brakeBias = brakesInfo.brakeBias;
             
             for (int i = 0; i < 4; i++)
             {
                 m_brakeTorque.Add(0f);
-                m_brakeBias.Add(0f);
             }
         }
 

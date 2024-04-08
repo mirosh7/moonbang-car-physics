@@ -31,7 +31,6 @@ namespace Car
             {
                 controller.OnUpdate();
             }
-            Debug.Log("Succesuful frame");
         }
     }
 }

@@ -208,9 +208,14 @@ namespace Car.Data
             [SerializeField]
             private float m_maxTorque;
 
+            [SerializeField]
+            private List<float> m_brakeBias;
+
             public AnimationCurve brakeTorqueCurve => m_brakeTorqueCurve;
 
             public float maxTorque => m_maxTorque;
+
+            public List<float> brakeBias => m_brakeBias;
         }
         
         [Serializable]

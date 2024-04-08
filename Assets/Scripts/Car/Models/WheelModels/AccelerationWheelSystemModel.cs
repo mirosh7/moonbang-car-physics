@@ -27,7 +27,7 @@ namespace Car.Models.WheelModels
 
         public void UpdateWheelsAcceleration(List<bool> wheelHits, List<float> brakeTorques, List<float> outputTorques, List<float> fxs)
         {
-            for (int i = 0; i < m_accelerationWheelComponents.Count; i++)
+            for (int i = 2; i < m_accelerationWheelComponents.Count; i++)
             {
                 if (!wheelHits[i])
                 {

@@ -21,7 +21,6 @@ namespace Car.Models.WheelModels
         {
             for (int i = 0; i < m_visualWheelComponents.Count; i++)
             {
-                return;
                 m_visualWheelComponents[i].ApplyVisuals(wheelVisuals[i], wheelRoots[i], angularVelocities[i], currentLengths[i], steerAngles[i]);
             }
         }
