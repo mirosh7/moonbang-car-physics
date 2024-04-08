@@ -6,17 +6,23 @@ namespace Car.Models
 {
     public class BrakesModel
     {
-        private float[] m_brakeTorque = new float[2];
-        private float[] m_brakeBias = new float[2];
+        private List<float> m_brakeTorque = new List<float>(4);
+        private List<float> m_brakeBias = new List<float>(4);
         private AnimationCurve m_brakeTorqueCurve;
         private float m_maxTorque;
 
-        public float[] brakeTorque => m_brakeTorque;
+        public List<float> brakeTorque => m_brakeTorque;
 
         public BrakesModel(CarDesc.BrakesInfo brakesInfo)
         {
             m_brakeTorqueCurve = brakesInfo.brakeTorqueCurve;
             m_maxTorque = brakesInfo.maxTorque;
+            
+            for (int i = 0; i < 4; i++)
+            {
+                m_brakeTorque.Add(0f);
+                m_brakeBias.Add(0f);
+            }
         }
 
         public void UpdateBrakes(float brakeInput, List<float> angularVelocities)

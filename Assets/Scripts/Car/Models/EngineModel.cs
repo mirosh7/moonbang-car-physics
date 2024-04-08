@@ -42,7 +42,7 @@ namespace Car.Models
             m_engineInertia = engineInfo.engineInertia;
         }
         
-        public void UpdateEngine(float throttle, float clutchTorque, int currentGearRatio)
+        public void UpdateEngine(float throttle, float clutchTorque, int currentGear)
         {
             m_maxEffectiveTorque = m_torqueCurve.Evaluate(m_engineRpm) * m_engineMul;
             m_engineFriction = (m_engineRpm * m_engineFrictionCoefficient) + m_startFriction;
@@ -52,7 +52,7 @@ namespace Car.Models
             m_engineRpm = m_engineAngularVelocity * RAD_TO_RPM;
             m_engineAngularVelocity = Mathf.Clamp(m_engineAngularVelocity, m_engineIdleRpm, m_engineMaxRpm);
         
-            if (currentGearRatio == 0)
+            if (currentGear == 0)
             {
                 m_carRigidbody.AddTorque(m_engineOrientation * m_engineTorque * 2f);
             }

@@ -102,7 +102,7 @@ public class CarBuilder
         m_raycastWheelSystemController = new RaycastWheelSystemController(m_wheelRootTransforms, m_raycastWheelSystemModel);
         AddToControllersList(m_raycastWheelSystemController);
 
-        m_slipForcesSystemController = new SlipForcesSystemController(m_slipForcesSystemModel, m_suspensionForcesSystemModel, m_accelerationWheelSystemModel);
+        m_slipForcesSystemController = new SlipForcesSystemController(m_slipForcesSystemModel, m_suspensionForcesSystemModel, m_accelerationWheelSystemModel, m_raycastWheelSystemModel);
         AddToControllersList(m_slipForcesSystemController);
 
         m_suspensionForcesSystemController = new SuspensionForcesSystemController(m_suspensionForcesSystemModel, m_raycastWheelSystemModel, m_wheelRootTransforms);

@@ -9,7 +9,6 @@ namespace Car.Controllers
         private InputManager m_inputManager;
         private BrakesModel m_brakesModel;
         private AccelerationWheelSystemModel m_accelerationWheelSystemModel;
-        private List<float> m_accelerationVelocities = new List<float>();
 
         public BrakesController(BrakesModel brakesModel, AccelerationWheelSystemModel accelerationWheelSystemModel, InputManager inputManager)
         {

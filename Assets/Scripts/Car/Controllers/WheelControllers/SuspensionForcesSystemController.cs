@@ -24,7 +24,7 @@ namespace Car.Controllers.WheelControllers
 
         private void UpdateSuspensionForces()
         {
-            m_suspensionForcesSystemModel.UpdateWheelsSuspension(m_raycastWheelSystemModel.raycastHits, m_wheelRoots);
+            m_suspensionForcesSystemModel.UpdateWheelsSuspension(m_raycastWheelSystemModel.raycastHits, m_wheelRoots, m_raycastWheelSystemModel.wheelHitStates);
         }
     }
 }

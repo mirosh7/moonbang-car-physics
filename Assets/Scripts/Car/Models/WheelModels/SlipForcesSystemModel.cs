@@ -25,10 +25,15 @@ namespace Car.Models.WheelModels
             }
         } 
 
-        public void UpdateSlipForces(List<Vector3> linearVelocities, List<float> suspensionForces, List<float> angularVelocities)
+        public void UpdateSlipForces(List<Vector3> linearVelocities, List<float> suspensionForces, List<float> angularVelocities, List<bool> wheelHitStates)
         {
             for (int i = 0; i < m_slipForceComponents.Count; i++)
             {
+                if (!wheelHitStates[i])
+                {
+                    continue;
+                }
+                
                 m_slipForceComponents[i].UpdateSlipForces(linearVelocities[i], suspensionForces[i], angularVelocities[i]);
                 m_slipForces[i] = m_slipForceComponents[i].slipForce;
             }

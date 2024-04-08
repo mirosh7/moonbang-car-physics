@@ -8,19 +8,24 @@ namespace Car.Models
     {
         private float m_differentialRatio;
         private bool m_isDiffLocked;
-        private float[] m_outputTorque = new float[2];
+        private List<float> m_outputTorque = new List<float>(4);
         private float m_inputShaftVelocity;
         private float m_angularVelocityL;
         private float m_angularVelocityR;
         private float m_wheelInertia;
         
-        public float[] outputTorque => m_outputTorque;
+        public List<float> outputTorque => m_outputTorque;
 
         public DifferentialModel(CarDesc.DifferentialInfo differentialInfo, CarDesc.WheelInfo wheelInfo)
         {
             m_differentialRatio = differentialInfo.differentialRatio;
             m_isDiffLocked = differentialInfo.isDiffLocked;
             m_wheelInertia = wheelInfo.wheelInertia;
+
+            for (int i = 0; i < 4; i++)
+            {
+                m_outputTorque.Add(0f);
+            }
         }
         
         public void UpdateOutputTorque(float inputTorque, List<float> wheelAngularVelocities)

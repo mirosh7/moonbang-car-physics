@@ -25,10 +25,15 @@ namespace Car.Models.WheelModels
             }
         }
 
-        public void UpdateWheelTireForces(List<Transform> wheelRoots, List<RaycastHit> raycastHits, List<Vector2> slipForces, List<float> suspensionForces)
+        public void UpdateWheelTireForces(List<Transform> wheelRoots, List<RaycastHit> raycastHits, List<Vector2> slipForces, List<float> suspensionForces, List<bool> wheelHitStates)
         {
             for (int i = 0; i < m_tireForceComponents.Count; i++)
             {
+                if (!wheelHitStates[i])
+                {
+                    continue;
+                }
+                
                 m_tireForceComponents[i].UpdateTireForce(
                     wheelRoots[i],
                     raycastHits[i],

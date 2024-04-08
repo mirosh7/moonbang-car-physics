@@ -1,4 +1,5 @@
 using Car.Models.WheelModels;
+using UnityEngine.Rendering;
 
 namespace Car.Controllers.WheelControllers
 {
@@ -7,12 +8,14 @@ namespace Car.Controllers.WheelControllers
         private SlipForcesSystemModel m_slipForcesSystemModel;
         private SuspensionForcesSystemModel m_suspensionForcesSystemModel;
         private AccelerationWheelSystemModel m_accelerationWheelSystemModel;
+        private RaycastWheelSystemModel m_raycastWheelSystemModel;
 
-        public SlipForcesSystemController(SlipForcesSystemModel slipForcesSystemModel, SuspensionForcesSystemModel suspensionForcesSystemModel, AccelerationWheelSystemModel accelerationWheelSystemModel)
+        public SlipForcesSystemController(SlipForcesSystemModel slipForcesSystemModel, SuspensionForcesSystemModel suspensionForcesSystemModel, AccelerationWheelSystemModel accelerationWheelSystemModel, RaycastWheelSystemModel raycastWheelSystemModel)
         {
             m_slipForcesSystemModel = slipForcesSystemModel;
             m_suspensionForcesSystemModel = suspensionForcesSystemModel;
             m_accelerationWheelSystemModel = accelerationWheelSystemModel;
+            m_raycastWheelSystemModel = raycastWheelSystemModel;
         }
 
         public void OnUpdate()
@@ -22,7 +25,7 @@ namespace Car.Controllers.WheelControllers
 
         private void UpdateSlipForces()
         {
-            m_slipForcesSystemModel.UpdateSlipForces(m_suspensionForcesSystemModel.linearVelocities, m_suspensionForcesSystemModel.suspensionForces, m_accelerationWheelSystemModel.angularVelocities);
+            m_slipForcesSystemModel.UpdateSlipForces(m_suspensionForcesSystemModel.linearVelocities, m_suspensionForcesSystemModel.suspensionForces, m_accelerationWheelSystemModel.angularVelocities, m_raycastWheelSystemModel.wheelHitStates);
         }
     }
 }

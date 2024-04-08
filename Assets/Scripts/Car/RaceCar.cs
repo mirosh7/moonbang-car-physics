@@ -21,6 +21,7 @@ namespace Car
         {
             var carBuilder = new CarBuilder(m_carDesc, m_wheelTransforms, m_wheelRootTransforms, m_rb);
             carBuilder.Build();
+            
             m_controllers = carBuilder.carControllers;
         }
 

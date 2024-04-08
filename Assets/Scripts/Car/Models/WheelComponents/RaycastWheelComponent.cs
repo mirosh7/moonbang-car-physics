@@ -24,11 +24,14 @@ namespace Car.Models.WheelComponents
 
         public void UpdateRaycast(Transform wheelRoot)
         {
-            m_isWheelHit = Physics.Raycast(wheelRoot.position,
+            var position = wheelRoot.position;
+            m_isWheelHit = Physics.Raycast(position,
                 -wheelRoot.up,
                 out m_wheelHit,
                 (m_restLength + m_wheelRadius),
                 m_raycastLayer);
+            
+            Debug.DrawRay(position, Vector3.down * (m_restLength + m_wheelRadius), Color.red);
         }
     }
 }

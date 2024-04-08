@@ -33,7 +33,7 @@ namespace Car.Controllers.WheelControllers
             var raycastHits = m_raycastWheelSystemModel.raycastHits;
             var slipForces = m_slipForcesSystemModel.slipForces;
             var suspensionForces = m_suspensionForcesSystemModel.suspensionForces;
-            m_tireForceSystemModel.UpdateWheelTireForces(m_wheelRoots, raycastHits, slipForces, suspensionForces);
+            m_tireForceSystemModel.UpdateWheelTireForces(m_wheelRoots, raycastHits, slipForces, suspensionForces, m_raycastWheelSystemModel.wheelHitStates);
         }
     }
 }

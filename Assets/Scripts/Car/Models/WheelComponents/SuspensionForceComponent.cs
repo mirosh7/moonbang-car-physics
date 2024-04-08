@@ -42,7 +42,7 @@ namespace Car.Models.WheelComponents
         private void CalculateSuspensionForce()
         {
             var springForce = (m_restLength - m_currentLength) * m_suspensionStiffness;
-            var damperForce = ((m_lastLength - m_currentLength) / Time.fixedDeltaTime) * m_damperStiffness;
+            var damperForce = (m_lastLength - m_currentLength) / Time.fixedDeltaTime * m_damperStiffness;
             m_suspensionForce = Mathf.Max(0, springForce + damperForce);
             m_lastLength = m_currentLength;
         }

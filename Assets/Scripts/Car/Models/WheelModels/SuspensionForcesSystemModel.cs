@@ -31,10 +31,14 @@ namespace Car.Models.WheelModels
             }
         }
 
-        public void UpdateWheelsSuspension(List<RaycastHit> raycastHits, List<Transform> wheelRoots)
+        public void UpdateWheelsSuspension(List<RaycastHit> raycastHits, List<Transform> wheelRoots, List<bool> wheelHitStates)
         {
             for (int i = 0; i < m_suspensionForceComponents.Count; i++)
             {
+                if (!wheelHitStates[i])
+                {
+                    continue;
+                }
                 m_suspensionForceComponents[i].UpdateSuspensionForce(raycastHits[i], wheelRoots[i]);
                 m_suspensionForces[i] = m_suspensionForceComponents[i].suspensionForce;
                 m_currentLengths[i] = m_suspensionForceComponents[i].currentLength;
