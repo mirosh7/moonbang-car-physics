@@ -1,10 +1,12 @@
 using System.Collections.Generic;
+using Car;
 using Car.Controllers;
-using Car.Controllers.WheelControllers;
+using Car.Controllers.PhysicsControllers;
+using Car.Controllers.PhysicsControllers.WheelControllers;
 using Car.Data;
 using Car.Models;
-using Car.Models.WheelComponents;
-using Car.Models.WheelModels;
+using Car.Models.PhysicsModels;
+using Car.Models.PhysicsModels.WheelModels;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -13,8 +15,8 @@ public class CarBuilder
     private List<ICarController> m_carControllers = new List<ICarController>();
     private CarDesc m_carDesc;
     private Rigidbody m_rb;
-    private List<Transform> m_wheelTransforms;
-    private List<Transform> m_wheelRootTransforms;
+    private List<Transform> m_wheelTransforms = new List<Transform>();
+    private List<Transform> m_wheelRootTransforms = new List<Transform>();
     
     private SteeringModel m_steeringModel;
     private GearShiftingModel m_gearShiftingModel;
@@ -29,6 +31,7 @@ public class CarBuilder
     private SuspensionForcesSystemModel m_suspensionForcesSystemModel;
     private TireForceSystemModel m_tireForceSystemModel;
     private VisualWheelSystemModel m_visualWheelSystemModel;
+    private CarPrefabLoadModel m_carPrefabLoadModel;
 
     private SteeringController m_steeringController;
     private GearboxSystemController m_gearboxSystemController;
@@ -41,25 +44,21 @@ public class CarBuilder
     private SuspensionForcesSystemController m_suspensionForcesSystemController;
     private TireForcesSystemController m_tireForcesSystemController;
     private VisualWheelSystemController m_visualWheelSystemController;
+    private CarPrefabLoadController m_carPrefabLoadController;
+    
+    private string m_carPrefabName;
+    private string m_carWheelName;
 
     private InputManager m_inputManager;
 
-    public CarBuilder(CarDesc carDesc, List<Transform> wheelTransforms, List<Transform> wheelRootTransforms, Rigidbody rb)
-    {
-        m_rb = rb;
-        m_carDesc = carDesc;
-        m_wheelTransforms = wheelTransforms;
-        m_wheelRootTransforms = wheelRootTransforms;
-    }
-    
-    public List<ICarController> carControllers => m_carControllers;
-
-    public void Build()
+    public CarBuilder(CarDesc carDesc, string carPrefabName, string carWheelName)
     {
         m_inputManager = InputManager.instance;
-        CreateCarModels();
-        CreateCarControllers();
+        m_carDesc = carDesc;
+        m_carPrefabName = carPrefabName;
+        m_carWheelName = carWheelName;
     }
+    
     private void CreateCarModels()
     {
         m_steeringModel = new SteeringModel(m_carDesc.steeringInfo, m_wheelRootTransforms);
@@ -117,6 +116,39 @@ public class CarBuilder
         Debug.Log("Car controllers created");
     }
 
+    private void CreateVisualCar()
+    {
+        m_carPrefabLoadModel = new CarPrefabLoadModel(m_carPrefabName, m_carWheelName);
+        m_carPrefabLoadController = new CarPrefabLoadController(m_carPrefabLoadModel);
+        
+        m_carPrefabLoadController.LoadCarPrefabs();
+        
+        m_wheelRootTransforms = m_carPrefabLoadController.GetWheelRoots();
+        
+    }
+
+    public RaceCar BuildCar(Transform container = null)
+    {
+        CreateVisualCar();
+        var carCore = Object.Instantiate(m_carPrefabLoadController.carCore, container);
+        var carVisual = Object.Instantiate(m_carPrefabLoadController.carPrefab, carCore.transform);
+        
+        foreach (var w in m_carDesc.wheelInfos)
+        {
+            var wheel = Object.Instantiate(m_carPrefabLoadController.wheelPrefab, carCore.transform);
+            m_wheelTransforms.Add(wheel.transform);
+        }
+        
+        var raceCar = carCore.GetComponent<RaceCar>();
+        m_rb = carCore.GetComponent<Rigidbody>();
+        CreateCarModels();
+        CreateCarControllers();
+        
+        raceCar.SetControllers(m_carControllers);
+        
+        return raceCar;
+    }
+    
     private void AddToControllersList(ICarController carController)
     {
         m_carControllers.Add(carController);
