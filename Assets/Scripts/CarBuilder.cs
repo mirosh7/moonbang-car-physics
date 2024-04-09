@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Car;
 using Car.Controllers;
 using Car.Controllers.PhysicsControllers;
@@ -123,7 +124,7 @@ public class CarBuilder
         
         m_carPrefabLoadController.LoadCarPrefabs();
         
-        m_wheelRootTransforms = m_carPrefabLoadController.GetWheelRoots();
+        
         
     }
 
@@ -141,6 +142,8 @@ public class CarBuilder
         
         var raceCar = carCore.GetComponent<RaceCar>();
         m_rb = carCore.GetComponent<Rigidbody>();
+
+        m_wheelRootTransforms = carVisual.GetComponentsInChildren<Transform>().Where(wT => wT.name == "wheelRoot").ToList();
         CreateCarModels();
         CreateCarControllers();
         
