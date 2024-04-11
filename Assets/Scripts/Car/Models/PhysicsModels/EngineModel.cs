@@ -38,7 +38,7 @@ namespace Car.Models.PhysicsModels
             m_engineOrientation = engineInfo.engineOrientation;
             m_engineIdleRpm = engineInfo.engineIdleRpm * RPM_TO_RAD;
             m_engineMaxRpm = engineInfo.engineMaxRpm * RPM_TO_RAD;
-            m_engineMul = engineInfo.engineIdleRpm;
+            m_engineMul = engineInfo.engineMul;
             m_engineFrictionCoefficient = engineInfo.engineFrictionCoefficient;
             m_startFriction = engineInfo.startFriction;
             m_engineInertia = engineInfo.engineInertia;

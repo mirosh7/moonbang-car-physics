@@ -32,6 +32,7 @@ public class CarBuilder
     private TireForceSystemModel m_tireForceSystemModel;
     private VisualWheelSystemModel m_visualWheelSystemModel;
     private CarPrefabLoadModel m_carPrefabLoadModel;
+    private WheelSteeringSystemModel m_wheelSteeringSystemModel;
 
     private SteeringController m_steeringController;
     private GearboxSystemController m_gearboxSystemController;
@@ -45,6 +46,7 @@ public class CarBuilder
     private TireForcesSystemController m_tireForcesSystemController;
     private VisualWheelSystemController m_visualWheelSystemController;
     private CarPrefabLoadController m_carPrefabLoadController;
+    private WheelSteeringSystemController m_wheelSteeringSystemController;
     
     private string m_carPrefabName;
     private string m_carWheelName;
@@ -89,6 +91,7 @@ public class CarBuilder
         m_suspensionForcesSystemModel = new SuspensionForcesSystemModel(m_carDesc.wheelInfos, m_rb);
         m_tireForceSystemModel = new TireForceSystemModel(m_carDesc.wheelInfos, m_rb);
         m_visualWheelSystemModel = new VisualWheelSystemModel(m_carDesc.wheelInfos);
+        m_wheelSteeringSystemModel = new WheelSteeringSystemModel(m_wheelRootTransforms);
         
         Debug.Log("Car models created");
     }
@@ -127,7 +130,10 @@ public class CarBuilder
 
         m_visualWheelSystemController = new VisualWheelSystemController(m_visualWheelSystemModel, m_accelerationWheelSystemModel, m_suspensionForcesSystemModel, m_steeringModel, m_wheelTransforms, m_wheelRootTransforms);
         AddToControllersList(m_visualWheelSystemController);
-        
+
+        m_wheelSteeringSystemController = new WheelSteeringSystemController(m_wheelSteeringSystemModel, m_steeringModel);
+        AddToControllersList(m_wheelSteeringSystemController);
+
         Debug.Log("Car controllers created");
     }
 

@@ -31,7 +31,7 @@ namespace Car.Controllers.PhysicsControllers.WheelControllers
 
         private void UpdateVisual()
         {
-            m_visualWheelSystemModel.UpdateWheelsVisual(m_wheelVisuals, m_wheelRoots, m_accelerationWheelSystemModel.angularVelocities, m_suspensionForcesSystemModel.currentLengths, m_steeringModel.steerAngle);
+            m_visualWheelSystemModel.UpdateWheelsVisual(m_wheelVisuals, m_wheelRoots, m_accelerationWheelSystemModel.angularVelocities, m_suspensionForcesSystemModel.currentLengths, m_steeringModel.steerAngles);
         }
     }
 }

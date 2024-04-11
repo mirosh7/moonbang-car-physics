@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Car;
 using Car.Data;
+using Cinemachine;
 using UI.Debug;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -13,9 +14,11 @@ public class RaceCarState : MonoBehaviour
     
     [SerializeField]
     private CarDesc m_carDesc;
-    
     [SerializeField]
     private Transform m_carSpawnPoint;
+
+    [SerializeField]
+    private CinemachineVirtualCamera m_carCamera;
     
     [SerializeField]
     private UICarPhysicsInfo m_carPhysicsInfo;
@@ -47,6 +50,7 @@ public class RaceCarState : MonoBehaviour
     private void ResetCar()
     {
         m_currentCar = m_carBuilder.BuildCar(m_carSpawnPoint);
+        AttachCameraToCurrentCar(m_currentCar.transform);
     }
 
     private void CreateUIControllers()
@@ -59,5 +63,11 @@ public class RaceCarState : MonoBehaviour
 
         m_carInputInfoController = new CarInputInfoController(m_carInputInfo, m_inputManager);
         m_controllers.Add(m_carInputInfoController);
+    }
+
+    private void AttachCameraToCurrentCar(Transform carTransform)
+    {
+        m_carCamera.Follow = carTransform;
+        m_carCamera.LookAt = carTransform;
     }
 }

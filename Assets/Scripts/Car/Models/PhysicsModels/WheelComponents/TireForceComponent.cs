@@ -31,6 +31,11 @@ namespace Car.Models.PhysicsModels.WheelComponents
             }
 
             m_fx = combinedForce.x * suspensionForce * m_longitudinalCoeff;
+            if (combinedForce.x > 0)
+            {
+               // Debug.Log("FX = "+ suspensionForce);
+            }
+            
             var fY = combinedForce.y * suspensionForce * m_lateralCoeff;
                 
             Vector3 combinedForceNorm = (forwardForceVectorNormalized * m_fx + sideForceVectorNormalized * fY);

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Car.Data;
 using Car.Models.PhysicsModels.WheelComponents;
+using UnityEngine;
 
 namespace Car.Models.PhysicsModels.WheelModels
 {
@@ -28,13 +29,14 @@ namespace Car.Models.PhysicsModels.WheelModels
         {
             for (int i = 0; i < m_accelerationWheelComponents.Count; i++)
             {
-                if (!wheelHits[i] || i > 1)
+                if (!wheelHits[i])
                 {
                     continue;
                 }
                 
                 var driveTorque = outputTorques[i];
                 var brakeTorque = brakeTorques[i];
+                
                 m_accelerationWheelComponents[i].UpdateWheelAcceleration(fxs[i], driveTorque, brakeTorque);
                 m_angularVelocities[i] = m_accelerationWheelComponents[i].angularVelocity;
             }

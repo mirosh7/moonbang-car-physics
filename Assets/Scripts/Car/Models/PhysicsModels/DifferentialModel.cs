@@ -37,13 +37,13 @@ namespace Car.Models.PhysicsModels
             
                 var vel = (m_angularVelocityL - m_angularVelocityR) * 0.5f / Time.fixedDeltaTime * m_wheelInertia;
             
-                m_outputTorque[0] = (inputTorque * 0.5f * m_differentialRatio) - vel;
-                m_outputTorque[1] = (inputTorque * 0.5f * m_differentialRatio) + vel;
+                m_outputTorque[2] = (inputTorque * 0.5f * m_differentialRatio) - vel;
+                m_outputTorque[3] = (inputTorque * 0.5f * m_differentialRatio) + vel;
             }
             else
             {
-                m_outputTorque[0] = inputTorque * m_differentialRatio * 0.5f;
-                m_outputTorque[1] = inputTorque * m_differentialRatio * 0.5f;
+                m_outputTorque[2] = inputTorque * m_differentialRatio * 0.5f;
+                m_outputTorque[3] = inputTorque * m_differentialRatio * 0.5f;
             }
         }
     

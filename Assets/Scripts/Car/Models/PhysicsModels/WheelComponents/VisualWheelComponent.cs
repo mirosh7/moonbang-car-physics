@@ -20,7 +20,7 @@ namespace Car.Models.PhysicsModels.WheelComponents
             currentAngle %= 360f;
             
             wheelVisual.position = wheelRoot.position - wheelRoot.up * currentLength;
-            //wheelVisual.localRotation = Quaternion.Euler(currentAngle, steerAngle, 0f);
+            wheelVisual.localRotation = Quaternion.Euler(currentAngle, steerAngle, 0f);
             //wheelVisual.parent.transform.localRotation = Quaternion.Euler(m_caster, 0, m_camber);
             //wheelVisual.transform.rotation = Quaternion.Euler(m_caster, 0, m_camber);
         }

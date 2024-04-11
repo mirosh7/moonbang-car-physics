@@ -11,7 +11,7 @@ namespace Car.Models.PhysicsModels
         private float m_turnRadius;
         private float m_ackermannAngleL;
         private float m_ackermannAngleR;
-        private List<float> m_steerAngle = new List<float>(4);
+        private List<float> m_steerAngles = new List<float>(4);
         private float m_steerForce;
 
         public SteeringModel(CarDesc.SteeringInfo steeringInfo, List<Transform> wheelTransform)
@@ -21,13 +21,13 @@ namespace Car.Models.PhysicsModels
 
             foreach (var wheel in wheelTransform)
             {
-                m_steerAngle.Add(0f);
+                m_steerAngles.Add(0f);
             }
             
             InitializeAckermannParams(wheelTransform);
         }
 
-        public List<float> steerAngle => m_steerAngle;
+        public List<float> steerAngles => m_steerAngles;
 
         public void UpdateAckermann(float inputSteering)
         {
@@ -47,8 +47,8 @@ namespace Car.Models.PhysicsModels
                 m_ackermannAngleR = 0f;
             }
             
-            m_steerAngle[0] = m_ackermannAngleL;
-            m_steerAngle[1] = m_ackermannAngleR;
+            m_steerAngles[0] = m_ackermannAngleL;
+            m_steerAngles[1] = m_ackermannAngleR;
         }
         
         private void InitializeAckermannParams(List<Transform> wheelTransform)
