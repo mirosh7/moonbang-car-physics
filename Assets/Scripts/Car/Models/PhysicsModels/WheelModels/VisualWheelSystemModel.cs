@@ -21,7 +21,7 @@ namespace Car.Models.PhysicsModels.WheelModels
         {
             for (int i = 0; i < m_visualWheelComponents.Count; i++)
             {
-                m_visualWheelComponents[i].ApplyVisuals(wheelVisuals[i], wheelRoots[i], angularVelocities[i], currentLengths[i], steerAngles[i]);
+                m_visualWheelComponents[i].ApplyVisuals(wheelVisuals[i], wheelRoots[i], angularVelocities[i], currentLengths[i], steerAngles[i], i % 2 == 0);
             }
         }
     }

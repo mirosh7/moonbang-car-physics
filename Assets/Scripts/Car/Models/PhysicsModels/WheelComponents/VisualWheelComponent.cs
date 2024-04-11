@@ -14,13 +14,13 @@ namespace Car.Models.PhysicsModels.WheelComponents
             m_caster = wheelInfo.caster;
         }
 
-        public void ApplyVisuals(Transform wheelVisual, Transform wheelRoot, float angularVelocity, float currentLength, float steerAngle)
+        public void ApplyVisuals(Transform wheelVisual, Transform wheelRoot, float angularVelocity, float currentLength, float steerAngle, bool isOppositeSide)
         {
             var currentAngle = angularVelocity * Mathf.Rad2Deg * Time.deltaTime;
             currentAngle %= 360f;
             
             wheelVisual.position = wheelRoot.position - wheelRoot.up * currentLength;
-            wheelVisual.localRotation = Quaternion.Euler(currentAngle, steerAngle, 0f);
+            wheelVisual.localRotation = Quaternion.Euler(currentAngle, isOppositeSide ? steerAngle + 180f : steerAngle, 0f);
             //wheelVisual.parent.transform.localRotation = Quaternion.Euler(m_caster, 0, m_camber);
             //wheelVisual.transform.rotation = Quaternion.Euler(m_caster, 0, m_camber);
         }

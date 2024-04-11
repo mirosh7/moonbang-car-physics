@@ -127,7 +127,7 @@ MonoBehaviour:
     - 0.7
     - 1
   m_wheelInfos:
-  - m_restLength: 0.4
+  - m_restLength: 0.25
     m_suspensionStiffness: 50000
     m_damperStiffness: 8000
     m_slipAnglePeak: 20
@@ -135,14 +135,14 @@ MonoBehaviour:
     m_caster: 0
     m_longitudinalCoeff: 1
     m_lateralCoeff: 1
-    m_wheelRadius: 0.23
+    m_wheelRadius: 0.16
     m_raycastLayer:
       serializedVersion: 2
       m_Bits: 8
     m_wheelMass: 15
     m_longFrictionCoeff: 1
     m_relaxationLength: 0.05
-  - m_restLength: 0.4
+  - m_restLength: 0.25
     m_suspensionStiffness: 50000
     m_damperStiffness: 8000
     m_slipAnglePeak: 20
@@ -150,14 +150,14 @@ MonoBehaviour:
     m_caster: 0
     m_longitudinalCoeff: 1
     m_lateralCoeff: 1
-    m_wheelRadius: 0.23
+    m_wheelRadius: 0.16
     m_raycastLayer:
       serializedVersion: 2
       m_Bits: 8
     m_wheelMass: 15
     m_longFrictionCoeff: 1
     m_relaxationLength: 0.05
-  - m_restLength: 0.4
+  - m_restLength: 0.25
     m_suspensionStiffness: 50000
     m_damperStiffness: 8000
     m_slipAnglePeak: 20
@@ -165,14 +165,14 @@ MonoBehaviour:
     m_caster: 0
     m_longitudinalCoeff: 1
     m_lateralCoeff: 1
-    m_wheelRadius: 0.23
+    m_wheelRadius: 0.16
     m_raycastLayer:
       serializedVersion: 2
       m_Bits: 8
     m_wheelMass: 15
     m_longFrictionCoeff: 1
     m_relaxationLength: 0.05
-  - m_restLength: 0.4
+  - m_restLength: 0.25
     m_suspensionStiffness: 50000
     m_damperStiffness: 8000
     m_slipAnglePeak: 20
@@ -180,7 +180,7 @@ MonoBehaviour:
     m_caster: 0
     m_longitudinalCoeff: 1
     m_lateralCoeff: 1
-    m_wheelRadius: 0.23
+    m_wheelRadius: 0.16
     m_raycastLayer:
       serializedVersion: 2
       m_Bits: 8
