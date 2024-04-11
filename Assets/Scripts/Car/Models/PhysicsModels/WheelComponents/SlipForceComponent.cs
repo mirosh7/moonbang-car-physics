@@ -1,5 +1,6 @@
 using Car.Data;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Car.Models.PhysicsModels.WheelComponents
 {
@@ -10,6 +11,7 @@ namespace Car.Models.PhysicsModels.WheelComponents
         private float m_wheelRadius;
         private float m_longFrictionCoeff;
         private Vector2 m_slipForce;
+        private float m_relaxationLength;
         
         public Vector2 slipForce => m_slipForce;
 
@@ -19,6 +21,7 @@ namespace Car.Models.PhysicsModels.WheelComponents
             m_wheelInertia = wheelInfo.wheelInertia;
             m_wheelRadius = wheelInfo.wheelRadius;
             m_longFrictionCoeff = wheelInfo.longFrictionCoeff;
+            m_relaxationLength = wheelInfo.relaxationLength;
         }
 
         private float GetLongitudinalForce(Vector3 linearVelocity, float suspensionForce, float angularVelocity)
@@ -29,17 +32,18 @@ namespace Car.Models.PhysicsModels.WheelComponents
             var maximumFrictionTorque = suspensionForce * m_wheelRadius * m_longFrictionCoeff;
             return suspensionForce == 0 ? 0 : targetFrictionTorque / maximumFrictionTorque;
         }
-
+        
         private float GetLateralForce(Vector3 linearVelocity)
         {
-            var slipAngle = Mathf.Abs(linearVelocity.z) <= 0.5  ? 0 : Mathf.Atan(-linearVelocity.x / Mathf.Abs(linearVelocity.z)) * Mathf.Rad2Deg;
-            return slipAngle / m_slipAnglePeak;
+            float dynamicSlipAngle = 0f;
+            var slipAngle = Mathf.Abs(linearVelocity.z) == 0  ? 0 : Mathf.Atan(-linearVelocity.x / Mathf.Abs(linearVelocity.z)) * Mathf.Rad2Deg;
+            //return slipAngle / m_slipAnglePeak;
             //Transient force calc
-            /* coeff = (Mathf.Abs(linearVelocity.x) / relaxationLenth) * deltaTime;
+             var coeff = (Mathf.Abs(linearVelocity.x) / m_relaxationLength) * Time.fixedDeltaTime;
              coeff = Mathf.Clamp(coeff, 0f, 1f);
-             SADyn += (slipAngle - SADyn) * coeff;
-             SADyn = Mathf.Clamp(SADyn, -90f, 90f);
-             return Mathf.Clamp(SADyn / slipAnglePeak, -1, 1);*/ 
+             dynamicSlipAngle += (slipAngle - dynamicSlipAngle) * coeff;
+             dynamicSlipAngle = Mathf.Clamp(dynamicSlipAngle, -90f, 90f);
+             return Mathf.Clamp(dynamicSlipAngle / m_slipAnglePeak, -1, 1);
         }
 
         public void UpdateSlipForces(Vector3 linearVelocity, float suspensionForce, float angularVelocity)

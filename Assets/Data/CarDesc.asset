@@ -141,6 +141,7 @@ MonoBehaviour:
       m_Bits: 8
     m_wheelMass: 15
     m_longFrictionCoeff: 1
+    m_relaxationLength: 0.05
   - m_restLength: 0.4
     m_suspensionStiffness: 50000
     m_damperStiffness: 8000
@@ -155,6 +156,7 @@ MonoBehaviour:
       m_Bits: 8
     m_wheelMass: 15
     m_longFrictionCoeff: 1
+    m_relaxationLength: 0.05
   - m_restLength: 0.4
     m_suspensionStiffness: 50000
     m_damperStiffness: 8000
@@ -169,6 +171,7 @@ MonoBehaviour:
       m_Bits: 8
     m_wheelMass: 15
     m_longFrictionCoeff: 1
+    m_relaxationLength: 0.05
   - m_restLength: 0.4
     m_suspensionStiffness: 50000
     m_damperStiffness: 8000
@@ -183,6 +186,7 @@ MonoBehaviour:
       m_Bits: 8
     m_wheelMass: 15
     m_longFrictionCoeff: 1
+    m_relaxationLength: 0.05
   m_steeringInfo:
     m_turnRadius: 8
     m_steerForce: 1.2

@@ -162,6 +162,9 @@ namespace Car.Data
             private float m_wheelMass;
             [SerializeField]
             private float m_longFrictionCoeff;
+
+            [SerializeField]
+            private float m_relaxationLength;
             
             public float longFrictionCoeff => m_longFrictionCoeff;
 
@@ -186,6 +189,8 @@ namespace Car.Data
             public float damperStiffness => m_damperStiffness;
 
             public float slipAnglePeak => m_slipAnglePeak;
+
+            public float relaxationLength => m_relaxationLength;
         }
         
         [Serializable]

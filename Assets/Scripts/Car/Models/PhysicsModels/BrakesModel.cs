@@ -28,7 +28,9 @@ namespace Car.Models.PhysicsModels
         public void UpdateBrakes(float brakeInput, List<float> angularVelocities)
         {
             m_brakeTorque[0] = -brakeInput * m_brakeBias[0] * m_maxTorque * m_brakeTorqueCurve.Evaluate(Mathf.Abs((angularVelocities[0] + angularVelocities[2]) * 0.5f));
-            m_brakeTorque[1] = -brakeInput * m_brakeBias[1] * m_maxTorque * m_brakeTorqueCurve.Evaluate(Mathf.Abs((angularVelocities[1] + angularVelocities[3]) * 0.5f));
+            m_brakeTorque[1] = m_brakeTorque[0];
+            m_brakeTorque[2] = -brakeInput * m_brakeBias[1] * m_maxTorque * m_brakeTorqueCurve.Evaluate(Mathf.Abs((angularVelocities[1] + angularVelocities[3]) * 0.5f));
+            m_brakeTorque[3] = m_brakeTorque[2];
         }
     }
 }
