@@ -23,7 +23,7 @@ namespace Car
             }
             foreach (var controller in m_controllers)
             {
-                controller.OnUpdate();
+                controller.OnCarUpdate();
             }
         }
     }

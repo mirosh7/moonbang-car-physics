@@ -21,7 +21,7 @@ namespace Car.Controllers.PhysicsControllers.WheelControllers
             m_suspensionForcesSystemModel = suspensionForcesSystemModel;
         }
 
-        public void OnUpdate()
+        public void OnCarUpdate()
         {
             UpdateTireForces();
         }

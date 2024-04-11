@@ -9,7 +9,6 @@ using Car.Models;
 using Car.Models.PhysicsModels;
 using Car.Models.PhysicsModels.WheelModels;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class CarBuilder
 {
@@ -51,6 +50,21 @@ public class CarBuilder
     private string m_carWheelName;
 
     private InputManager m_inputManager;
+    
+    public SteeringModel steeringModel => m_steeringModel;
+    public GearShiftingModel gearShiftingModel => m_gearShiftingModel;
+    public EngineModel engineModel => m_engineModel;
+    public DifferentialModel differentialModel => m_differentialModel;
+    public ClutchModel clutchModel => m_clutchModel;
+    public BrakesModel brakesModel => m_brakesModel;
+    public AntirollBarModel antirollBarModel => m_antirollBarModel;
+    public AccelerationWheelSystemModel accelerationWheelSystemModel => m_accelerationWheelSystemModel;
+    public RaycastWheelSystemModel raycastWheelSystemModel => m_raycastWheelSystemModel;
+    public SlipForcesSystemModel slipForcesSystemModel => m_slipForcesSystemModel;
+    public SuspensionForcesSystemModel suspensionForcesSystemModel => m_suspensionForcesSystemModel;
+    public TireForceSystemModel tireForceSystemModel => m_tireForceSystemModel;
+    public VisualWheelSystemModel visualWheelSystemModel => m_visualWheelSystemModel;
+    public CarPrefabLoadModel carPrefabLoadModel => m_carPrefabLoadModel;
 
     public CarBuilder(CarDesc carDesc, string carPrefabName, string carWheelName)
     {
@@ -121,17 +135,12 @@ public class CarBuilder
     {
         m_carPrefabLoadModel = new CarPrefabLoadModel(m_carPrefabName, m_carWheelName);
         m_carPrefabLoadController = new CarPrefabLoadController(m_carPrefabLoadModel);
-        
-        m_carPrefabLoadController.LoadCarPrefabs();
-        
-        
-        
     }
 
-    public RaceCar BuildCar(Transform container = null)
+    public RaceCar BuildCar(Transform spawnPoint)
     {
         CreateVisualCar();
-        var carCore = Object.Instantiate(m_carPrefabLoadController.carCore, container);
+        var carCore = Object.Instantiate(m_carPrefabLoadController.carCore, spawnPoint.position, spawnPoint.rotation);
         var carVisual = Object.Instantiate(m_carPrefabLoadController.carPrefab, carCore.transform);
         
         foreach (var w in m_carDesc.wheelInfos)
@@ -156,5 +165,4 @@ public class CarBuilder
     {
         m_carControllers.Add(carController);
     }
-    
 }

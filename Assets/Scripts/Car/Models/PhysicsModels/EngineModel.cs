@@ -6,7 +6,7 @@ namespace Car.Models.PhysicsModels
     public class EngineModel
     {
         public const float RPM_TO_RAD = Mathf.PI * 2f / 60f;
-        public const float RAD_TO_RPM = 1/RPM_TO_RAD;
+        public const float RAD_TO_RPM = 1 / RPM_TO_RAD;
     
         private Rigidbody m_carRigidbody;
         private AnimationCurve m_torqueCurve;
@@ -28,18 +28,21 @@ namespace Car.Models.PhysicsModels
         private float m_engineInertia;
 
         public float engineAngularVelocity => m_engineAngularVelocity;
+        public float engineRpm => m_engineRpm;
+        public float carSpeed => m_carRigidbody.velocity.magnitude * 3.6f;
 
         public EngineModel(Rigidbody rb, CarDesc.EngineInfo engineInfo)
         {
             m_carRigidbody = rb;
             m_torqueCurve = engineInfo.torqueCurve;
             m_engineOrientation = engineInfo.engineOrientation;
-            m_engineIdleRpm = engineInfo.engineIdleRpm;
-            m_engineMaxRpm = engineInfo.engineMaxRpm;
+            m_engineIdleRpm = engineInfo.engineIdleRpm * RPM_TO_RAD;
+            m_engineMaxRpm = engineInfo.engineMaxRpm * RPM_TO_RAD;
             m_engineMul = engineInfo.engineIdleRpm;
             m_engineFrictionCoefficient = engineInfo.engineFrictionCoefficient;
             m_startFriction = engineInfo.startFriction;
             m_engineInertia = engineInfo.engineInertia;
+            m_engineAngularVelocity = 100f;
         }
         
         public void UpdateEngine(float throttle, float clutchTorque, int currentGear)

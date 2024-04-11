@@ -24,7 +24,7 @@ namespace Car.Controllers.PhysicsControllers
             m_inputManager.gearDown += m_gearShiftingModel.ShiftDown;
         }
 
-        public void OnUpdate()
+        public void OnCarUpdate()
         {
             UpdateGearboxSystem();
         }

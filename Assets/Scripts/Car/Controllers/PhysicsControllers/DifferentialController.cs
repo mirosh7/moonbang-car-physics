@@ -18,7 +18,7 @@ namespace Car.Controllers.PhysicsControllers
             m_accelerationWheelSystemModel = accelerationWheelSystemModel;
         }
 
-        public void OnUpdate()
+        public void OnCarUpdate()
         {
             UpdateDifferential();
         }

@@ -20,7 +20,7 @@ namespace Car.Controllers.PhysicsControllers.WheelControllers
             m_raycastWheelSystemModel = raycastWheelSystemModel;
         }
 
-        public void OnUpdate()
+        public void OnCarUpdate()
         {
             UpdateWheelsAcceleration();
         }

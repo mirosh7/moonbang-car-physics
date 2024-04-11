@@ -13,7 +13,7 @@ namespace Car.Controllers.PhysicsControllers
             m_inputManager = inputManager;
         }
 
-        public void OnUpdate()
+        public void OnCarUpdate()
         {
             UpdateSteering();
         }

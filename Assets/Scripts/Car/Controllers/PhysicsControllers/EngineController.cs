@@ -17,7 +17,7 @@ namespace Car.Controllers.PhysicsControllers
             m_gearShiftingModel = gearShiftingModel;
         }
 
-        public void OnUpdate()
+        public void OnCarUpdate()
         {
             UpdateEngine();
         }

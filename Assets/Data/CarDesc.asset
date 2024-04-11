@@ -127,10 +127,10 @@ MonoBehaviour:
     - 0.7
     - 1
   m_wheelInfos:
-  - m_restLength: 2
-    m_suspensionStiffness: 10000
-    m_damperStiffness: 2000
-    m_slipAnglePeak: 4
+  - m_restLength: 0.4
+    m_suspensionStiffness: 50000
+    m_damperStiffness: 8000
+    m_slipAnglePeak: 20
     m_camber: 0
     m_caster: 0
     m_longitudinalCoeff: 1
@@ -141,10 +141,10 @@ MonoBehaviour:
       m_Bits: 8
     m_wheelMass: 15
     m_longFrictionCoeff: 1
-  - m_restLength: 2
-    m_suspensionStiffness: 10000
-    m_damperStiffness: 2000
-    m_slipAnglePeak: 4
+  - m_restLength: 0.4
+    m_suspensionStiffness: 50000
+    m_damperStiffness: 8000
+    m_slipAnglePeak: 20
     m_camber: 0
     m_caster: 0
     m_longitudinalCoeff: 1
@@ -155,10 +155,10 @@ MonoBehaviour:
       m_Bits: 8
     m_wheelMass: 15
     m_longFrictionCoeff: 1
-  - m_restLength: 2
-    m_suspensionStiffness: 10000
-    m_damperStiffness: 2000
-    m_slipAnglePeak: 4
+  - m_restLength: 0.4
+    m_suspensionStiffness: 50000
+    m_damperStiffness: 8000
+    m_slipAnglePeak: 20
     m_camber: 0
     m_caster: 0
     m_longitudinalCoeff: 1
@@ -169,10 +169,10 @@ MonoBehaviour:
       m_Bits: 8
     m_wheelMass: 15
     m_longFrictionCoeff: 1
-  - m_restLength: 2
-    m_suspensionStiffness: 10000
-    m_damperStiffness: 2000
-    m_slipAnglePeak: 4
+  - m_restLength: 0.4
+    m_suspensionStiffness: 50000
+    m_damperStiffness: 8000
+    m_slipAnglePeak: 20
     m_camber: 0
     m_caster: 0
     m_longitudinalCoeff: 1

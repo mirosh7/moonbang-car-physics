@@ -24,7 +24,7 @@ namespace Car.Controllers.PhysicsControllers.WheelControllers
             m_wheelRoots = wheelRoots;
         }
 
-        public void OnUpdate()
+        public void OnCarUpdate()
         {
             UpdateVisual();
         }

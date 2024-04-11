@@ -11,18 +11,9 @@ namespace Car.Controllers
         public CarPrefabLoadController(CarPrefabLoadModel carPrefabLoadModel)
         {
             m_carPrefabLoadModel = carPrefabLoadModel;
-        }
-
-        public void LoadCarPrefabs()
-        {
             m_carPrefabLoadModel.LoadPrefabs();
         }
-
-        public List<Transform> GetWheelRoots()
-        {
-            return m_carPrefabLoadModel.GetWheelRoots();
-        }
-
+        
         public GameObject carPrefab => m_carPrefabLoadModel.carVisualPrefab;
         public GameObject wheelPrefab => m_carPrefabLoadModel.carWheel;
         public GameObject carCore => m_carPrefabLoadModel.carCore;

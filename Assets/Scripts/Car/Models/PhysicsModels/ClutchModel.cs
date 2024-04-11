@@ -8,13 +8,14 @@ namespace Car.Models.PhysicsModels
         private float m_clutchStiffness;
         private float m_clutchCapacity;
         private float m_clutchDamping;
-        
         private float m_clutchTorque;
-
-        public float clutchTorque => m_clutchTorque;
-
         private float m_clutchMaxTorque;
         private float m_clutchLock;
+        
+        public float clutchTorque => m_clutchTorque;
+        public float clutchLock => m_clutchLock;
+
+        
 
         public ClutchModel(CarDesc.ClutchInfo clutchInfo, CarDesc.EngineInfo engineInfo)
         {
