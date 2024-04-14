@@ -9,8 +9,10 @@ namespace Car.Models.PhysicsModels.WheelModels
     {
         private List<SlipForceComponent> m_slipForceComponents = new List<SlipForceComponent>();
         private List<Vector2> m_slipForces = new List<Vector2>();
+        private List<float> m_slipAngles = new List<float>();
 
         public List<Vector2> slipForces => m_slipForces;
+        public List<float> slipAngles => m_slipAngles;
 
         public SlipForcesSystemModel(List<CarDesc.WheelInfo> wheelInfos)
         {
@@ -22,6 +24,11 @@ namespace Car.Models.PhysicsModels.WheelModels
             foreach (var slipForceComponent in m_slipForceComponents)
             {
                 m_slipForces.Add(slipForceComponent.slipForce);
+            }
+            
+            foreach (var slipForceComponent in m_slipForceComponents)
+            {
+                m_slipAngles.Add(slipForceComponent.slipAngle);
             }
         } 
 
@@ -36,6 +43,7 @@ namespace Car.Models.PhysicsModels.WheelModels
                 
                 m_slipForceComponents[i].UpdateSlipForces(linearVelocities[i], suspensionForces[i], angularVelocities[i]);
                 m_slipForces[i] = m_slipForceComponents[i].slipForce;
+                m_slipAngles[i] = m_slipForceComponents[i].slipAngle;
             }
         }
     }

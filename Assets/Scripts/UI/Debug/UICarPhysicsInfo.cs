@@ -9,6 +9,21 @@ namespace UI.Debug
         [SerializeField]
         private List<TMP_Text> m_tmpTexts;
         
+        [SerializeField]
+        private List<TMP_Text> m_slipForcesTexts;
+        
+        [SerializeField]
+        private List<TMP_Text> m_suspensionForcesTexts;
+        
+        [SerializeField]
+        private List<TMP_Text> m_angularVelocitiesForcesTexts;
+        
+        [SerializeField]
+        private List<TMP_Text> m_slipAnglesTexts;
+        
+        [SerializeField]
+        private List<TMP_Text> m_linearVelocitiesTexts;
+        
         public void SetEngineRpm(float data)
         {
             m_tmpTexts[0].text = $"Engine RPM = {data}";
@@ -39,10 +54,50 @@ namespace UI.Debug
                     break;
             }
         }
-
+        
         public void SetSpeedValue(float data)
         {
             m_tmpTexts[4].text = $"Speed = {data} KM/H";
+        }
+
+        public void SetSuspensionForce(List<float> datas)
+        {
+            for (int i = 0; i < datas.Count; i++)
+            {
+                m_suspensionForcesTexts[i].text = $"Wheel {i} SuspensionForce = {datas[i]}";
+            }
+        }
+        
+        public void SetAngularVelocities(List<float> datas)
+        {
+            for (int i = 0; i < datas.Count; i++)
+            {
+                m_angularVelocitiesForcesTexts[i].text = $"Wheel {i} AngularVelocity = {datas[i]}";
+            }
+        }
+        
+        public void SetSlipForcesValue(List<Vector2> datas)
+        {
+            for (int i = 0; i < datas.Count; i++)
+            {
+                m_slipForcesTexts[i].text = $"Wheel {i} SlipForce = {datas[i]}";
+            }
+        }
+        
+        public void SetSlipAngles(List<float> datas)
+        {
+            for (int i = 0; i < datas.Count; i++)
+            {
+                m_slipAnglesTexts[i].text = $"Wheel {i} SlipAngle = {datas[i]}";
+            }
+        }
+
+        public void SetLinearVelocities(List<Vector3> datas)
+        {
+            for (int i = 0; i < datas.Count; i++)
+            {
+                m_linearVelocitiesTexts[i].text = $"Wheel {i} LinearVelocity = {datas[i]}";
+            }
         }
     }
 }

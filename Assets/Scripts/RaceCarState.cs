@@ -58,7 +58,10 @@ public class RaceCarState : MonoBehaviour
         m_carPhysicsInfoController = new CarPhysicsInfoController(m_carPhysicsInfo,
             m_carBuilder.engineModel,
             m_carBuilder.clutchModel,
-            m_carBuilder.gearShiftingModel);
+            m_carBuilder.gearShiftingModel,
+            m_carBuilder.slipForcesSystemModel,
+            m_carBuilder.suspensionForcesSystemModel,
+            m_carBuilder.accelerationWheelSystemModel);
         m_controllers.Add(m_carPhysicsInfoController);
 
         m_carInputInfoController = new CarInputInfoController(m_carInputInfo, m_inputManager);

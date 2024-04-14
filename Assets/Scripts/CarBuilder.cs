@@ -112,28 +112,28 @@ public class CarBuilder
 
         m_brakesController = new BrakesController(m_brakesModel, m_accelerationWheelSystemModel, m_inputManager);
         AddToControllersList(m_brakesController);
+        
+        m_wheelSteeringSystemController = new WheelSteeringSystemController(m_wheelSteeringSystemModel, m_steeringModel);
+        AddToControllersList(m_wheelSteeringSystemController);
+        
+        m_raycastWheelSystemController = new RaycastWheelSystemController(m_wheelRootTransforms, m_raycastWheelSystemModel);
+        AddToControllersList(m_raycastWheelSystemController);
+        
+        m_visualWheelSystemController = new VisualWheelSystemController(m_visualWheelSystemModel, m_accelerationWheelSystemModel, m_suspensionForcesSystemModel, m_steeringModel, m_wheelTransforms, m_wheelRootTransforms);
+        AddToControllersList(m_visualWheelSystemController);
+        
+        m_suspensionForcesSystemController = new SuspensionForcesSystemController(m_suspensionForcesSystemModel, m_raycastWheelSystemModel, m_wheelRootTransforms);
+        AddToControllersList(m_suspensionForcesSystemController);
 
         m_accelerationWheelSystemController = new AccelerationWheelSystemController(m_accelerationWheelSystemModel, m_brakesModel, m_differentialModel, m_tireForceSystemModel, m_raycastWheelSystemModel);
         AddToControllersList(m_accelerationWheelSystemController);
 
-        m_raycastWheelSystemController = new RaycastWheelSystemController(m_wheelRootTransforms, m_raycastWheelSystemModel);
-        AddToControllersList(m_raycastWheelSystemController);
-
         m_slipForcesSystemController = new SlipForcesSystemController(m_slipForcesSystemModel, m_suspensionForcesSystemModel, m_accelerationWheelSystemModel, m_raycastWheelSystemModel);
         AddToControllersList(m_slipForcesSystemController);
-
-        m_suspensionForcesSystemController = new SuspensionForcesSystemController(m_suspensionForcesSystemModel, m_raycastWheelSystemModel, m_wheelRootTransforms);
-        AddToControllersList(m_suspensionForcesSystemController);
-
+        
         m_tireForcesSystemController = new TireForcesSystemController(m_tireForceSystemModel, m_wheelRootTransforms, m_raycastWheelSystemModel, m_slipForcesSystemModel, m_suspensionForcesSystemModel);
         AddToControllersList(m_tireForcesSystemController);
-
-        m_visualWheelSystemController = new VisualWheelSystemController(m_visualWheelSystemModel, m_accelerationWheelSystemModel, m_suspensionForcesSystemModel, m_steeringModel, m_wheelTransforms, m_wheelRootTransforms);
-        AddToControllersList(m_visualWheelSystemController);
-
-        m_wheelSteeringSystemController = new WheelSteeringSystemController(m_wheelSteeringSystemModel, m_steeringModel);
-        AddToControllersList(m_wheelSteeringSystemController);
-
+        
         Debug.Log("Car controllers created");
     }
 
