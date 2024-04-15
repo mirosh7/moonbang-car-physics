@@ -26,7 +26,7 @@ namespace Car.Models.PhysicsModels.WheelComponents
             var brakeSmoothTime = 0.2f; // Время сглаживания (можно настроить)
             var smoothedBrakeForce = Mathf.SmoothDamp(0f, brakeForce, ref m_brakeVelocity, brakeSmoothTime);
             m_angularVelocity += angularAcceleration * Time.fixedDeltaTime;
-            m_angularVelocity -= smoothedBrakeForce * Time.fixedDeltaTime;
+            m_angularVelocity -= Mathf.Min(Mathf.Abs(m_angularVelocity), smoothedBrakeForce) * Time.fixedDeltaTime;
             m_angularVelocity = Mathf.Clamp(m_angularVelocity, -360, 360);
             
             if (Mathf.Abs(brakeForce) >= Mathf.Abs(m_angularVelocity))

@@ -19,24 +19,15 @@ MonoBehaviour:
       - serializedVersion: 3
         time: 0.54380035
         value: 165.38332
-        inSlope: 0.043475557
-        outSlope: 0.043475557
+        inSlope: 0.043464623
+        outSlope: 0.043464623
         tangentMode: 34
         weightedMode: 0
         inWeight: 0
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 1791.3517
-        value: 243.23969
-        inSlope: 0.016791377
-        outSlope: 0.016791377
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.1065546
-      - serializedVersion: 3
-        time: 2000.0411
-        value: 259.35065
+        time: 4045.2678
+        value: 341.18573
         inSlope: 0.024714326
         outSlope: 0.024714326
         tangentMode: 0
@@ -44,17 +35,8 @@ MonoBehaviour:
         inWeight: 0.33333334
         outWeight: 0.16034651
       - serializedVersion: 3
-        time: 3006.766
-        value: 282.628
-        inSlope: 0.017465733
-        outSlope: 0.017465733
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.11400919
-        outWeight: 0.10079634
-      - serializedVersion: 3
-        time: 5006.6855
-        value: 325.76425
+        time: 6474.6816
+        value: 398.55896
         inSlope: 0.02501438
         outSlope: 0.02501438
         tangentMode: 0
@@ -62,11 +44,20 @@ MonoBehaviour:
         inWeight: 0.09072539
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 7986.535
-        value: 215.79672
-        inSlope: -0.036903717
-        outSlope: -0.036903717
+        time: 7972.107
+        value: 275.46988
+        inSlope: -0.21454334
+        outSlope: -0.21454334
         tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 7989.948
+        value: 269.28098
+        inSlope: -0.05540824
+        outSlope: -0.05540824
+        tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334

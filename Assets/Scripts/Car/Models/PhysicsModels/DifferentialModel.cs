@@ -30,11 +30,11 @@ namespace Car.Models.PhysicsModels
         
         public void UpdateOutputTorque(float inputTorque, List<float> wheelAngularVelocities)
         {
+            m_angularVelocityL = wheelAngularVelocities[2];
+            m_angularVelocityR = wheelAngularVelocities[3];
+            
             if (m_isDiffLocked)
             {
-                m_angularVelocityL = wheelAngularVelocities[2];
-                m_angularVelocityR = wheelAngularVelocities[3];
-            
                 var vel = (m_angularVelocityL - m_angularVelocityR) * 0.5f / Time.fixedDeltaTime * m_wheelInertia;
             
                 m_outputTorque[2] = (inputTorque * 0.5f * m_differentialRatio) - vel;
