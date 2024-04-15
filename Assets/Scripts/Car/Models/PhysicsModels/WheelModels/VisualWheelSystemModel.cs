@@ -17,11 +17,11 @@ namespace Car.Models.PhysicsModels.WheelModels
             }
         } 
 
-        public void UpdateWheelsVisual(List<Transform> wheelVisuals, List<Transform> wheelRoots, List<float> angularVelocities, List<float> currentLengths, List<float> steerAngles)
+        public void UpdateWheelsVisual(List<Transform> wheelRotationParts, List<Transform> wheelVisuals, List<Transform> wheelRoots, List<float> angularVelocities, List<float> currentLengths, List<float> steerAngles)
         {
             for (int i = 0; i < m_visualWheelComponents.Count; i++)
             {
-                m_visualWheelComponents[i].ApplyVisuals(wheelVisuals[i], wheelRoots[i], angularVelocities[i], currentLengths[i], steerAngles[i], i % 2 == 0);
+                m_visualWheelComponents[i].ApplyVisuals(wheelRotationParts[i], wheelVisuals[i], wheelRoots[i], angularVelocities[i], currentLengths[i], steerAngles[i], i % 2 == 0);
             }
         }
     }

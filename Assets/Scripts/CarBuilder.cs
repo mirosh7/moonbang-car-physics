@@ -98,7 +98,7 @@ public class CarBuilder
 
     private void CreateCarControllers()
     {
-        m_steeringController = new SteeringController(m_steeringModel, m_inputManager);
+        m_steeringController = new SteeringController(m_steeringModel, m_inputManager, m_slipForcesSystemModel);
         AddToControllersList(m_steeringController);
         
         m_gearboxSystemController = new GearboxSystemController(m_gearShiftingModel, m_clutchModel, m_differentialModel, m_engineModel, m_inputManager);

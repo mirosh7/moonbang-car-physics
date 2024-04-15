@@ -13,6 +13,7 @@ namespace Car.Controllers.PhysicsControllers.WheelControllers
         private SteeringModel m_steeringModel;
         private List<Transform> m_wheelVisuals;
         private List<Transform> m_wheelRoots;
+        private List<Transform> m_wheelRotationParts = new List<Transform>();
 
         public VisualWheelSystemController(VisualWheelSystemModel visualWheelSystemModel, AccelerationWheelSystemModel accelerationWheelSystemModel, SuspensionForcesSystemModel suspensionForcesSystemModel, SteeringModel steeringModel, List<Transform> wheelVisuals, List<Transform> wheelRoots)
         {
@@ -22,6 +23,11 @@ namespace Car.Controllers.PhysicsControllers.WheelControllers
             m_steeringModel = steeringModel;
             m_wheelVisuals = wheelVisuals;
             m_wheelRoots = wheelRoots;
+
+            foreach (var wheelVisual in m_wheelVisuals)
+            {
+                m_wheelRotationParts.Add(wheelVisual.GetChild(0));
+            }
         }
 
         public void OnCarUpdate()
@@ -31,7 +37,7 @@ namespace Car.Controllers.PhysicsControllers.WheelControllers
 
         private void UpdateVisual()
         {
-            m_visualWheelSystemModel.UpdateWheelsVisual(m_wheelVisuals, m_wheelRoots, m_accelerationWheelSystemModel.angularVelocities, m_suspensionForcesSystemModel.currentLengths, m_steeringModel.steerAngles);
+            m_visualWheelSystemModel.UpdateWheelsVisual(m_wheelRotationParts, m_wheelVisuals, m_wheelRoots, m_accelerationWheelSystemModel.angularVelocities, m_suspensionForcesSystemModel.currentLengths, m_steeringModel.steerAngles);
         }
     }
 }

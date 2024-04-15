@@ -86,7 +86,7 @@ MonoBehaviour:
     m_clutchCapacity: 1.3
     m_clutchDamping: 0.903
   m_differentialInfo:
-    m_isDiffLocked: 0
+    m_isDiffLocked: 1
     m_differentialRatio: 4
   m_brakesInfo:
     m_brakeTorqueCurve:
@@ -179,7 +179,7 @@ MonoBehaviour:
     m_longFrictionCoeff: 1
     m_relaxationLength: 0.05
   m_steeringInfo:
-    m_turnRadius: 8
+    m_turnRadius: 3
     m_steerForce: 1.2
   m_antirollBarInfo:
     m_isEnabled: 0

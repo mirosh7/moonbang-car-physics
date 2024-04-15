@@ -29,7 +29,7 @@ namespace Car.Models.PhysicsModels
 
         public List<float> steerAngles => m_steerAngles;
 
-        public void UpdateAckermann(float inputSteering)
+        public void UpdateAckermann(float inputSteering, List<float> slipAngles)
         {
             if (inputSteering > 0)
             {
@@ -47,8 +47,8 @@ namespace Car.Models.PhysicsModels
                 m_ackermannAngleR = 0f;
             }
             
-            m_steerAngles[0] = m_ackermannAngleL;
-            m_steerAngles[1] = m_ackermannAngleR;
+            m_steerAngles[0] = m_ackermannAngleR;
+            m_steerAngles[1] = m_ackermannAngleL;
         }
         
         private void InitializeAckermannParams(List<Transform> wheelTransform)
