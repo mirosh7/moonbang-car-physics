@@ -29,7 +29,7 @@ namespace Car.Models.PhysicsModels.WheelComponents
 
         private float GetLongitudinalForce(Vector3 linearVelocity, float suspensionForce, float angularVelocity)
         {
-            const float suspensionForceThreshold = 0.05f;
+            const float suspensionForceThreshold = Single.Epsilon;
             var targetAngularVelocity = linearVelocity.z / m_wheelRadius;
             var targetAngularAcceleration = (angularVelocity - targetAngularVelocity) / Time.fixedDeltaTime;
             var targetFrictionTorque = targetAngularAcceleration * m_wheelInertia;
@@ -48,7 +48,7 @@ namespace Car.Models.PhysicsModels.WheelComponents
             coeff = Mathf.Clamp(coeff, 0f, 1f);
             dynamicSlipAngle += (m_slipAngle - dynamicSlipAngle) * coeff;
             dynamicSlipAngle = Mathf.Clamp(dynamicSlipAngle, -90f, 90f);
-            return Mathf.Clamp(dynamicSlipAngle / m_slipAnglePeak, -1, 1);
+            return dynamicSlipAngle / m_slipAnglePeak;
         }
 
         public void UpdateSlipForces(Vector3 linearVelocity, float suspensionForce, float angularVelocity)
