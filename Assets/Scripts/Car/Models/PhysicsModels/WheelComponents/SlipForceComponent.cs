@@ -13,10 +13,13 @@ namespace Car.Models.PhysicsModels.WheelComponents
         private float m_longFrictionCoeff;
         private Vector2 m_slipForce;
         private float m_slipAngle;
+        private float m_dynamicSlipAngle;
         private float m_relaxationLength;
+        private float m_lateralAcceleration;
         
         public Vector2 slipForce => m_slipForce;
         public float slipAngle => m_slipAngle;
+        public float lateralAcceleration => m_lateralAcceleration;
 
         public SlipForceComponent(CarDesc.WheelInfo wheelInfo)
         {
@@ -39,22 +42,26 @@ namespace Car.Models.PhysicsModels.WheelComponents
         
         private float GetLateralForce(Vector3 linearVelocity)
         {
-            const float slipAngleThreshold = 0.5f;
-            float dynamicSlipAngle = 0f;
+            const float slipAngleThreshold = Single.Epsilon;
             m_slipAngle = Mathf.Abs(linearVelocity.z) < slipAngleThreshold  ? 0f : Mathf.Atan(-linearVelocity.x / Mathf.Abs(linearVelocity.z)) * Mathf.Rad2Deg;
-            //return m_slipAngle / m_slipAnglePeak;
-            //Transient force calc
             var coeff = (Mathf.Abs(linearVelocity.x) / m_relaxationLength) * Time.fixedDeltaTime;
             coeff = Mathf.Clamp(coeff, 0f, 1f);
-            dynamicSlipAngle += (m_slipAngle - dynamicSlipAngle) * coeff;
-            dynamicSlipAngle = Mathf.Clamp(dynamicSlipAngle, -90f, 90f);
-            return dynamicSlipAngle / m_slipAnglePeak;
+            m_dynamicSlipAngle += (m_slipAngle - m_dynamicSlipAngle) * coeff;
+            m_dynamicSlipAngle = Mathf.Clamp(m_dynamicSlipAngle, -90f, 90f);
+            return m_dynamicSlipAngle / m_slipAnglePeak;
+        }
+
+        private void UpdateLateralAcceleration(Vector3 linearVelocity)
+        {
+            m_lateralAcceleration = (Mathf.Pow(linearVelocity.magnitude, 2) / m_wheelRadius) * Mathf.Tan(m_slipAngle * Mathf.Deg2Rad);
         }
 
         public void UpdateSlipForces(Vector3 linearVelocity, float suspensionForce, float angularVelocity)
         {
             m_slipForce = new Vector2(GetLongitudinalForce(linearVelocity, suspensionForce, angularVelocity),
                 GetLateralForce(linearVelocity));
+            
+            UpdateLateralAcceleration(linearVelocity);
         }
     }
 }

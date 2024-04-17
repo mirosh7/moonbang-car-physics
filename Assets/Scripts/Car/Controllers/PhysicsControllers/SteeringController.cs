@@ -24,7 +24,7 @@ namespace Car.Controllers.PhysicsControllers
 
         private void UpdateSteering()
         {
-            m_steeringModel.UpdateAckermann(m_inputManager.steering, m_slipForcesSystemModel.slipAngles);
+            m_steeringModel.UpdateSteering(m_inputManager.steering, m_slipForcesSystemModel.slipAngles, m_slipForcesSystemModel.lateralAccelerations);
         }
     }
 }

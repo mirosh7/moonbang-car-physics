@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Car.Data;
 using Car.Models.PhysicsModels.WheelComponents;
+using Unity.Jobs;
 using UnityEngine;
 
 namespace Car.Models.PhysicsModels.WheelModels
@@ -10,9 +11,11 @@ namespace Car.Models.PhysicsModels.WheelModels
         private List<SlipForceComponent> m_slipForceComponents = new List<SlipForceComponent>();
         private List<Vector2> m_slipForces = new List<Vector2>();
         private List<float> m_slipAngles = new List<float>();
+        private List<float> m_lateralAccelerations = new List<float>();
 
         public List<Vector2> slipForces => m_slipForces;
         public List<float> slipAngles => m_slipAngles;
+        public List<float> lateralAccelerations => m_lateralAccelerations;
 
         public SlipForcesSystemModel(List<CarDesc.WheelInfo> wheelInfos)
         {
@@ -24,11 +27,8 @@ namespace Car.Models.PhysicsModels.WheelModels
             foreach (var slipForceComponent in m_slipForceComponents)
             {
                 m_slipForces.Add(slipForceComponent.slipForce);
-            }
-            
-            foreach (var slipForceComponent in m_slipForceComponents)
-            {
                 m_slipAngles.Add(slipForceComponent.slipAngle);
+                m_lateralAccelerations.Add(slipForceComponent.lateralAcceleration);
             }
         } 
 
@@ -44,6 +44,7 @@ namespace Car.Models.PhysicsModels.WheelModels
                 m_slipForceComponents[i].UpdateSlipForces(linearVelocities[i], suspensionForces[i], angularVelocities[i]);
                 m_slipForces[i] = m_slipForceComponents[i].slipForce;
                 m_slipAngles[i] = m_slipForceComponents[i].slipAngle;
+                m_lateralAccelerations[i] = m_slipForceComponents[i].lateralAcceleration;
             }
         }
     }

@@ -200,9 +200,16 @@ namespace Car.Data
             private float m_turnRadius;
             [SerializeField]
             private float m_steerForce;
+            [SerializeField]
+            private float m_maxCorrectionAngle;
+            [SerializeField]
+            private float m_correctionSpeed;
 
             public float turnRadius => m_turnRadius;
             public float steerForce => m_steerForce;
+            public float maxCorrectionAngle => m_maxCorrectionAngle;
+            public float correctionSpeed => m_correctionSpeed;
+
         }
         
         [Serializable]

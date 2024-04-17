@@ -80,7 +80,7 @@ MonoBehaviour:
     - 1.391
     - 1
     - 0.719
-    m_shiftTime: 0.5
+    m_shiftTime: 0.01
   m_clutchInfo:
     m_clutchStiffness: 30
     m_clutchCapacity: 1.3
@@ -121,7 +121,7 @@ MonoBehaviour:
   - m_restLength: 0.3
     m_suspensionStiffness: 50000
     m_damperStiffness: 1500
-    m_slipAnglePeak: 4
+    m_slipAnglePeak: 5
     m_camber: 0
     m_caster: 0
     m_longitudinalCoeff: 1
@@ -136,7 +136,7 @@ MonoBehaviour:
   - m_restLength: 0.3
     m_suspensionStiffness: 50000
     m_damperStiffness: 1500
-    m_slipAnglePeak: 4
+    m_slipAnglePeak: 5
     m_camber: 0
     m_caster: 0
     m_longitudinalCoeff: 1
@@ -151,7 +151,7 @@ MonoBehaviour:
   - m_restLength: 0.3
     m_suspensionStiffness: 50000
     m_damperStiffness: 1500
-    m_slipAnglePeak: 4
+    m_slipAnglePeak: 5
     m_camber: 0
     m_caster: 0
     m_longitudinalCoeff: 1
@@ -166,7 +166,7 @@ MonoBehaviour:
   - m_restLength: 0.3
     m_suspensionStiffness: 50000
     m_damperStiffness: 1500
-    m_slipAnglePeak: 4
+    m_slipAnglePeak: 5
     m_camber: 0
     m_caster: 0
     m_longitudinalCoeff: 1
@@ -181,6 +181,8 @@ MonoBehaviour:
   m_steeringInfo:
     m_turnRadius: 3
     m_steerForce: 1.2
+    m_maxCorrectionAngle: 60
+    m_correctionSpeed: 1
   m_antirollBarInfo:
     m_isEnabled: 0
     m_stiffnessFront: 10000
