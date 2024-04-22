@@ -37,33 +37,20 @@ namespace Car.Models.PhysicsModels
 
         private void UpdateAckermann()
         {
-            if (m_carSteerInput > 0)
-            {
-                m_ackermannAngleL = Mathf.Rad2Deg * Mathf.Atan(m_wheelBase / (m_turnRadius + m_rearTrack / 2)) * m_carSteerInput * m_steerForce;
-                m_ackermannAngleR = Mathf.Rad2Deg * Mathf.Atan(m_wheelBase / (m_turnRadius - m_rearTrack / 2)) * m_carSteerInput * m_steerForce;
-            }
-            else if (m_carSteerInput < 0)
-            {
-                m_ackermannAngleL = Mathf.Rad2Deg * Mathf.Atan(m_wheelBase / (m_turnRadius - m_rearTrack / 2)) * m_carSteerInput * m_steerForce;
-                m_ackermannAngleR = Mathf.Rad2Deg * Mathf.Atan(m_wheelBase / (m_turnRadius + m_rearTrack / 2)) * m_carSteerInput * m_steerForce;
-            }
+            m_ackermannAngleL = Mathf.Rad2Deg * Mathf.Atan(m_wheelBase / (m_carSteerInput > 0 ? m_turnRadius + m_rearTrack / 2 : m_turnRadius - m_rearTrack / 2)) * m_carSteerInput * m_steerForce;
+            m_ackermannAngleR = Mathf.Rad2Deg * Mathf.Atan(m_wheelBase / (m_carSteerInput > 0 ? m_turnRadius - m_rearTrack / 2 : m_turnRadius + m_rearTrack / 2)) * m_carSteerInput * m_steerForce;
         }
 
         private void RawSteeringInputLerp(float inputSteering)
         {
-            m_carSteerInput = Mathf.Lerp(m_carSteerInput, inputSteering, Time.fixedDeltaTime);
+            m_carSteerInput = inputSteering;
         }
 
-        private void UpdateCorrection(List<float> slipAngles)
+        private void UpdateCorrection(List<float> slipAngles, List<float> lateralAccelerations)
         {
-            if (m_carSteerInput != 0)
-            {
-                return;
-            }
-            
             float correctionFactor = m_correctionSpeed * Time.fixedDeltaTime;
-            m_ackermannAngleL -= slipAngles[1] * correctionFactor;
-            m_ackermannAngleR -= slipAngles[0] * correctionFactor;
+            m_ackermannAngleL -= lateralAccelerations[1] * correctionFactor;
+            m_ackermannAngleR -= lateralAccelerations[0] * correctionFactor;
                 
             m_ackermannAngleL = Mathf.Clamp(m_ackermannAngleL, -m_maxCorrectionAngle, m_maxCorrectionAngle);
             m_ackermannAngleR = Mathf.Clamp(m_ackermannAngleR, -m_maxCorrectionAngle, m_maxCorrectionAngle);
@@ -73,10 +60,10 @@ namespace Car.Models.PhysicsModels
         {
             RawSteeringInputLerp(inputSteering);
             UpdateAckermann();
-            UpdateCorrection(slipAngles);
+            UpdateCorrection(slipAngles, lateralAccelerations);
             
-            m_steerAngles[0] = m_ackermannAngleR;
-            m_steerAngles[1] = m_ackermannAngleL;
+            m_steerAngles[0] = Mathf.Lerp(m_steerAngles[0], m_ackermannAngleR, m_correctionSpeed * Time.fixedDeltaTime);
+            m_steerAngles[1] = Mathf.Lerp(m_steerAngles[1], m_ackermannAngleL, m_correctionSpeed * Time.fixedDeltaTime);
         }
         
         private void InitializeAckermannParams(List<Transform> wheelTransform)
