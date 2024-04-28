@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using Camera.Controllers;
+using Camera.Models;
 using Car;
 using Car.Data;
 using Cinemachine;
@@ -18,7 +20,7 @@ public class RaceCarState : MonoBehaviour
     private Transform m_carSpawnPoint;
 
     [SerializeField]
-    private CinemachineVirtualCamera m_carCamera;
+    private CinemachineFreeLook m_carCamera;
     
     [SerializeField]
     private UICarPhysicsInfo m_carPhysicsInfo;
@@ -28,15 +30,19 @@ public class RaceCarState : MonoBehaviour
     private RaceCar m_currentCar;
     private CarBuilder m_carBuilder;
 
+    private FreeCameraModel m_freeCameraModel;
+
     private CarPhysicsInfoController m_carPhysicsInfoController;
     private CarInputInfoController m_carInputInfoController;
+    private FreeCameraController m_freeCameraController;
     
     private void Start()
     {
         m_inputManager = InputManager.instance;
         m_carBuilder = new CarBuilder(m_carDesc, "Mazda", "Wheel");
         ResetCar();
-        CreateUIControllers();
+        CreateModels();
+        CreateControllers();
     }
 
     private void Update()
@@ -50,10 +56,14 @@ public class RaceCarState : MonoBehaviour
     private void ResetCar()
     {
         m_currentCar = m_carBuilder.BuildCar(m_carSpawnPoint);
-        AttachCameraToCurrentCar(m_currentCar.transform);
     }
 
-    private void CreateUIControllers()
+    private void CreateModels()
+    {
+        m_freeCameraModel = new FreeCameraModel(m_carCamera, m_inputManager);
+    }
+
+    private void CreateControllers()
     {
         m_carPhysicsInfoController = new CarPhysicsInfoController(m_carPhysicsInfo,
             m_carBuilder.engineModel,
@@ -66,11 +76,8 @@ public class RaceCarState : MonoBehaviour
 
         m_carInputInfoController = new CarInputInfoController(m_carInputInfo, m_inputManager);
         m_controllers.Add(m_carInputInfoController);
-    }
 
-    private void AttachCameraToCurrentCar(Transform carTransform)
-    {
-        m_carCamera.Follow = carTransform;
-        m_carCamera.LookAt = carTransform;
+        m_freeCameraController = new FreeCameraController(m_freeCameraModel, m_currentCar.transform);
+        m_controllers.Add(m_freeCameraController);
     }
 }

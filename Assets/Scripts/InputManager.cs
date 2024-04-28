@@ -18,6 +18,9 @@ public class InputManager : MonoBehaviour
     private float m_steering = 0f;
     public float steering => m_steering;
 
+    private Vector2 m_rotation = Vector2.zero;
+    public Vector2 rotation => m_rotation;
+
     public Action gearUp;
     public Action gearDown;
     
@@ -27,6 +30,7 @@ public class InputManager : MonoBehaviour
     private InputAction m_gearDownAction;
     private InputAction m_handBrakeAction;
     private InputAction m_accelerationAction;
+    private InputAction m_rotationAction;
 
     private string m_steeringActionName = "Steering";
     private string m_brakesActionName = "Brakes";
@@ -34,6 +38,7 @@ public class InputManager : MonoBehaviour
     private string m_gearDownActionName = "Gear Down";
     private string m_handBrakeActionName = "Hand Brake";
     private string m_accelerationActionName = "Acceleration";
+    private string m_rotationActionName = "Rotation";
 
     private void Awake()
     {
@@ -57,6 +62,7 @@ public class InputManager : MonoBehaviour
             m_gearDownAction = currentActionMap.FindAction(m_gearDownActionName);
             m_handBrakeAction = currentActionMap.FindAction(m_handBrakeActionName);
             m_accelerationAction = currentActionMap.FindAction(m_accelerationActionName);
+            m_rotationAction = currentActionMap.FindAction(m_rotationActionName);
         }
         
         RegisterInputActions();
@@ -69,6 +75,9 @@ public class InputManager : MonoBehaviour
         
         m_brakesAction.performed += ctx => m_brakes = ctx.ReadValue<float>();
         m_brakesAction.canceled += ctx => m_brakes = 0f;
+
+        m_rotationAction.performed += ctx => m_rotation = ctx.ReadValue<Vector2>();
+        m_rotationAction.canceled += ctx => m_rotation = Vector2.zero;
 
         m_gearUpAction.performed += ctx => gearUp.Invoke();
         m_gearDownAction.performed += ctx => gearDown.Invoke();
@@ -84,6 +93,7 @@ public class InputManager : MonoBehaviour
         m_gearUpAction.Enable();
         m_gearDownAction.Enable();
         m_accelerationAction.Enable();
+        m_rotationAction.Enable();
     }
 
     private void OnDisable()
@@ -93,6 +103,7 @@ public class InputManager : MonoBehaviour
         m_gearUpAction.Disable();
         m_gearDownAction.Disable();
         m_accelerationAction.Disable();
+        m_rotationAction.Disable();
     }
 }
 
