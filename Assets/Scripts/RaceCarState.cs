@@ -35,6 +35,8 @@ public class RaceCarState : MonoBehaviour
     private CarPhysicsInfoController m_carPhysicsInfoController;
     private CarInputInfoController m_carInputInfoController;
     private FreeCameraController m_freeCameraController;
+
+    public CarBuilder carBuilder => m_carBuilder;
     
     private void Start()
     {

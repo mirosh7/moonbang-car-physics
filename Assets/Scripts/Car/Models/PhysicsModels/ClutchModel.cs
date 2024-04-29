@@ -14,9 +14,7 @@ namespace Car.Models.PhysicsModels
         
         public float clutchTorque => m_clutchTorque;
         public float clutchLock => m_clutchLock;
-
         
-
         public ClutchModel(CarDesc.ClutchInfo clutchInfo, CarDesc.EngineInfo engineInfo)
         {
             m_clutchStiffness = clutchInfo.clutchStiffness;

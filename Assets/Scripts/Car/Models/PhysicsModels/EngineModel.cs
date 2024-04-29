@@ -29,6 +29,7 @@ namespace Car.Models.PhysicsModels
 
         public float engineAngularVelocity => m_engineAngularVelocity;
         public float engineRpm => m_engineRpm;
+        public float engineMaxRpm => m_engineMaxRpm;
         public float carSpeed => m_carRigidbody.velocity.magnitude * 3.6f;
 
         public EngineModel(Rigidbody rb, CarDesc.EngineInfo engineInfo)

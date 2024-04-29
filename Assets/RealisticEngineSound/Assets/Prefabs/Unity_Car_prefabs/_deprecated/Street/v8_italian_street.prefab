@@ -1,0 +1,340 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1272264205038044}
+  m_IsPrefabParent: 1
+--- !u!1 &1272264205038044
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4897008225960074}
+  - component: {fileID: 114844904182194844}
+  - component: {fileID: 114448610302241956}
+  m_Layer: 0
+  m_Name: v8_italian_street
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4897008225960074
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1272264205038044}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114448610302241956
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1272264205038044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4146eb7e6b74b5c4cac304797ab1d2de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ReleaseGasPedalAtShifting: 0
+  gasPedalSensity: 0.1
+  carMaxRPM: 7000
+  maxRPMSensity: 1
+  waitAtShifting: 0.2
+--- !u!114 &114844904182194844
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1272264205038044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6dcd2266c92fd740bdfac8b91d46014, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  masterVolume: 1
+  audioMixer: {fileID: 0}
+  engineCurrentRPM: 0
+  gasPedalPressing: 1
+  gasPedalValue: 1
+  gasPedalValueSetting: 0
+  gasPedalSimSpeed: 8
+  maxRPMLimit: 7000
+  pitchMultiplier: 1
+  reverbZoneSetting: 0
+  optimisationLevel: 0.01
+  audioRolloffMode: 2
+  minDistance: 1
+  maxDistance: 100
+  isReversing: 0
+  useRPMLimit: 1
+  enableReverseGear: 1
+  carCurrentSpeed: 0
+  carMaxSpeed: 0
+  isShifting: 0
+  idleClip: {fileID: 8300000, guid: 48ab1860caa85db479cb088130cbe0e4, type: 3}
+  idleVolCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0.006642769
+      value: 0.8992103
+      inSlope: -0.07838011
+      outSlope: -0.07838011
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.18603297
+      value: 0.8859502
+      inSlope: -0.46244487
+      outSlope: -0.46244487
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.44998777
+      value: -0.0063803215
+      inSlope: -7.1053543
+      outSlope: -7.1053543
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  idlePitchCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 3
+      outSlope: 3
+      tangentMode: 34
+    - serializedVersion: 2
+      time: 1
+      value: 4
+      inSlope: 3
+      outSlope: 3
+      tangentMode: 34
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  lowOffClip: {fileID: 8300000, guid: 729166e1222a23348ab8f6c722dec5e8, type: 3}
+  lowOnClip: {fileID: 8300000, guid: 1a5b31a9efc318549922d16e98d9b506, type: 3}
+  lowVolCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0.14165309
+      value: 0
+      inSlope: 0.3033217
+      outSlope: 0.3033217
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.2519673
+      value: 0.48876554
+      inSlope: 0.3243223
+      outSlope: 0.3243223
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.4
+      value: 0
+      inSlope: -6.727428
+      outSlope: -6.727428
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  lowPitchCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0.22201835
+      inSlope: 3.6779819
+      outSlope: 3.6779819
+      tangentMode: 34
+    - serializedVersion: 2
+      time: 1
+      value: 3.9
+      inSlope: 3.6779819
+      outSlope: 3.6779819
+      tangentMode: 34
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  medOffClip: {fileID: 8300000, guid: 596eb4dc79a2cd942a01e2ba2bf6d894, type: 3}
+  medOnClip: {fileID: 8300000, guid: fabb11b08e633eb4d96ee3b822be2fac, type: 3}
+  medVolCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0.25
+      value: 0
+      inSlope: 7.9209394
+      outSlope: 7.9209394
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.36331296
+      value: 0.5785044
+      inSlope: -1.374185
+      outSlope: -1.374185
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.95
+      value: 0
+      inSlope: -0.14551118
+      outSlope: -0.14551118
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  medPitchCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0.1
+      inSlope: 2.5
+      outSlope: 2.5
+      tangentMode: 34
+    - serializedVersion: 2
+      time: 1
+      value: 2.6
+      inSlope: 2.5
+      outSlope: 2.5
+      tangentMode: 34
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  highOffClip: {fileID: 8300000, guid: 413cdd1559ffcbd44a39baef31ddf998, type: 3}
+  highOnClip: {fileID: 8300000, guid: dffd46bbf56474b40bf59da1579749d0, type: 3}
+  highVolCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0.2806396
+      value: 0
+      inSlope: 2.6797335
+      outSlope: 2.6797335
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.74420464
+      value: 1
+      inSlope: 0.053621173
+      outSlope: 0.053621173
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.9899042
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  highPitchCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 1.3
+      outSlope: 1.3
+      tangentMode: 34
+    - serializedVersion: 2
+      time: 1
+      value: 1.3
+      inSlope: 1.3
+      outSlope: 1.3
+      tangentMode: 34
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  maxRPMClip: {fileID: 8300000, guid: 62f97a87f54b9034b811709b3864e20d, type: 3}
+  maxRPMVolCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0.97167754
+      value: 0
+      inSlope: Infinity
+      outSlope: Infinity
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.9899042
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  reversingClip: {fileID: 8300000, guid: ab48462ad5b353a4887240546d19f906, type: 3}
+  reversingVolCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.49953833
+      value: 0.9978992
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  reversingPitchCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0.5
+      inSlope: 1.5
+      outSlope: 1.5
+      tangentMode: 34
+    - serializedVersion: 2
+      time: 1
+      value: 2
+      inSlope: 1.5
+      outSlope: 1.5
+      tangentMode: 34
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  mainCamera: {fileID: 0}
+  isCameraNear: 0
+  engineShakeSetting: 0
+  shakeLenghtSetting: 0
+  shakeLength: 50
+  shakeVolumeChange: 0.5
+  randomChance: 0.5

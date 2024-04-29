@@ -30,7 +30,6 @@ namespace Car.Models.PhysicsModels
             {
                 await ChangeGearAsync(++m_currentGear);
             }
-            
         }
     
         public async void ShiftDown()

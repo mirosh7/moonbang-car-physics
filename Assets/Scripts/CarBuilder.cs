@@ -33,6 +33,7 @@ public class CarBuilder
     private VisualWheelSystemModel m_visualWheelSystemModel;
     private CarPrefabLoadModel m_carPrefabLoadModel;
     private WheelSteeringSystemModel m_wheelSteeringSystemModel;
+    private WheelSoundSystemModel m_wheelSoundSystemModel;
 
     private SteeringController m_steeringController;
     private GearboxSystemController m_gearboxSystemController;
@@ -47,6 +48,7 @@ public class CarBuilder
     private VisualWheelSystemController m_visualWheelSystemController;
     private CarPrefabLoadController m_carPrefabLoadController;
     private WheelSteeringSystemController m_wheelSteeringSystemController;
+    private WheelSoundSystemController m_wheelSoundSystemController;
     
     private string m_carPrefabName;
     private string m_carWheelName;
@@ -92,6 +94,7 @@ public class CarBuilder
         m_tireForceSystemModel = new TireForceSystemModel(m_carDesc.wheelInfos, m_rb);
         m_visualWheelSystemModel = new VisualWheelSystemModel(m_carDesc.wheelInfos);
         m_wheelSteeringSystemModel = new WheelSteeringSystemModel(m_wheelRootTransforms);
+        m_wheelSoundSystemModel = new WheelSoundSystemModel(m_wheelRootTransforms);
         
         Debug.Log("Car models created");
     }
@@ -133,6 +136,9 @@ public class CarBuilder
         
         m_tireForcesSystemController = new TireForcesSystemController(m_tireForceSystemModel, m_wheelRootTransforms, m_raycastWheelSystemModel, m_slipForcesSystemModel, m_suspensionForcesSystemModel);
         AddToControllersList(m_tireForcesSystemController);
+
+        m_wheelSoundSystemController = new WheelSoundSystemController(m_wheelSoundSystemModel, m_slipForcesSystemModel);
+        AddToControllersList(m_wheelSoundSystemController);
         
         Debug.Log("Car controllers created");
     }
@@ -157,12 +163,14 @@ public class CarBuilder
         
         var raceCar = carCore.GetComponent<RaceCar>();
         m_rb = carCore.GetComponent<Rigidbody>();
-
+        
         m_wheelRootTransforms = carVisual.GetComponentsInChildren<Transform>().Where(wT => wT.name == "wheelRoot").ToList();
         CreateCarModels();
         CreateCarControllers();
         
         raceCar.SetControllers(m_carControllers);
+        var engineSoundController = carCore.GetComponentInChildren<RealisticEngineSound>();
+        engineSoundController.engineModel = m_engineModel;
         
         return raceCar;
     }

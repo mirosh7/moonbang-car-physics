@@ -36,6 +36,7 @@ namespace Car.Models.PhysicsModels.WheelComponents
             m_currentLength = (wheelRoot.position - (hit.point + (up * m_wheelRadius))).magnitude;
             CalculateSuspensionForce();
             m_rb.AddForceAtPosition(m_suspensionForce * up, hit.point);
+            Debug.DrawRay(hit.point, m_suspensionForce * up, Color.blue);
             m_linearVelocity = wheelRoot.InverseTransformDirection(m_rb.GetPointVelocity(hit.point));
         }
         
