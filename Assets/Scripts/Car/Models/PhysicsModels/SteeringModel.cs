@@ -7,23 +7,17 @@ namespace Car.Models.PhysicsModels
 {
     public class SteeringModel
     {
+        private CarDesc.SteeringInfo m_steeringInfo;
         private float m_wheelBase;
         private float m_rearTrack;
-        private float m_turnRadius;
         private float m_ackermannAngleL;
         private float m_ackermannAngleR;
         private List<float> m_steerAngles = new List<float>(4);
-        private float m_steerForce;
         private float m_carSteerInput;
-        private float m_maxCorrectionAngle;
-        private float m_correctionSpeed;
 
         public SteeringModel(CarDesc.SteeringInfo steeringInfo, List<Transform> wheelTransform)
         {
-            m_turnRadius = steeringInfo.turnRadius;
-            m_steerForce = steeringInfo.steerForce;
-            m_maxCorrectionAngle = steeringInfo.maxCorrectionAngle;
-            m_correctionSpeed = steeringInfo.correctionSpeed;
+            m_steeringInfo = steeringInfo;
             
             foreach (var wheel in wheelTransform)
             {
@@ -37,8 +31,8 @@ namespace Car.Models.PhysicsModels
 
         private void UpdateAckermann()
         {
-            m_ackermannAngleL = Mathf.Rad2Deg * Mathf.Atan(m_wheelBase / (m_carSteerInput > 0 ? m_turnRadius + m_rearTrack / 2 : m_turnRadius - m_rearTrack / 2)) * m_carSteerInput * m_steerForce;
-            m_ackermannAngleR = Mathf.Rad2Deg * Mathf.Atan(m_wheelBase / (m_carSteerInput > 0 ? m_turnRadius - m_rearTrack / 2 : m_turnRadius + m_rearTrack / 2)) * m_carSteerInput * m_steerForce;
+            m_ackermannAngleL = Mathf.Rad2Deg * Mathf.Atan(m_wheelBase / (m_carSteerInput > 0 ? m_steeringInfo.turnRadius + m_rearTrack / 2 : m_steeringInfo.turnRadius - m_rearTrack / 2)) * m_carSteerInput * m_steeringInfo.steerForce;
+            m_ackermannAngleR = Mathf.Rad2Deg * Mathf.Atan(m_wheelBase / (m_carSteerInput > 0 ? m_steeringInfo.turnRadius - m_rearTrack / 2 : m_steeringInfo.turnRadius + m_rearTrack / 2)) * m_carSteerInput * m_steeringInfo.steerForce;
         }
 
         private void RawSteeringInputLerp(float inputSteering)
@@ -48,12 +42,12 @@ namespace Car.Models.PhysicsModels
 
         private void UpdateCorrection(List<float> slipAngles, List<float> lateralAccelerations)
         {
-            float correctionFactor = m_correctionSpeed * Time.fixedDeltaTime;
+            float correctionFactor = m_steeringInfo.correctionSpeed * Time.fixedDeltaTime;
             m_ackermannAngleL -= lateralAccelerations[1] * correctionFactor;
             m_ackermannAngleR -= lateralAccelerations[0] * correctionFactor;
                 
-            m_ackermannAngleL = Mathf.Clamp(m_ackermannAngleL, -m_maxCorrectionAngle, m_maxCorrectionAngle);
-            m_ackermannAngleR = Mathf.Clamp(m_ackermannAngleR, -m_maxCorrectionAngle, m_maxCorrectionAngle);
+            m_ackermannAngleL = Mathf.Clamp(m_ackermannAngleL, -m_steeringInfo.maxCorrectionAngle, m_steeringInfo.maxCorrectionAngle);
+            m_ackermannAngleR = Mathf.Clamp(m_ackermannAngleR, -m_steeringInfo.maxCorrectionAngle, m_steeringInfo.maxCorrectionAngle);
         }
         
         public void UpdateSteering(float inputSteering, List<float> slipAngles, List<float> lateralAccelerations)
@@ -62,8 +56,8 @@ namespace Car.Models.PhysicsModels
             UpdateAckermann();
             UpdateCorrection(slipAngles, lateralAccelerations);
             
-            m_steerAngles[0] = Mathf.Lerp(m_steerAngles[0], m_ackermannAngleR, m_correctionSpeed * Time.fixedDeltaTime);
-            m_steerAngles[1] = Mathf.Lerp(m_steerAngles[1], m_ackermannAngleL, m_correctionSpeed * Time.fixedDeltaTime);
+            m_steerAngles[0] = Mathf.Lerp(m_steerAngles[0], m_ackermannAngleR, m_steeringInfo.correctionSpeed * Time.fixedDeltaTime);
+            m_steerAngles[1] = Mathf.Lerp(m_steerAngles[1], m_ackermannAngleL, m_steeringInfo.correctionSpeed * Time.fixedDeltaTime);
         }
         
         private void InitializeAckermannParams(List<Transform> wheelTransform)

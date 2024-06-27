@@ -8,25 +8,23 @@ namespace Car.Models.PhysicsModels
 {
     public class GearShiftingModel
     {
-        private List<float> m_gearBoxRatios;
-        private readonly float m_shiftTime;
+        private CarDesc.GearboxInfo m_gearboxInfo;
         private int m_currentGear;
         private bool m_isShifting;
 
-        public float currentGearRatio => m_gearBoxRatios[m_currentGear];
+        public float currentGearRatio => m_gearboxInfo.gearBoxRatios[m_currentGear];
         
         public int currentGear => m_currentGear;
 
         public GearShiftingModel(CarDesc.GearboxInfo gearboxInfo)
         {
-            m_gearBoxRatios = gearboxInfo.gearBoxRatios;
-            m_shiftTime = gearboxInfo.shiftTime;
+            m_gearboxInfo = gearboxInfo;
             m_currentGear = 1;
         }
         
         public async void ShiftUp()
         {
-            if (!m_isShifting && m_currentGear < m_gearBoxRatios.Count - 1)
+            if (!m_isShifting && m_currentGear < m_gearboxInfo.gearBoxRatios.Count - 1)
             {
                 await ChangeGearAsync(++m_currentGear);
             }
@@ -48,7 +46,7 @@ namespace Car.Models.PhysicsModels
         
         public float GetOutputTorque(float inputTorque)
         {
-            float outputTorque = inputTorque * m_gearBoxRatios[m_currentGear];
+            float outputTorque = inputTorque * m_gearboxInfo.gearBoxRatios[m_currentGear];
             return outputTorque; 
         }
         
@@ -57,7 +55,7 @@ namespace Car.Models.PhysicsModels
             m_isShifting = true;
             m_currentGear = 1;
             
-            await UniTask.Delay(TimeSpan.FromSeconds(m_shiftTime));
+            await UniTask.Delay(TimeSpan.FromSeconds(m_gearboxInfo.shiftTime));
 
             m_currentGear = nextGear;
             m_isShifting = false;

@@ -6,18 +6,14 @@ namespace Car.Models.PhysicsModels
 {
     public class BrakesModel
     {
+        private CarDesc.BrakesInfo m_brakesInfo;
         private List<float> m_brakeTorque = new List<float>(4);
-        private List<float> m_brakeBias = new List<float>(4);
-        private AnimationCurve m_brakeTorqueCurve;
-        private float m_maxTorque;
-
+        
         public List<float> brakeTorque => m_brakeTorque;
 
         public BrakesModel(CarDesc.BrakesInfo brakesInfo)
         {
-            m_brakeTorqueCurve = brakesInfo.brakeTorqueCurve;
-            m_maxTorque = brakesInfo.maxTorque;
-            m_brakeBias = brakesInfo.brakeBias;
+            m_brakesInfo = brakesInfo;
             
             for (int i = 0; i < 4; i++)
             {
@@ -27,9 +23,9 @@ namespace Car.Models.PhysicsModels
 
         public void UpdateBrakes(float brakeInput, List<float> angularVelocities)
         {
-            m_brakeTorque[0] = brakeInput * m_brakeBias[0] * m_maxTorque * m_brakeTorqueCurve.Evaluate(Mathf.Abs((angularVelocities[0] + angularVelocities[2]) * 0.5f));
+            m_brakeTorque[0] = brakeInput * m_brakesInfo.brakeBias[0] *  m_brakesInfo.maxTorque *  m_brakesInfo.brakeTorqueCurve.Evaluate(Mathf.Abs((angularVelocities[0] + angularVelocities[2]) * 0.5f));
             m_brakeTorque[1] = m_brakeTorque[0];
-            m_brakeTorque[2] = brakeInput * m_brakeBias[1] * m_maxTorque * m_brakeTorqueCurve.Evaluate(Mathf.Abs((angularVelocities[1] + angularVelocities[3]) * 0.5f));
+            m_brakeTorque[2] = brakeInput *  m_brakesInfo.brakeBias[1] *  m_brakesInfo.maxTorque *  m_brakesInfo.brakeTorqueCurve.Evaluate(Mathf.Abs((angularVelocities[1] + angularVelocities[3]) * 0.5f));
             m_brakeTorque[3] = m_brakeTorque[2];
         }
     }

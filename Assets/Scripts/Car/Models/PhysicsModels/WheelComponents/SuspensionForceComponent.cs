@@ -6,22 +6,16 @@ namespace Car.Models.PhysicsModels.WheelComponents
     public class SuspensionForceComponent
     {
         private Rigidbody m_rb;
-        private float m_restLength;
-        private float m_suspensionStiffness;
-        private float m_damperStiffness;
+        private CarDesc.WheelInfo m_wheelInfo;
         private Vector3 m_linearVelocity;
         private float m_suspensionForce;
         private float m_currentLength;
         private float m_lastLength;
-        private float m_wheelRadius;
 
         public SuspensionForceComponent(CarDesc.WheelInfo wheelInfo, Rigidbody rb)
         {
             m_rb = rb;
-            m_restLength = wheelInfo.restLength;
-            m_suspensionStiffness = wheelInfo.suspensionStiffness;
-            m_damperStiffness = wheelInfo.damperStiffness;
-            m_wheelRadius = wheelInfo.wheelRadius;
+            m_wheelInfo = wheelInfo;
         }
 
         public Vector3 linearVelocity => m_linearVelocity;
@@ -33,7 +27,7 @@ namespace Car.Models.PhysicsModels.WheelComponents
         public void UpdateSuspensionForce(RaycastHit hit, Transform wheelRoot)
         {
             var up = wheelRoot.up;
-            m_currentLength = (wheelRoot.position - (hit.point + (up * m_wheelRadius))).magnitude;
+            m_currentLength = (wheelRoot.position - (hit.point + (up * m_wheelInfo.wheelRadius))).magnitude;
             CalculateSuspensionForce();
             m_rb.AddForceAtPosition(m_suspensionForce * up, hit.point);
             Debug.DrawRay(hit.point, m_suspensionForce * up, Color.blue);
@@ -42,8 +36,8 @@ namespace Car.Models.PhysicsModels.WheelComponents
         
         private void CalculateSuspensionForce()
         {
-            var springForce = (m_restLength - m_currentLength) * m_suspensionStiffness;
-            var damperForce = (m_lastLength - m_currentLength) / Time.fixedDeltaTime * m_damperStiffness;
+            var springForce = (m_wheelInfo.restLength - m_currentLength) * m_wheelInfo.suspensionStiffness;
+            var damperForce = (m_lastLength - m_currentLength) / Time.fixedDeltaTime * m_wheelInfo.damperStiffness;
             m_suspensionForce = Mathf.Max(0f, springForce + damperForce);
             m_lastLength = m_currentLength;
         }

@@ -7,14 +7,10 @@ namespace Car.Models.PhysicsModels.WheelComponents
 {
     public class SlipForceComponent
     {
-        private float m_slipAnglePeak;
-        private float m_wheelInertia;
-        private float m_wheelRadius;
-        private float m_longFrictionCoeff;
+        private CarDesc.WheelInfo m_wheelInfo;
         private Vector2 m_slipForce;
         private float m_slipAngle;
         private float m_dynamicSlipAngle;
-        private float m_relaxationLength;
         private float m_lateralAcceleration;
         
         public Vector2 slipForce => m_slipForce;
@@ -23,20 +19,16 @@ namespace Car.Models.PhysicsModels.WheelComponents
 
         public SlipForceComponent(CarDesc.WheelInfo wheelInfo)
         {
-            m_slipAnglePeak = wheelInfo.slipAnglePeak;
-            m_wheelInertia = wheelInfo.wheelInertia;
-            m_wheelRadius = wheelInfo.wheelRadius;
-            m_longFrictionCoeff = wheelInfo.longFrictionCoeff;
-            m_relaxationLength = wheelInfo.relaxationLength;
+            m_wheelInfo = wheelInfo;
         }
 
         private float GetLongitudinalForce(Vector3 linearVelocity, float suspensionForce, float angularVelocity)
         {
             const float suspensionForceThreshold = Single.Epsilon;
-            var targetAngularVelocity = linearVelocity.z / m_wheelRadius;
+            var targetAngularVelocity = linearVelocity.z / m_wheelInfo.wheelRadius;
             var targetAngularAcceleration = (angularVelocity - targetAngularVelocity) / Time.fixedDeltaTime;
-            var targetFrictionTorque = targetAngularAcceleration * m_wheelInertia;
-            var maximumFrictionTorque = suspensionForce * m_wheelRadius * m_longFrictionCoeff;
+            var targetFrictionTorque = targetAngularAcceleration * m_wheelInfo.wheelInertia;
+            var maximumFrictionTorque = suspensionForce * m_wheelInfo.wheelRadius * m_wheelInfo.longFrictionCoeff;
             return suspensionForce == 0 ? 0 : targetFrictionTorque / maximumFrictionTorque;
         }
         
@@ -44,16 +36,16 @@ namespace Car.Models.PhysicsModels.WheelComponents
         {
             const float slipAngleThreshold = Single.Epsilon;
             m_slipAngle = Mathf.Abs(linearVelocity.z) < slipAngleThreshold  ? 0f : Mathf.Atan(-linearVelocity.x / Mathf.Abs(linearVelocity.z)) * Mathf.Rad2Deg;
-            var coeff = (Mathf.Abs(linearVelocity.x) / m_relaxationLength) * Time.fixedDeltaTime;
+            var coeff = (Mathf.Abs(linearVelocity.x) / m_wheelInfo.relaxationLength) * Time.fixedDeltaTime;
             coeff = Mathf.Clamp(coeff, 0f, 1f);
             m_dynamicSlipAngle += (m_slipAngle - m_dynamicSlipAngle) * coeff;
             m_dynamicSlipAngle = Mathf.Clamp(m_dynamicSlipAngle, -90f, 90f);
-            return m_dynamicSlipAngle / m_slipAnglePeak;
+            return m_dynamicSlipAngle / m_wheelInfo.slipAnglePeak;
         }
 
         private void UpdateLateralAcceleration(Vector3 linearVelocity)
         {
-            m_lateralAcceleration = (Mathf.Pow(linearVelocity.magnitude, 2) / m_wheelRadius) * Mathf.Tan(m_slipAngle * Mathf.Deg2Rad);
+            m_lateralAcceleration = (Mathf.Pow(linearVelocity.magnitude, 2) / m_wheelInfo.wheelRadius) * Mathf.Tan(m_slipAngle * Mathf.Deg2Rad);
         }
 
         public void UpdateSlipForces(Vector3 linearVelocity, float suspensionForce, float angularVelocity)

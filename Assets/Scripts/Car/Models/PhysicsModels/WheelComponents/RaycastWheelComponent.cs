@@ -5,17 +5,13 @@ namespace Car.Models.PhysicsModels.WheelComponents
 {
     public class RaycastWheelComponent
     {
+        private CarDesc.WheelInfo m_wheelInfo;
         private RaycastHit m_wheelHit;
         private bool m_isWheelHit;
-        private LayerMask m_raycastLayer;
-        private float m_wheelRadius;
-        private float m_restLength;
 
         public RaycastWheelComponent(CarDesc.WheelInfo wheelInfo)
         {
-            m_wheelRadius = wheelInfo.wheelRadius;
-            m_restLength = wheelInfo.restLength;
-            m_raycastLayer = wheelInfo.raycastLayer;
+            m_wheelInfo = wheelInfo;
         }
         
         public bool isWheelHit => m_isWheelHit;
@@ -28,10 +24,10 @@ namespace Car.Models.PhysicsModels.WheelComponents
             m_isWheelHit = Physics.Raycast(position,
                 -wheelRoot.up,
                 out m_wheelHit,
-                (m_restLength + m_wheelRadius),
-                m_raycastLayer);
+                (m_wheelInfo.restLength + m_wheelInfo.wheelRadius),
+                m_wheelInfo.raycastLayer);
             
-            Debug.DrawRay(position, Vector3.down * (m_restLength + m_wheelRadius), Color.red);
+            Debug.DrawRay(position, Vector3.down * (m_wheelInfo.restLength + m_wheelInfo.wheelRadius), Color.red);
         }
     }
 }

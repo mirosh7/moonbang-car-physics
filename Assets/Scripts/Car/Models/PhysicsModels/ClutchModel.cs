@@ -5,11 +5,9 @@ namespace Car.Models.PhysicsModels
 {
     public class ClutchModel
     {
-        private float m_clutchStiffness;
-        private float m_clutchCapacity;
-        private float m_clutchDamping;
+        private CarDesc.ClutchInfo m_clutchInfo;
+        private CarDesc.EngineInfo m_engineInfo;
         private float m_clutchTorque;
-        private float m_clutchMaxTorque;
         private float m_clutchLock;
         
         public float clutchTorque => m_clutchTorque;
@@ -17,18 +15,17 @@ namespace Car.Models.PhysicsModels
         
         public ClutchModel(CarDesc.ClutchInfo clutchInfo, CarDesc.EngineInfo engineInfo)
         {
-            m_clutchStiffness = clutchInfo.clutchStiffness;
-            m_clutchCapacity = clutchInfo.clutchCapacity;
-            m_clutchDamping = clutchInfo.clutchDamping;
-            m_clutchMaxTorque = engineInfo.maxEngineTorque * m_clutchCapacity;
+            m_clutchInfo = clutchInfo;
+            m_engineInfo = engineInfo;
         }
         
         public void UpdateClutchTorque(float engineAngularVelocity, float currentGearBoxRatio, float gearBoxInputShaftVelocity)
         {
+            var clutchMaxTorque = m_engineInfo.maxEngineTorque * m_clutchInfo.clutchCapacity;
             var clutchSlip = (engineAngularVelocity - gearBoxInputShaftVelocity) * Mathf.Abs(Mathf.Sign(currentGearBoxRatio));
             m_clutchLock = currentGearBoxRatio == 0 ? 0 : MapRangeClamped(engineAngularVelocity * EngineModel.RAD_TO_RPM, 1000, 1300, 0, 1);
-            var clt = Mathf.Clamp(clutchSlip * m_clutchLock * m_clutchStiffness, -m_clutchMaxTorque, m_clutchMaxTorque);
-            m_clutchTorque = clt + ((m_clutchTorque - clt) * m_clutchDamping);
+            var clt = Mathf.Clamp(clutchSlip * m_clutchLock * m_clutchInfo.clutchStiffness, -clutchMaxTorque, clutchMaxTorque);
+            m_clutchTorque = clt + ((m_clutchTorque - clt) * m_clutchInfo.clutchDamping);
         }
 
 
