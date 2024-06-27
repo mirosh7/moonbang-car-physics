@@ -17,9 +17,9 @@ namespace Car.Models.PhysicsModels.WheelComponents
             m_audioSource.Play();
         }
 
-        public void ApplyAudio(float slipAngle)
+        public void ApplyAudio(float slipForce)
         {
-            m_audioSource.volume = Mathf.Clamp(Mathf.Abs(slipAngle), 0, 1);
+            m_audioSource.volume = Mathf.Clamp(Mathf.Abs(slipForce), 0, 1);
         }
     }
 }

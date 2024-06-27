@@ -37,7 +37,7 @@ namespace Car.Models.PhysicsModels.WheelComponents
             var targetAngularAcceleration = (angularVelocity - targetAngularVelocity) / Time.fixedDeltaTime;
             var targetFrictionTorque = targetAngularAcceleration * m_wheelInertia;
             var maximumFrictionTorque = suspensionForce * m_wheelRadius * m_longFrictionCoeff;
-            return suspensionForce < suspensionForceThreshold ? 0 : targetFrictionTorque / maximumFrictionTorque;
+            return suspensionForce == 0 ? 0 : targetFrictionTorque / maximumFrictionTorque;
         }
         
         private float GetLateralForce(Vector3 linearVelocity)

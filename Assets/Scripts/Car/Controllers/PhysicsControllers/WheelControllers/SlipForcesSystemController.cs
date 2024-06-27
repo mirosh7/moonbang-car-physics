@@ -1,3 +1,4 @@
+using Car.Models.PhysicsModels;
 using Car.Models.PhysicsModels.WheelModels;
 
 namespace Car.Controllers.PhysicsControllers.WheelControllers

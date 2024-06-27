@@ -9,8 +9,11 @@ namespace Car.Models.PhysicsModels.WheelModels
     {
         private List<TireForceComponent> m_tireForceComponents = new List<TireForceComponent>();
         private List<float> m_fxVelocities = new List<float>();
+        private List<float> m_normalizedTireForceMagnitudes = new List<float>();
 
         public List<float> fxVelocities => m_fxVelocities;
+
+        public List<float> normalizedTireForceMagnitudes => m_normalizedTireForceMagnitudes;
 
         public TireForceSystemModel(List<CarDesc.WheelInfo> wheelInfos, Rigidbody rb)
         {
@@ -22,6 +25,7 @@ namespace Car.Models.PhysicsModels.WheelModels
             foreach (var tireForceComponent in m_tireForceComponents)
             {
                 m_fxVelocities.Add(tireForceComponent.fx);
+                m_normalizedTireForceMagnitudes.Add(tireForceComponent.normalizedForce.magnitude);
             }
         }
 
@@ -43,6 +47,7 @@ namespace Car.Models.PhysicsModels.WheelModels
                     );
 
                 m_fxVelocities[i] = m_tireForceComponents[i].fx;
+                m_normalizedTireForceMagnitudes[i] = m_tireForceComponents[i].normalizedForce.magnitude;
             }
         }
     }

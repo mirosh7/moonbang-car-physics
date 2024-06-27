@@ -137,7 +137,7 @@ public class CarBuilder
         m_tireForcesSystemController = new TireForcesSystemController(m_tireForceSystemModel, m_wheelRootTransforms, m_raycastWheelSystemModel, m_slipForcesSystemModel, m_suspensionForcesSystemModel);
         AddToControllersList(m_tireForcesSystemController);
 
-        m_wheelSoundSystemController = new WheelSoundSystemController(m_wheelSoundSystemModel, m_slipForcesSystemModel);
+        m_wheelSoundSystemController = new WheelSoundSystemController(m_wheelSoundSystemModel, m_tireForceSystemModel);
         AddToControllersList(m_wheelSoundSystemController);
         
         Debug.Log("Car controllers created");

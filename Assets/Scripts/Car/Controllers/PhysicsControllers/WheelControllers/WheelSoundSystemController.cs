@@ -5,12 +5,12 @@ namespace Car.Controllers.PhysicsControllers.WheelControllers
     public class WheelSoundSystemController : ICarController
     {
         private WheelSoundSystemModel m_wheelSoundSystemModel;
-        private SlipForcesSystemModel m_slipForcesSystemModel;
+        private TireForceSystemModel m_tireForceSystemModel;
 
-        public WheelSoundSystemController(WheelSoundSystemModel wheelSoundSystemModel, SlipForcesSystemModel slipForcesSystemModel)
+        public WheelSoundSystemController(WheelSoundSystemModel wheelSoundSystemModel, TireForceSystemModel tireForceSystemModel)
         {
             m_wheelSoundSystemModel = wheelSoundSystemModel;
-            m_slipForcesSystemModel = slipForcesSystemModel;
+            m_tireForceSystemModel = tireForceSystemModel;
         }
 
         public void OnCarUpdate()
@@ -20,7 +20,7 @@ namespace Car.Controllers.PhysicsControllers.WheelControllers
 
         private void UpdateWheelSounds()
         {
-            m_wheelSoundSystemModel.UpdateWheelSounds(m_slipForcesSystemModel.slipAngles);
+            m_wheelSoundSystemModel.UpdateWheelSounds(m_tireForceSystemModel.normalizedTireForceMagnitudes);
         }
     }
 }

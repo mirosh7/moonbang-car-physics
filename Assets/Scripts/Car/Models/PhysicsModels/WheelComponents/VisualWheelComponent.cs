@@ -24,8 +24,6 @@ namespace Car.Models.PhysicsModels.WheelComponents
             wheelVisual.position = wheelRoot.position - wheelRoot.up * currentLength;
             wheelRotationPart.localRotation = Quaternion.Euler(isOppositeSide ? -m_currentAngle : m_currentAngle, 0f, 0f);
             wheelVisual.localRotation = Quaternion.Euler(0f, isOppositeSide ? steerAngle + 180f : steerAngle, 0f);
-            //wheelVisual.parent.transform.localRotation = Quaternion.Euler(m_caster, 0, m_camber);
-            //wheelVisual.transform.rotation = Quaternion.Euler(m_caster, 0, m_camber);
         }
     }
 }
