@@ -60,7 +60,7 @@ namespace UI.Debug
             m_tmpTexts[4].text = $"Speed = {data} KM/H";
         }
 
-        public void SetSuspensionForce(List<float> datas)
+        public void SetSuspensionForce(IReadOnlyList<float> datas)
         {
             for (int i = 0; i < datas.Count; i++)
             {
@@ -68,7 +68,7 @@ namespace UI.Debug
             }
         }
         
-        public void SetAngularVelocities(List<float> datas)
+        public void SetAngularVelocities(IReadOnlyList<float> datas)
         {
             for (int i = 0; i < datas.Count; i++)
             {
@@ -76,7 +76,7 @@ namespace UI.Debug
             }
         }
         
-        public void SetSlipForcesValue(List<Vector2> datas)
+        public void SetSlipForcesValue(IReadOnlyList<Vector2> datas)
         {
             for (int i = 0; i < datas.Count; i++)
             {
@@ -84,7 +84,7 @@ namespace UI.Debug
             }
         }
         
-        public void SetSlipAngles(List<float> datas)
+        public void SetSlipAngles(IReadOnlyList<float> datas)
         {
             for (int i = 0; i < datas.Count; i++)
             {
@@ -92,7 +92,7 @@ namespace UI.Debug
             }
         }
 
-        public void SetLinearVelocities(List<Vector3> datas)
+        public void SetLinearVelocities(IReadOnlyList<Vector3> datas)
         {
             for (int i = 0; i < datas.Count; i++)
             {

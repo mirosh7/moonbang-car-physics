@@ -10,7 +10,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using Car.Models.PhysicsModels;
+using Car;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -21,7 +21,7 @@ public class RealisticEngineSound : MonoBehaviour
     public float masterVolume = 1f;
     public AudioMixerGroup audioMixer;
     public bool destroyAudioSources = true; // enable or disable: destroy unused or too far away audio sources that are currently can't be heard
-    public EngineModel engineModel;
+    public RaceCar car;
     public float engineCurrentRPM = 0.0f;
     public bool gasPedalPressing = false;
     [Range(0.0f, 1.0f)]
@@ -144,7 +144,7 @@ public class RealisticEngineSound : MonoBehaviour
 
     private void Start()
     {
-        maxRPMLimit = engineModel.engineMaxRpm * EngineModel.RAD_TO_RPM;
+        maxRPMLimit = car.engineMaxRpm * CarPhysicsNative.RAD_TO_RPM;
         spatialBlend = 1f; // remove this line if you want to set custom values for spatialBlend
         _wait = new WaitForSeconds(0.15f); // setup wait for secconds
         // if res scipts are far away from camera do not need to create audio sources, this audio sources already won't be heard because of the distance
@@ -506,7 +506,7 @@ public class RealisticEngineSound : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        engineCurrentRPM = engineModel.engineRpm;
+        engineCurrentRPM = car.engineRpm;
         if (mainCamera != null)
         {
             if (Vector3.Distance(mainCamera.transform.position, gameObject.transform.position) > maxDistance)
