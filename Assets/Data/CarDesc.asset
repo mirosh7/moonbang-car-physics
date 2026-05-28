@@ -118,7 +118,7 @@ MonoBehaviour:
     - 0.7
     - 1
   m_wheelInfos:
-  - m_restLength: 0.3
+  - m_restLength: 0.6
     m_suspensionStiffness: 50000
     m_damperStiffness: 1500
     m_slipAnglePeak: 15
@@ -126,14 +126,19 @@ MonoBehaviour:
     m_caster: 0
     m_longitudinalCoeff: 1
     m_lateralCoeff: 1
-    m_wheelRadius: 0.16
+    m_wheelRadius: 0.33
     m_raycastLayer:
       serializedVersion: 2
       m_Bits: 8
     m_wheelMass: 15
     m_longFrictionCoeff: 1
     m_relaxationLength: 0.05
-  - m_restLength: 0.3
+    m_longSlipPeak: 0.12
+    m_pacejkaShapeLong: 1.65
+    m_pacejkaCurveLong: 0.96
+    m_pacejkaShapeLat: 1.35
+    m_pacejkaCurveLat: 0.96
+  - m_restLength: 0.6
     m_suspensionStiffness: 50000
     m_damperStiffness: 1500
     m_slipAnglePeak: 15
@@ -141,14 +146,19 @@ MonoBehaviour:
     m_caster: 0
     m_longitudinalCoeff: 1
     m_lateralCoeff: 1
-    m_wheelRadius: 0.16
+    m_wheelRadius: 0.33
     m_raycastLayer:
       serializedVersion: 2
       m_Bits: 8
     m_wheelMass: 15
     m_longFrictionCoeff: 1
     m_relaxationLength: 0.05
-  - m_restLength: 0.3
+    m_longSlipPeak: 0.12
+    m_pacejkaShapeLong: 1.65
+    m_pacejkaCurveLong: 0.96
+    m_pacejkaShapeLat: 1.35
+    m_pacejkaCurveLat: 0.96
+  - m_restLength: 0.6
     m_suspensionStiffness: 50000
     m_damperStiffness: 1500
     m_slipAnglePeak: 15
@@ -156,14 +166,19 @@ MonoBehaviour:
     m_caster: 0
     m_longitudinalCoeff: 1
     m_lateralCoeff: 1
-    m_wheelRadius: 0.16
+    m_wheelRadius: 0.33
     m_raycastLayer:
       serializedVersion: 2
       m_Bits: 8
     m_wheelMass: 15
     m_longFrictionCoeff: 1
     m_relaxationLength: 0.05
-  - m_restLength: 0.3
+    m_longSlipPeak: 0.12
+    m_pacejkaShapeLong: 1.65
+    m_pacejkaCurveLong: 0.96
+    m_pacejkaShapeLat: 1.35
+    m_pacejkaCurveLat: 0.96
+  - m_restLength: 0.6
     m_suspensionStiffness: 50000
     m_damperStiffness: 1500
     m_slipAnglePeak: 15
@@ -171,13 +186,18 @@ MonoBehaviour:
     m_caster: 0
     m_longitudinalCoeff: 1
     m_lateralCoeff: 1
-    m_wheelRadius: 0.16
+    m_wheelRadius: 0.33
     m_raycastLayer:
       serializedVersion: 2
       m_Bits: 8
     m_wheelMass: 15
     m_longFrictionCoeff: 1
     m_relaxationLength: 0.05
+    m_longSlipPeak: 0.12
+    m_pacejkaShapeLong: 1.65
+    m_pacejkaCurveLong: 0.96
+    m_pacejkaShapeLat: 1.35
+    m_pacejkaCurveLat: 0.96
   m_steeringInfo:
     m_turnRadius: 3
     m_steerForce: 1.2

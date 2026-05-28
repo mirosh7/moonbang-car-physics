@@ -67,11 +67,11 @@ public class RaceCarState : MonoBehaviour
 
     private void CreateControllers()
     {
-        m_carPhysicsInfoController = new CarPhysicsInfoController(m_carPhysicsInfo, m_currentCar);
-        m_controllers.Add(m_carPhysicsInfoController);
+       // m_carPhysicsInfoController = new CarPhysicsInfoController(m_carPhysicsInfo, m_currentCar);
+       // m_controllers.Add(m_carPhysicsInfoController);
 
-        m_carInputInfoController = new CarInputInfoController(m_carInputInfo, m_inputManager);
-        m_controllers.Add(m_carInputInfoController);
+       // m_carInputInfoController = new CarInputInfoController(m_carInputInfo, m_inputManager);
+       // m_controllers.Add(m_carInputInfoController);
 
         m_freeCameraController = new FreeCameraController(m_freeCameraModel, m_currentCar.transform);
         m_controllers.Add(m_freeCameraController);

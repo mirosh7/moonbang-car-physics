@@ -110,15 +110,27 @@ typedef struct CP_WheelInfo {
     float restLength;
     float suspensionStiffness;
     float damperStiffness;
-    float slipAnglePeak;
+    float slipAnglePeak;        /* slip angle (deg) at peak lateral force; sets Pacejka B_lat */
     float camber;               /* exposed for visuals; not used by the math */
     float caster;               /* idem */
-    float longitudinalCoeff;
-    float lateralCoeff;
+    float longitudinalCoeff;    /* longitudinal peak-friction factor: Dx = coeff * Fz */
+    float lateralCoeff;         /* lateral peak-friction factor:      Dy = coeff * Fz */
     float wheelRadius;
     float wheelMass;            /* wheelInertia = wheelRadius^2 * wheelMass */
     float longFrictionCoeff;
     float relaxationLength;
+
+    /* ---- Pacejka Magic Formula shape parameters ----
+     * Per axis force: F(x) = D*sin(C*atan(B*x - E*(B*x - atan(B*x)))).
+     * D comes from the friction factor * normal load (above). The stiffness
+     * factor B is derived so the curve peaks at the configured peak slip
+     * (longSlipPeak for the slip ratio, slipAnglePeak for the slip angle):
+     *   B = tan(pi / (2*C)) / peakSlip. */
+    float longSlipPeak;         /* slip ratio at peak longitudinal force (e.g. 0.12) */
+    float pacejkaShapeLong;     /* C_x (e.g. 1.65) */
+    float pacejkaCurveLong;     /* E_x (e.g. 0.96) */
+    float pacejkaShapeLat;      /* C_y (e.g. 1.35) */
+    float pacejkaCurveLat;      /* E_y (e.g. 0.96) */
 } CP_WheelInfo;
 
 typedef struct CP_CarConfig {

@@ -77,6 +77,30 @@ inline float mapRangeClamped(float value, float inA, float inB, float outA, floa
     return lerp(outA, outB, inverseLerp(inA, inB, value));
 }
 
+/* Pacejka Magic Formula (simplified, no Sh/Sv offsets):
+ *   F(x) = D * sin(C * atan(B*x - E*(B*x - atan(B*x))))
+ * x is the slip ratio (longitudinal) or slip angle in radians (lateral). */
+inline float magicFormula(float slip, float B, float C, float D, float E) {
+    float bx = B * slip;
+    return D * std::sin(C * std::atan(bx - E * (bx - std::atan(bx))));
+}
+
+/* Stiffness factor B so the Magic Formula peaks at |slip| = peakSlip. */
+inline float magicStiffnessFromPeak(float C, float peakSlip) {
+    if (peakSlip < 1e-6f || C < 1e-6f) return 0.0f;
+    return std::tan(PI / (2.0f * C)) / peakSlip;
+}
+
+/* Local slope dF/dslip of the Magic Formula at the given slip. Used to treat
+ * the tire force implicitly w.r.t. wheel speed (numerical stability). */
+inline float magicFormulaSlope(float slip, float B, float C, float D, float E) {
+    float bx = B * slip;
+    float phi = bx - E * (bx - std::atan(bx));
+    float dphi = B * ((1.0f - E) + E / (1.0f + bx * bx));
+    float a = std::atan(phi);
+    return D * C * std::cos(C * a) * (1.0f / (1.0f + phi * phi)) * dphi;
+}
+
 /* Owns its keyframes; evaluates with clamped linear interpolation. */
 class Curve {
 public:

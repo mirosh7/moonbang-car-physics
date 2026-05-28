@@ -109,7 +109,9 @@ void CarSim::updateWheels(const CP_WheelInput& in, CP_WheelOutput& out) {
     const float* brakeTorque = m_brakes.brakeTorque();
     for (int i = 0; i < CARSIM_WHEEL_COUNT; ++i) {
         if (!in.wheels[i].hit) continue;
-        m_acceleration[i].update(m_tire[i].fx(), driveTorque[i], brakeTorque[i], dt);
+        m_acceleration[i].update(m_tire[i].fx(), driveTorque[i], brakeTorque[i],
+                                 m_suspension[i].linearVelocity().z,
+                                 m_suspension[i].suspensionForce(), dt);
     }
 
     // 3. slip forces
@@ -123,8 +125,8 @@ void CarSim::updateWheels(const CP_WheelInput& in, CP_WheelOutput& out) {
     // 4. tire forces (accumulate onto the suspension force)
     for (int i = 0; i < CARSIM_WHEEL_COUNT; ++i) {
         if (!in.wheels[i].hit) continue;
-        Vec3 tireForce = m_tire[i].update(in.wheels[i], m_slip[i].slipLong(),
-                                          m_slip[i].slipLat(),
+        Vec3 tireForce = m_tire[i].update(in.wheels[i], m_slip[i].slipRatio(),
+                                          m_slip[i].slipAngleRad(),
                                           m_suspension[i].suspensionForce());
         wheelForce[i] = wheelForce[i] + tireForce;
     }
@@ -139,8 +141,8 @@ void CarSim::updateWheels(const CP_WheelInput& in, CP_WheelOutput& out) {
         out.linearVelocity[i] = m_suspension[i].linearVelocity().toC();
         out.slipAngle[i] = m_slip[i].slipAngle();
         out.lateralAcceleration[i] = m_slip[i].lateralAcceleration();
-        out.slipForceLong[i] = m_slip[i].slipLong();
-        out.slipForceLat[i] = m_slip[i].slipLat();
+        out.slipForceLong[i] = m_slip[i].slipRatio();
+        out.slipForceLat[i] = m_slip[i].slipAngle();
         out.normalizedTireMagnitude[i] = m_tire[i].normalizedMagnitude();
         out.fx[i] = m_tire[i].fx();
     }

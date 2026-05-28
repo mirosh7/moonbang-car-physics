@@ -163,15 +163,21 @@ public:
     void init(const CP_WheelInfo& info) {
         m_info = info;
         m_wheelInertia = info.wheelRadius * info.wheelRadius * info.wheelMass;
+        m_bLong = magicStiffnessFromPeak(info.pacejkaShapeLong, info.longSlipPeak);
     }
 
-    void update(float fx, float driveTorque, float brakeTorque, float dt);
+    /* Integrates wheel spin. The longitudinal tire reaction is linearised about
+     * the current wheel speed (implicit) for stability, which needs the normal
+     * load via suspensionForce and the derived Pacejka stiffness m_bLong. */
+    void update(float fx, float driveTorque, float brakeTorque,
+                float groundForwardSpeed, float suspensionForce, float dt);
 
     float angularVelocity() const { return m_angularVelocity; }
 
 private:
     CP_WheelInfo m_info{};
     float m_wheelInertia = 0.0f;
+    float m_bLong = 0.0f;   /* derived Pacejka longitudinal stiffness factor */
     float m_angularVelocity = 0.0f;
 };
 
@@ -185,34 +191,36 @@ public:
     void update(const Vec3& linearVelocity, float suspensionForce,
                 float angularVelocity, float dt);
 
-    float slipLong() const { return m_slipLong; }
-    float slipLat() const  { return m_slipLat; }
-    float slipAngle() const { return m_slipAngle; }
+    float slipRatio() const     { return m_slipRatio; }          /* longitudinal, dimensionless */
+    float slipAngleRad() const  { return m_dynamicSlipAngle; }   /* lateral, radians (relaxed) */
+    float slipAngle() const     { return m_dynamicSlipAngle * RAD2DEG; } /* telemetry, degrees */
     float lateralAcceleration() const { return m_lateralAcceleration; }
 
 private:
     CP_WheelInfo m_info{};
     float m_wheelInertia = 0.0f;
-    float m_slipLong = 0.0f;
-    float m_slipLat = 0.0f;
-    float m_slipAngle = 0.0f;
-    float m_dynamicSlipAngle = 0.0f;
+    float m_slipRatio = 0.0f;
+    float m_dynamicSlipAngle = 0.0f;   /* relaxed slip angle, radians */
     float m_lateralAcceleration = 0.0f;
 };
 
 class TireWheel {
 public:
-    void init(const CP_WheelInfo& info) { m_info = info; }
+    void init(const CP_WheelInfo& info);
 
-    /* Returns the world tire force to add at the contact point. */
-    Vec3 update(const CP_WheelState& w, float longitudinalForce,
-                float lateralForce, float suspensionForce);
+    /* Pacejka Magic Formula tire. Takes the longitudinal slip ratio and the
+     * (relaxed) slip angle in radians; returns the world tire force to add at
+     * the contact point. */
+    Vec3 update(const CP_WheelState& w, float slipRatio, float slipAngleRad,
+                float suspensionForce);
 
     float fx() const { return m_fx; }
     float normalizedMagnitude() const { return m_normalizedMagnitude; }
 
 private:
     CP_WheelInfo m_info{};
+    float m_bLong = 0.0f;   /* derived Pacejka stiffness factors */
+    float m_bLat = 0.0f;
     float m_fx = 0.0f;
     float m_normalizedMagnitude = 0.0f;
 };

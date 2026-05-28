@@ -134,11 +134,14 @@ void BrakesModel::init(const CP_BrakesInfo& info) {
 
 void BrakesModel::update(float brakeInput,
                          const float angularVelocities[CARSIM_WHEEL_COUNT]) {
-    m_brakeTorque[0] = brakeInput * m_info.biasFront * m_info.maxTorque *
-        m_curve.evaluate(std::fabs((angularVelocities[0] + angularVelocities[2]) * 0.5f));
+    // Index convention: 0=FL, 1=FR, 2=RL, 3=RR. The brake-torque curve is
+    // looked up per axle from that axle's mean wheel speed.
+    float frontSpeed = std::fabs((angularVelocities[0] + angularVelocities[1]) * 0.5f);
+    float rearSpeed  = std::fabs((angularVelocities[2] + angularVelocities[3]) * 0.5f);
+
+    m_brakeTorque[0] = brakeInput * m_info.biasFront * m_info.maxTorque * m_curve.evaluate(frontSpeed);
     m_brakeTorque[1] = m_brakeTorque[0];
-    m_brakeTorque[2] = brakeInput * m_info.biasRear * m_info.maxTorque *
-        m_curve.evaluate(std::fabs((angularVelocities[1] + angularVelocities[3]) * 0.5f));
+    m_brakeTorque[2] = brakeInput * m_info.biasRear * m_info.maxTorque * m_curve.evaluate(rearSpeed);
     m_brakeTorque[3] = m_brakeTorque[2];
 }
 
@@ -198,58 +201,99 @@ Vec3 SuspensionWheel::update(const CP_WheelState& w, float dt) {
 
 /* ------------------------------------------------------------ acceleration */
 void AccelerationWheel::update(float fx, float driveTorque, float brakeTorque,
+                               float groundForwardSpeed, float suspensionForce,
                                float dt) {
-    float frictionTorque = fx * m_info.wheelRadius;
-    float angularAcceleration = (driveTorque - frictionTorque) / m_wheelInertia;
-    m_angularVelocity += angularAcceleration * dt;
-    m_angularVelocity -= std::min(std::fabs(m_angularVelocity),
-                                  brakeTorque * signf(m_angularVelocity) / m_wheelInertia * dt);
+    // The longitudinal tire force is very stiff w.r.t. wheel speed (its slope
+    // is B*C*D, scaled up at low ground speed). Integrating it explicitly makes
+    // the wheel speed oscillate and blow up at a fixed timestep. We instead
+    // treat that dependence implicitly: linearise the tire reaction around the
+    // current wheel speed and solve for the new speed. This is unconditionally
+    // stable and lets the wheel settle on its rolling speed instead of spinning
+    // up to the clamp.
+    const float kVelFloor = 1.0f;  // m/s, keeps the slope finite near standstill
+    float denom = std::max(std::fabs(groundForwardSpeed), kVelFloor);
+
+    float reactionTorque = fx * m_info.wheelRadius;          // last tick's tire reaction
+
+    float slipRatio = (m_angularVelocity * m_info.wheelRadius - groundForwardSpeed) / denom;
+    float dLong = m_info.longitudinalCoeff * std::max(0.0f, suspensionForce);
+    float forceSlope = magicFormulaSlope(slipRatio, m_bLong, m_info.pacejkaShapeLong,
+                                         dLong, m_info.pacejkaCurveLong);
+    // dTorque/dOmega = R * dF/dslip * dslip/dOmega, dslip/dOmega = R/denom.
+    float torqueSlope = std::max(0.0f, forceSlope) * m_info.wheelRadius * m_info.wheelRadius / denom;
+
+    float deltaOmega = (driveTorque - reactionTorque) / (m_wheelInertia / dt + torqueSlope);
+    m_angularVelocity += deltaOmega;
+
+    // Braking always opposes the current spin and can at most bring the wheel
+    // to a stop this tick (the min() prevents braking from reversing it).
+    float brakeDelta = brakeTorque / m_wheelInertia * dt;  // >= 0
+    m_angularVelocity -= signf(m_angularVelocity) * std::min(std::fabs(m_angularVelocity), brakeDelta);
+
     m_angularVelocity = clampf(m_angularVelocity, -360.0f, 360.0f);
 }
 
 /* -------------------------------------------------------------------- slip */
 void SlipWheel::update(const Vec3& linearVelocity, float suspensionForce,
                        float angularVelocity, float dt) {
-    // longitudinal
-    float targetAngularVelocity = linearVelocity.z / m_info.wheelRadius;
-    float targetAngularAcceleration = (angularVelocity - targetAngularVelocity) / dt;
-    float targetFrictionTorque = targetAngularAcceleration * m_wheelInertia;
-    float maximumFrictionTorque = suspensionForce * m_info.wheelRadius * m_info.longFrictionCoeff;
-    m_slipLong = suspensionForce == 0.0f ? 0.0f
-                                         : targetFrictionTorque / maximumFrictionTorque;
+    // A velocity floor keeps the slip ratio / slip angle finite near standstill
+    // (both are otherwise singular as the forward speed approaches zero).
+    const float kVelFloor = 1.0f;  // m/s
+    float vLong = linearVelocity.z;
+    float vLat  = linearVelocity.x;
+    float denom = std::max(std::fabs(vLong), kVelFloor);
 
-    // lateral
-    const float eps = std::numeric_limits<float>::epsilon();
-    m_slipAngle = std::fabs(linearVelocity.z) < eps
-                      ? 0.0f
-                      : std::atan(-linearVelocity.x / std::fabs(linearVelocity.z)) * RAD2DEG;
-    float coeff = (std::fabs(linearVelocity.x) / m_info.relaxationLength) * dt;
-    coeff = clampf(coeff, 0.0f, 1.0f);
-    m_dynamicSlipAngle += (m_slipAngle - m_dynamicSlipAngle) * coeff;
-    m_dynamicSlipAngle = clampf(m_dynamicSlipAngle, -90.0f, 90.0f);
-    m_slipLat = m_dynamicSlipAngle / m_info.slipAnglePeak;
+    // longitudinal slip ratio: (wheel surface speed - ground speed) / ground speed
+    float wheelSurfaceSpeed = angularVelocity * m_info.wheelRadius;
+    m_slipRatio = (wheelSurfaceSpeed - vLong) / denom;
+    m_slipRatio = clampf(m_slipRatio, -4.0f, 4.0f);
+
+    // lateral slip angle (radians), relaxed over the relaxation length so the
+    // tire force builds up over travelled distance rather than instantly.
+    float slipAngle = std::atan(-vLat / denom);
+    float relax = m_info.relaxationLength > 1e-4f
+                      ? clamp01(std::fabs(vLong) * dt / m_info.relaxationLength)
+                      : 1.0f;
+    m_dynamicSlipAngle += (slipAngle - m_dynamicSlipAngle) * relax;
+    m_dynamicSlipAngle = clampf(m_dynamicSlipAngle, -PI * 0.5f, PI * 0.5f);
 
     float mag = magnitude(linearVelocity);
-    m_lateralAcceleration = (mag * mag / m_info.wheelRadius) * std::tan(m_slipAngle * DEG2RAD);
+    m_lateralAcceleration = (mag * mag / m_info.wheelRadius) * std::tan(m_dynamicSlipAngle);
 }
 
 /* -------------------------------------------------------------------- tire */
-Vec3 TireWheel::update(const CP_WheelState& w, float longitudinalForce,
-                       float lateralForce, float suspensionForce) {
+void TireWheel::init(const CP_WheelInfo& info) {
+    m_info = info;
+    m_bLong = magicStiffnessFromPeak(info.pacejkaShapeLong, info.longSlipPeak);
+    m_bLat  = magicStiffnessFromPeak(info.pacejkaShapeLat, info.slipAnglePeak * DEG2RAD);
+    m_fx = 0.0f;
+    m_normalizedMagnitude = 0.0f;
+}
+
+Vec3 TireWheel::update(const CP_WheelState& w, float slipRatio, float slipAngleRad,
+                       float suspensionForce) {
     Vec3 forwardProj = normalized(projectOnPlane(Vec3(w.forward), Vec3(w.hitNormal)));
     Vec3 sideProj = normalized(projectOnPlane(Vec3(w.right), Vec3(w.hitNormal)));
 
-    float cx = longitudinalForce;
-    float cy = lateralForce;
-    float cmag = std::sqrt(cx * cx + cy * cy);
-    if (cmag > 1.0f) { cx /= cmag; cy /= cmag; }
+    // Peak forces scale with normal load (friction-factor * Fz).
+    float dLong = m_info.longitudinalCoeff * suspensionForce;
+    float dLat  = m_info.lateralCoeff * suspensionForce;
 
-    m_fx = cx * suspensionForce * m_info.longitudinalCoeff;
-    float fY = cy * suspensionForce * m_info.lateralCoeff;
+    float fx0 = magicFormula(slipRatio,    m_bLong, m_info.pacejkaShapeLong, dLong, m_info.pacejkaCurveLong);
+    float fy0 = magicFormula(slipAngleRad, m_bLat,  m_info.pacejkaShapeLat,  dLat,  m_info.pacejkaCurveLat);
 
-    // normalizedForce magnitude (drives skid sound). normalize(combined) has
-    // magnitude 1 when non-zero, 0 otherwise - matches Vector2.normalized.
-    m_normalizedMagnitude = cmag > 1e-8f ? 1.0f : 0.0f;
+    // Combined slip: keep the resultant inside the friction ellipse so the tire
+    // cannot deliver more than its limit when slipping in both directions.
+    float gx = dLong > 1e-4f ? fx0 / dLong : 0.0f;
+    float gy = dLat  > 1e-4f ? fy0 / dLat  : 0.0f;
+    float g = std::sqrt(gx * gx + gy * gy);
+    float scale = g > 1.0f ? 1.0f / g : 1.0f;
+
+    m_fx = fx0 * scale;
+    float fY = fy0 * scale;
+
+    // Skid intensity: how close the tire is to (or beyond) its friction limit.
+    m_normalizedMagnitude = clamp01(g);
 
     return forwardProj * m_fx + sideProj * fY;  // force to add at hitPoint
 }

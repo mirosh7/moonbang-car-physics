@@ -165,7 +165,30 @@ namespace Car.Data
 
             [SerializeField]
             private float m_relaxationLength;
-            
+
+            [Header("Pacejka Magic Formula")]
+            [Tooltip("Slip ratio at peak longitudinal force (e.g. 0.12).")]
+            [SerializeField]
+            private float m_longSlipPeak = 0.12f;
+            [Tooltip("Longitudinal shape factor C_x (e.g. 1.65).")]
+            [SerializeField]
+            private float m_pacejkaShapeLong = 1.65f;
+            [Tooltip("Longitudinal curvature factor E_x (e.g. 0.96).")]
+            [SerializeField]
+            private float m_pacejkaCurveLong = 0.96f;
+            [Tooltip("Lateral shape factor C_y (e.g. 1.35).")]
+            [SerializeField]
+            private float m_pacejkaShapeLat = 1.35f;
+            [Tooltip("Lateral curvature factor E_y (e.g. 0.96).")]
+            [SerializeField]
+            private float m_pacejkaCurveLat = 0.96f;
+
+            public float longSlipPeak => m_longSlipPeak;
+            public float pacejkaShapeLong => m_pacejkaShapeLong;
+            public float pacejkaCurveLong => m_pacejkaCurveLong;
+            public float pacejkaShapeLat => m_pacejkaShapeLat;
+            public float pacejkaCurveLat => m_pacejkaCurveLat;
+
             public float longFrictionCoeff => m_longFrictionCoeff;
 
             public float wheelInertia => Mathf.Pow(wheelRadius, 2) * m_wheelMass;

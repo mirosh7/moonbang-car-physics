@@ -60,6 +60,9 @@ namespace Car
             public float restLength, suspensionStiffness, damperStiffness, slipAnglePeak,
                          camber, caster, longitudinalCoeff, lateralCoeff, wheelRadius,
                          wheelMass, longFrictionCoeff, relaxationLength;
+            // Pacejka Magic Formula shape parameters (must match CP_WheelInfo order).
+            public float longSlipPeak, pacejkaShapeLong, pacejkaCurveLong,
+                         pacejkaShapeLat, pacejkaCurveLat;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -220,6 +223,11 @@ namespace Car
                         wheelMass = w.wheelInertia / (w.wheelRadius * w.wheelRadius), // recover mass
                         longFrictionCoeff = w.longFrictionCoeff,
                         relaxationLength = w.relaxationLength,
+                        longSlipPeak = w.longSlipPeak,
+                        pacejkaShapeLong = w.pacejkaShapeLong,
+                        pacejkaCurveLong = w.pacejkaCurveLong,
+                        pacejkaShapeLat = w.pacejkaShapeLat,
+                        pacejkaCurveLat = w.pacejkaCurveLat,
                     };
                 }
 

@@ -1,0 +1,9 @@
+﻿  api.cpp
+  car_sim.cpp
+  models.cpp
+     Создается библиотека C:\Projects\moonbang-car-physics\Native\CarPhysics\build\x64\Release\CarPhysics.lib и объект C:\Projects\moonbang-car-physics\Native\CarPhysics\build\x64\Release\CarPhysics.exp
+  Создание кода
+  Previous IPDB not found, fall back to full compilation.
+  All 187 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Создание кода завершено
+  CarPhysics.vcxproj -> C:\Projects\moonbang-car-physics\Native\CarPhysics\build\x64\Release\CarPhysics.dll
