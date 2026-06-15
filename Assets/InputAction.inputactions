@@ -1,4 +1,5 @@
 {
+    "version": 1,
     "name": "InputAction",
     "maps": [
         {
@@ -221,6 +222,34 @@
                     "processors": "",
                     "groups": "",
                     "action": "Rotation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "General",
+            "id": "d5293c63-367d-48f2-b6f3-d27245cffa7f",
+            "actions": [
+                {
+                    "name": "Edit",
+                    "type": "Button",
+                    "id": "5b86f4dd-8d3d-4069-9f69-a388bfe89e7a",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "73cb874e-aae6-46ca-8787-58b867931163",
+                    "path": "<Keyboard>/ctrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Edit",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

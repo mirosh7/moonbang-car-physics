@@ -10,6 +10,8 @@
  */
 #include "car_sim.h"
 
+#include <algorithm>
+
 namespace carsim {
 
 bool CarSim::init(const CP_CarConfig& config) {
@@ -21,6 +23,7 @@ bool CarSim::init(const CP_CarConfig& config) {
     m_differential.init(config.differential, config.wheels[0]);
     m_brakes.init(config.brakes);
     m_steering.init(config.steering, config.wheelBase, config.rearTrack);
+    m_antiroll = config.antiroll;
 
     for (int i = 0; i < CARSIM_WHEEL_COUNT; ++i) {
         m_suspension[i].init(config.wheels[i]);
@@ -29,6 +32,7 @@ bool CarSim::init(const CP_CarConfig& config) {
         m_tire[i].init(config.wheels[i]);
         m_visual[i].init();
         m_steerAngles[i] = 0.0f;
+        m_restLength[i] = config.wheels[i].restLength;
     }
     return true;
 }
@@ -131,6 +135,23 @@ void CarSim::updateWheels(const CP_WheelInput& in, CP_WheelOutput& out) {
         wheelForce[i] = wheelForce[i] + tireForce;
     }
 
+    // 5. anti-roll (stabiliser) bars: couple the L/R wheels of an axle by the
+    //    difference in suspension travel. The more-compressed side gets pushed
+    //    up, resisting body roll. Needs both wheels of the axle grounded.
+    if (m_antiroll.isEnabled) {
+        const int axle[2][2] = { {0, 1}, {2, 3} };
+        const float k[2] = { m_antiroll.stiffnessFront, m_antiroll.stiffnessRear };
+        for (int a = 0; a < 2; ++a) {
+            int l = axle[a][0], r = axle[a][1];
+            if (!in.wheels[l].hit || !in.wheels[r].hit) continue;
+            float travelL = std::max(0.0f, m_restLength[l] - m_suspension[l].currentLength());
+            float travelR = std::max(0.0f, m_restLength[r] - m_suspension[r].currentLength());
+            float f = k[a] * (travelL - travelR);
+            wheelForce[l] = wheelForce[l] + Vec3(in.wheels[l].up) * f;
+            wheelForce[r] = wheelForce[r] + Vec3(in.wheels[r].up) * (-f);
+        }
+    }
+
     // outputs
     for (int i = 0; i < CARSIM_WHEEL_COUNT; ++i) {
         out.applyForce[i] = wheelForce[i].toC();
@@ -145,6 +166,7 @@ void CarSim::updateWheels(const CP_WheelInput& in, CP_WheelOutput& out) {
         out.slipForceLat[i] = m_slip[i].slipAngle();
         out.normalizedTireMagnitude[i] = m_tire[i].normalizedMagnitude();
         out.fx[i] = m_tire[i].fx();
+        out.fy[i] = m_tire[i].fy();
     }
 }
 

@@ -131,7 +131,25 @@ typedef struct CP_WheelInfo {
     float pacejkaCurveLong;     /* E_x (e.g. 0.96) */
     float pacejkaShapeLat;      /* C_y (e.g. 1.35) */
     float pacejkaCurveLat;      /* E_y (e.g. 0.96) */
+
+    /* ---- wheel alignment (first-order) ----
+     * camber/caster (above) plus these. Toe and the steering-axis tilts are
+     * applied by the HOST to the wheel-root basis (so slip/forces follow the
+     * toed direction automatically); the only alignment EFFECT the math adds
+     * itself is camber thrust: Fy_camber = camberCoeff * sin(camber) * Fz. */
+    float toe;                  /* static toe per wheel, deg (>0 = toe-in) */
+    float kingpinInclination;   /* steering-axis lateral tilt, deg */
+    float camberCoeff;          /* camber-thrust factor (e.g. 0.6) */
 } CP_WheelInfo;
+
+/* Anti-roll (stabiliser) bar: couples the left/right wheels of an axle. An
+ * added vertical force proportional to the difference in suspension travel
+ * resists body roll. */
+typedef struct CP_AntirollBarInfo {
+    int   isEnabled;            /* 0 = off */
+    float stiffnessFront;       /* N per metre of L/R travel difference */
+    float stiffnessRear;
+} CP_AntirollBarInfo;
 
 typedef struct CP_CarConfig {
     CP_EngineInfo       engine;
@@ -141,6 +159,7 @@ typedef struct CP_CarConfig {
     CP_BrakesInfo       brakes;
     CP_SteeringInfo     steering;
     CP_WheelInfo        wheels[CARSIM_WHEEL_COUNT];
+    CP_AntirollBarInfo  antiroll;
 
     /* Ackermann geometry, measured once by the host from the wheel-root
      * world positions:
@@ -211,7 +230,8 @@ typedef struct CP_WheelOutput {
     float slipForceLong[CARSIM_WHEEL_COUNT];
     float slipForceLat[CARSIM_WHEEL_COUNT];
     float normalizedTireMagnitude[CARSIM_WHEEL_COUNT]; /* drives skid sound */
-    float fx[CARSIM_WHEEL_COUNT];
+    float fx[CARSIM_WHEEL_COUNT];                      /* longitudinal tire force, N */
+    float fy[CARSIM_WHEEL_COUNT];                      /* lateral tire force, N */
 } CP_WheelOutput;
 
 /* Opaque simulation handle. */

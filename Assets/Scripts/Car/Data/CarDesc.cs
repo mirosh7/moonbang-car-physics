@@ -26,6 +26,17 @@ namespace Car.Data
         [SerializeField]
         private AntirollBarInfo m_antirollBarInfo;
 
+        [Header("Колея (расстояние между стойками)")]
+        [Tooltip("Передняя колея, м. 0 — не двигать wheelRoot, оставить как в префабе.")]
+        [SerializeField]
+        private float m_trackFront;
+        [Tooltip("Задняя колея, м. 0 — не двигать wheelRoot, оставить как в префабе.")]
+        [SerializeField]
+        private float m_trackRear;
+
+        public float trackFront { get => m_trackFront; set => m_trackFront = value; }
+        public float trackRear { get => m_trackRear; set => m_trackRear = value; }
+
         public AntirollBarInfo antirollBarInfo => m_antirollBarInfo;
         public EngineInfo engineInfo => m_engineInfo;
         public GearboxInfo gearboxInfo => m_gearboxInfo;
@@ -113,9 +124,9 @@ namespace Car.Data
             [SerializeField]
             private float m_differentialRatio;
 
-            public bool isDiffLocked => m_isDiffLocked;
+            public bool isDiffLocked { get => m_isDiffLocked; set => m_isDiffLocked = value; }
 
-            public float differentialRatio => m_differentialRatio;
+            public float differentialRatio { get => m_differentialRatio; set => m_differentialRatio = value; }
         }
 
         [Serializable]
@@ -146,10 +157,21 @@ namespace Car.Data
             private float m_damperStiffness;
             [SerializeField]
             private float m_slipAnglePeak;
+            [Tooltip("Статический развал, град. >0 — верх колеса наружу.")]
             [SerializeField]
             private float m_camber;
+            [Tooltip("Кастер (продольный наклон оси поворота), град. Даёт самовыравнивание и набор развала в повороте.")]
             [SerializeField]
             private float m_caster;
+            [Tooltip("Схождение, град на колесо. >0 — toe-in (носки внутрь).")]
+            [SerializeField]
+            private float m_toe;
+            [Tooltip("Поперечный наклон оси поворота (kingpin), град.")]
+            [SerializeField]
+            private float m_kingpinInclination;
+            [Tooltip("Коэффициент camber thrust: Fy_развал = coeff * sin(развал) * Fz.")]
+            [SerializeField]
+            private float m_camberCoeff = 0.6f;
             [SerializeField]
             private float m_longitudinalCoeff;
             [SerializeField]
@@ -183,11 +205,11 @@ namespace Car.Data
             [SerializeField]
             private float m_pacejkaCurveLat = 0.96f;
 
-            public float longSlipPeak => m_longSlipPeak;
-            public float pacejkaShapeLong => m_pacejkaShapeLong;
-            public float pacejkaCurveLong => m_pacejkaCurveLong;
-            public float pacejkaShapeLat => m_pacejkaShapeLat;
-            public float pacejkaCurveLat => m_pacejkaCurveLat;
+            public float longSlipPeak { get => m_longSlipPeak; set => m_longSlipPeak = value; }
+            public float pacejkaShapeLong { get => m_pacejkaShapeLong; set => m_pacejkaShapeLong = value; }
+            public float pacejkaCurveLong { get => m_pacejkaCurveLong; set => m_pacejkaCurveLong = value; }
+            public float pacejkaShapeLat { get => m_pacejkaShapeLat; set => m_pacejkaShapeLat = value; }
+            public float pacejkaCurveLat { get => m_pacejkaCurveLat; set => m_pacejkaCurveLat = value; }
 
             public float longFrictionCoeff => m_longFrictionCoeff;
 
@@ -195,25 +217,31 @@ namespace Car.Data
 
             public LayerMask raycastLayer => m_raycastLayer;
 
-            public float wheelRadius => m_wheelRadius;
+            public float wheelRadius { get => m_wheelRadius; set => m_wheelRadius = value; }
 
-            public float longitudinalCoeff => m_longitudinalCoeff;
+            public float longitudinalCoeff { get => m_longitudinalCoeff; set => m_longitudinalCoeff = value; }
 
-            public float lateralCoeff => m_lateralCoeff;
+            public float lateralCoeff { get => m_lateralCoeff; set => m_lateralCoeff = value; }
 
-            public float camber => m_camber;
+            public float camber { get => m_camber; set => m_camber = value; }
 
-            public float caster => m_caster;
+            public float caster { get => m_caster; set => m_caster = value; }
 
-            public float restLength => m_restLength;
+            public float toe { get => m_toe; set => m_toe = value; }
 
-            public float suspensionStiffness => m_suspensionStiffness;
+            public float kingpinInclination { get => m_kingpinInclination; set => m_kingpinInclination = value; }
 
-            public float damperStiffness => m_damperStiffness;
+            public float camberCoeff { get => m_camberCoeff; set => m_camberCoeff = value; }
 
-            public float slipAnglePeak => m_slipAnglePeak;
+            public float restLength { get => m_restLength; set => m_restLength = value; }
 
-            public float relaxationLength => m_relaxationLength;
+            public float suspensionStiffness { get => m_suspensionStiffness; set => m_suspensionStiffness = value; }
+
+            public float damperStiffness { get => m_damperStiffness; set => m_damperStiffness = value; }
+
+            public float slipAnglePeak { get => m_slipAnglePeak; set => m_slipAnglePeak = value; }
+
+            public float relaxationLength { get => m_relaxationLength; set => m_relaxationLength = value; }
         }
         
         [Serializable]
@@ -248,7 +276,7 @@ namespace Car.Data
 
             public AnimationCurve brakeTorqueCurve => m_brakeTorqueCurve;
 
-            public float maxTorque => m_maxTorque;
+            public float maxTorque { get => m_maxTorque; set => m_maxTorque = value; }
 
             public List<float> brakeBias => m_brakeBias;
         }
@@ -263,9 +291,9 @@ namespace Car.Data
             [SerializeField]
             private float m_stiffnessRear;
 
-            public bool isEnabled => m_isEnabled;
-            public float stiffnessFront => m_stiffnessFront;
-            public float stiffnessRear => m_stiffnessRear;
+            public bool isEnabled { get => m_isEnabled; set => m_isEnabled = value; }
+            public float stiffnessFront { get => m_stiffnessFront; set => m_stiffnessFront = value; }
+            public float stiffnessRear { get => m_stiffnessRear; set => m_stiffnessRear = value; }
         }
     }
 }

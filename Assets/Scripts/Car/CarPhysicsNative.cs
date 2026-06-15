@@ -63,7 +63,12 @@ namespace Car
             // Pacejka Magic Formula shape parameters (must match CP_WheelInfo order).
             public float longSlipPeak, pacejkaShapeLong, pacejkaCurveLong,
                          pacejkaShapeLat, pacejkaCurveLat;
+            // Alignment (first-order). Must match CP_WheelInfo tail order.
+            public float toe, kingpinInclination, camberCoeff;
         }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct AntirollBarInfo { public int isEnabled; public float stiffnessFront, stiffnessRear; }
 
         [StructLayout(LayoutKind.Sequential)]
         private struct CarConfig
@@ -76,6 +81,7 @@ namespace Car
             public SteeringInfo steering;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount, ArraySubType = UnmanagedType.Struct)]
             public WheelInfo[] wheels;
+            public AntirollBarInfo antiroll;
             public float wheelBase, rearTrack;
         }
 
@@ -132,6 +138,7 @@ namespace Car
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount)] public float[] slipForceLat;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount)] public float[] normalizedTireMagnitude;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount)] public float[] fx;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount)] public float[] fy;
         }
 
         // ----- exported entry points -----
@@ -202,6 +209,12 @@ namespace Car
                         correctionSpeed = desc.steeringInfo.correctionSpeed,
                     },
                     wheels = new WheelInfo[WheelCount],
+                    antiroll = new AntirollBarInfo
+                    {
+                        isEnabled = desc.antirollBarInfo.isEnabled ? 1 : 0,
+                        stiffnessFront = desc.antirollBarInfo.stiffnessFront,
+                        stiffnessRear = desc.antirollBarInfo.stiffnessRear,
+                    },
                     wheelBase = wheelBase,
                     rearTrack = rearTrack,
                 };
@@ -228,6 +241,9 @@ namespace Car
                         pacejkaCurveLong = w.pacejkaCurveLong,
                         pacejkaShapeLat = w.pacejkaShapeLat,
                         pacejkaCurveLat = w.pacejkaCurveLat,
+                        toe = w.toe,
+                        kingpinInclination = w.kingpinInclination,
+                        camberCoeff = w.camberCoeff,
                     };
                 }
 

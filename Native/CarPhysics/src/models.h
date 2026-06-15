@@ -215,6 +215,7 @@ public:
                 float suspensionForce);
 
     float fx() const { return m_fx; }
+    float fy() const { return m_fy; }   /* lateral tire force (after combined-slip scaling) */
     float normalizedMagnitude() const { return m_normalizedMagnitude; }
 
 private:
@@ -222,6 +223,7 @@ private:
     float m_bLong = 0.0f;   /* derived Pacejka stiffness factors */
     float m_bLat = 0.0f;
     float m_fx = 0.0f;
+    float m_fy = 0.0f;
     float m_normalizedMagnitude = 0.0f;
 };
 

@@ -28,6 +28,17 @@ namespace Car
 		private float[] m_raycastDistance;
 		private int[] m_raycastMask;
 
+		// cached wheel alignment (degrees), applied to the root / visual each tick
+		private readonly float[] m_wheelToe = new float[WheelCount];
+		private readonly float[] m_wheelCamber = new float[WheelCount];
+		private readonly float[] m_wheelCaster = new float[WheelCount];
+
+		// base visual scale / radius captured at init, so editing wheelRadius can
+		// rescale the wheel meshes proportionally.
+		private Vector3[] m_baseWheelScale;
+		private float[] m_baseRadius;
+		private bool m_rebuildRequested;
+
 		private CarPhysicsNative.WheelInput m_wheelInput;
 		private CarPhysicsNative.WheelOutput m_wheelOutput;
 		private CarPhysicsNative.DrivetrainOutput m_drivetrainOutput;
@@ -56,11 +67,41 @@ namespace Car
 		public IReadOnlyList<Vector2> slipForces => m_slipForces;
 		public IReadOnlyList<Vector3> linearVelocities => m_linearVelocities;
 
+		/// <summary>Per-wheel snapshot for the debug HUD / graphs / 3D force overlay.</summary>
+		public struct WheelTelemetry
+		{
+			public float slipRatio;        // longitudinal, dimensionless
+			public float slipAngleDeg;     // lateral, degrees
+			public float fx;               // longitudinal tire force, N
+			public float fy;               // lateral tire force, N
+			public float fz;               // normal (suspension) force, N
+			public float normalizedMag;    // 0..1 skid intensity (friction-ellipse usage)
+			public float suspensionLength; // current suspension length, m
+			public float suspensionVel;    // compression rate (>0 = compressing), m/s
+			public float angularVelocity;  // wheel spin, rad/s
+			public bool  grounded;
+			public Vector3 contactPoint;    // world
+			public Vector3 contactNormal;   // world
+			public Vector3 wheelForward;    // world (after steering)
+			public Vector3 wheelRight;      // world
+			public Vector3 wheelUp;         // world
+		}
+
+		private WheelTelemetry[] m_telemetry = new WheelTelemetry[WheelCount];
+		private float[] m_lastSuspensionLength = new float[WheelCount];
+		private CarDesc m_desc;
+
+		/// <summary>Live per-wheel telemetry, index 0=FL 1=FR 2=RL 3=RR.</summary>
+		public IReadOnlyList<WheelTelemetry> telemetry => m_telemetry;
+		/// <summary>The descriptor this car was built from (Pacejka params, geometry, ...).</summary>
+		public CarDesc desc => m_desc;
+
 		public void Initialize(CarDesc desc, Rigidbody rb, IList<Transform> wheelRoots,
 			IList<Transform> wheelVisuals, InputManager input)
 		{
 			m_rb = rb;
 			m_input = input;
+			m_desc = desc;
 			engineMaxRpm = desc.engineInfo.engineMaxRpm;
 
 			m_wheelRoots = new Transform[WheelCount];
@@ -68,25 +109,23 @@ namespace Car
 			m_rotationParts = new Transform[WheelCount];
 			m_raycastDistance = new float[WheelCount];
 			m_raycastMask = new int[WheelCount];
+			m_baseWheelScale = new Vector3[WheelCount];
+			m_baseRadius = new float[WheelCount];
 			for (int i = 0; i < WheelCount; i++)
 			{
 				m_wheelRoots[i] = wheelRoots[i];
 				m_wheelVisuals[i] = wheelVisuals[i];
 				m_rotationParts[i] = wheelVisuals[i].GetChild(0);
-				var w = desc.wheelInfos[i];
-				m_raycastDistance[i] = w.restLength + w.wheelRadius;
-				m_raycastMask[i] = w.raycastLayer.value;
+				m_raycastMask[i] = desc.wheelInfos[i].raycastLayer.value;
+				m_baseWheelScale[i] = m_rotationParts[i].localScale;
+				m_baseRadius[i] = Mathf.Max(1e-3f, desc.wheelInfos[i].wheelRadius);
 			}
 
-			float wheelBase = Vector3.Distance(wheelRoots[0].position, wheelRoots[2].position);
-			float rearTrack = Vector3.Distance(wheelRoots[2].position, wheelRoots[3].position);
+			CacheAlignment();
+			ApplyTrackWidth(desc);   // 0 track = keep the prefab layout untouched
+			ApplyWheelRadius();      // scales wheel meshes + fills m_raycastDistance
 
-			m_sim = CarPhysicsNative.Create(desc, wheelBase, rearTrack);
-			if (m_sim == IntPtr.Zero)
-			{
-				Debug.LogError("CarPhysics: failed to create native simulation.");
-				return;
-			}
+			if (!CreateSim()) return;
 
 			m_wheelInput.wheels = new CarPhysicsNative.WheelState[WheelCount];
 
@@ -109,6 +148,7 @@ namespace Car
 		private void FixedUpdate()
 		{
 			m_marker.Begin();
+			if (m_rebuildRequested) Rebuild();
 			if (m_sim == IntPtr.Zero) return;
 
 			float dt = Time.fixedDeltaTime;
@@ -128,9 +168,11 @@ namespace Car
 
 			CarPhysicsNative.carsim_update_drivetrain(m_sim, ref dIn, out m_drivetrainOutput);
 
-			// 2. apply steering to wheel roots, neutral-gear body torque
+			// 2. apply steering (+ static toe) to wheel roots; neutral-gear body torque.
+			//    Toe goes on the root so slip / tire forces follow the toed direction.
 			for (int i = 0; i < WheelCount; i++)
-				m_wheelRoots[i].localRotation = Quaternion.Euler(0f, m_drivetrainOutput.steerAngles[i], 0f);
+				m_wheelRoots[i].localRotation =
+					Quaternion.Euler(0f, m_drivetrainOutput.steerAngles[i] + m_wheelToe[i], 0f);
 			if (m_drivetrainOutput.applyNeutralTorque != 0)
 				m_rb.AddTorque(m_drivetrainOutput.neutralBodyTorque.ToUnity());
 
@@ -170,7 +212,10 @@ namespace Car
 
 				m_wheelVisuals[i].position = m_wheelOutput.visualPosition[i].ToUnity();
 				m_rotationParts[i].localRotation = Quaternion.Euler(m_wheelOutput.spinEulerX[i], 0f, 0f);
-				m_wheelVisuals[i].localRotation = Quaternion.Euler(0f, m_wheelOutput.steerEulerY[i], 0f);
+				// camber leans the wheel about its forward axis (Z). Static camber
+				// also drives camber thrust inside the DLL; this is the matching visual.
+				m_wheelVisuals[i].localRotation =
+					Quaternion.Euler(0f, m_wheelOutput.steerEulerY[i], m_wheelCamber[i]);
 
 				if (m_skidSources != null && m_skidSources[i] != null)
 					m_skidSources[i].volume = Mathf.Clamp01(Mathf.Abs(m_wheelOutput.normalizedTireMagnitude[i]));
@@ -188,6 +233,7 @@ namespace Car
 			clutchTorque = m_drivetrainOutput.clutchTorque;
 			currentGear = m_drivetrainOutput.currentGear;
 
+			float dt = Time.fixedDeltaTime;
 			for (int i = 0; i < WheelCount; i++)
 			{
 				m_suspensionForces[i] = m_wheelOutput.suspensionForce[i];
@@ -195,6 +241,103 @@ namespace Car
 				m_slipAngles[i] = m_wheelOutput.slipAngle[i];
 				m_slipForces[i] = new Vector2(m_wheelOutput.slipForceLong[i], m_wheelOutput.slipForceLat[i]);
 				m_linearVelocities[i] = m_wheelOutput.linearVelocity[i].ToUnity();
+
+				float len = m_wheelOutput.currentLength[i];
+				Transform root = m_wheelRoots[i];
+				m_telemetry[i] = new WheelTelemetry
+				{
+					slipRatio = m_wheelOutput.slipForceLong[i],
+					slipAngleDeg = m_wheelOutput.slipForceLat[i],
+					fx = m_wheelOutput.fx[i],
+					fy = m_wheelOutput.fy != null ? m_wheelOutput.fy[i] : 0f,
+					fz = m_wheelOutput.suspensionForce[i],
+					normalizedMag = m_wheelOutput.normalizedTireMagnitude[i],
+					suspensionLength = len,
+					suspensionVel = (m_lastSuspensionLength[i] - len) / Mathf.Max(dt, 1e-5f),
+					angularVelocity = m_wheelOutput.angularVelocity[i],
+					grounded = m_wheelInput.wheels[i].hit != 0,
+					contactPoint = m_wheelInput.wheels[i].hitPoint.ToUnity(),
+					contactNormal = m_wheelInput.wheels[i].hitNormal.ToUnity(),
+					wheelForward = root.forward,
+					wheelRight = root.right,
+					wheelUp = root.up,
+				};
+				m_lastSuspensionLength[i] = len;
+			}
+		}
+
+		/// <summary>Request a live rebuild of the native sim from the current CarDesc
+		/// (used by the runtime tuning editor). Applied at the next FixedUpdate.</summary>
+		public void RequestRebuild() => m_rebuildRequested = true;
+
+		private void Rebuild()
+		{
+			m_rebuildRequested = false;
+			if (m_sim != IntPtr.Zero)
+			{
+				CarPhysicsNative.carsim_destroy(m_sim);
+				m_sim = IntPtr.Zero;
+			}
+			engineMaxRpm = m_desc.engineInfo.engineMaxRpm;
+			CacheAlignment();
+			ApplyTrackWidth(m_desc);
+			ApplyWheelRadius();
+			CreateSim();
+		}
+
+		private bool CreateSim()
+		{
+			float wheelBase = Vector3.Distance(m_wheelRoots[0].position, m_wheelRoots[2].position);
+			float rearTrack = Vector3.Distance(m_wheelRoots[2].position, m_wheelRoots[3].position);
+			m_sim = CarPhysicsNative.Create(m_desc, wheelBase, rearTrack);
+			if (m_sim == IntPtr.Zero)
+			{
+				Debug.LogError("CarPhysics: failed to create native simulation.");
+				return false;
+			}
+			return true;
+		}
+
+		/// <summary>Caches per-wheel toe/camber/caster (signed per side) for the
+		/// per-tick wheel-root and visual orientation.</summary>
+		private void CacheAlignment()
+		{
+			for (int i = 0; i < WheelCount; i++)
+			{
+				var w = m_desc.wheelInfos[i];
+				float side = (i % 2 == 0) ? -1f : 1f;   // even = left, odd = right
+				m_wheelToe[i] = -side * w.toe;           // toe-in: noses point inward
+				m_wheelCamber[i] = side * w.camber;       // visual lean
+				m_wheelCaster[i] = w.caster;
+			}
+		}
+
+		/// <summary>Scales the wheel meshes to the configured radius and refreshes
+		/// the suspension raycast lengths.</summary>
+		private void ApplyWheelRadius()
+		{
+			for (int i = 0; i < WheelCount; i++)
+			{
+				var w = m_desc.wheelInfos[i];
+				m_raycastDistance[i] = w.restLength + w.wheelRadius;
+				if (m_baseWheelScale != null && m_baseRadius != null)
+					m_rotationParts[i].localScale = m_baseWheelScale[i] * (w.wheelRadius / m_baseRadius[i]);
+			}
+		}
+
+		/// <summary>Sets each wheel root's lateral offset from the configured track
+		/// widths (distance between the struts). A track of 0 leaves the prefab
+		/// layout untouched.</summary>
+		private void ApplyTrackWidth(CarDesc desc)
+		{
+			for (int i = 0; i < WheelCount; i++)
+			{
+				float track = (i < 2) ? desc.trackFront : desc.trackRear;
+				if (track <= 0f) continue;
+				float side = (i % 2 == 0) ? -1f : 1f;   // even = left, odd = right
+				Vector3 lp = m_wheelRoots[i].localPosition;
+				lp.x = side * track * 0.5f;
+				m_wheelRoots[i].localPosition = lp;
 			}
 		}
 

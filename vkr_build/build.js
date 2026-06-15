@@ -27,6 +27,27 @@ const REPLACEMENTS = [
   ["процессора Ryzen 7 700", "процессора AMD Ryzen 7 7700"],
   ["приведено в таблице 1.2", "приведено в таблице 1.1"],
   ["(таблица 1.1)", "(таблица 1.2)"],
+
+  // --- ссылки на источники [N] (порядок номеров — по первому упоминанию) ---
+  ["модель Фиалы (Fiala) и модель Дугоффа (Dugoff).", "модель Фиалы (Fiala) и модель Дугоффа (Dugoff) [1, 2]."],
+  ["её адекватное воспроизведение принципиально важно.", "её адекватное воспроизведение принципиально важно [3]."],
+  ["что характеризуется длиной релаксации.", "что характеризуется длиной релаксации [1]."],
+  ["наиболее физически обоснованных аналитических моделей покрышки.", "наиболее физически обоснованных аналитических моделей покрышки [4]."],
+  ["совместно с компанией Volvo Car.", "совместно с компанией Volvo Car [1]."],
+  ["так и переходных режимов нагружения покрышки.", "так и переходных режимов нагружения покрышки [5]."],
+  ["простейшими линейными приближениями и детализированными физическими моделями.", "простейшими линейными приближениями и детализированными физическими моделями [6]."],
+  ["где она реализована как стандартная опция.", "где она реализована как стандартная опция [7]."],
+  ["продольных и боковых сил шины в комбинированном режиме нагружения.", "продольных и боковых сил шины в комбинированном режиме нагружения [8]."],
+  ["реализующий реалистичную модель покрышки на основе формулы Пасейки.", "реализующий реалистичную модель покрышки на основе формулы Пасейки [9]."],
+  ["уступающую по реализму полноценной модели Пасейки.", "уступающую по реализму полноценной модели Пасейки [10]."],
+  ["с поддержкой моделей покрышки, в том числе модели Пасейки.", "с поддержкой моделей покрышки, в том числе модели Пасейки [11, 12]."],
+  ["является ключевым элементом реалистичности симуляции.", "является ключевым элементом реалистичности симуляции [13]."],
+  ["реализована независимая подвеска типа МакФерсон.", "реализована независимая подвеска типа МакФерсон [14]."],
+  ["определяются из геометрии Аккермана:", "определяются из геометрии Аккермана [15]:"],
+  ["с учётом внутреннего трения и инерционности.", "с учётом внутреннего трения и инерционности [16]."],
+  ["механизм FFI в различных языках и аналогичные средства.", "механизм FFI в различных языках и аналогичные средства [17]."],
+  ["для которой существует соответствующий компилятор.", "для которой существует соответствующий компилятор [18]."],
+  ["вызова функций неуправляемых библиотек через механизм P/Invoke.", "вызова функций неуправляемых библиотек через механизм P/Invoke [19]."],
 ];
 function improve(line) {
   let s = line;
@@ -36,11 +57,21 @@ function improve(line) {
 
 /* ---------- помощники абзацев ---------- */
 function body(text) {
-  const noIndent = text.startsWith("где ") || text.startsWith("где,");
+  const noIndent = /^(где|Здесь)\b/.test(text);
   return new Paragraph({
     alignment: AlignmentType.JUSTIFIED,
     spacing: { line: LINE, after: 0 },
     indent: { firstLine: noIndent ? 0 : INDENT },
+    children: [new TextRun({ text, font: FONT, size: SZ })],
+  });
+}
+
+// строка экспликации формулы (переменная — пояснение), без абзацного отступа
+function explico(text) {
+  return new Paragraph({
+    alignment: AlignmentType.JUSTIFIED,
+    spacing: { line: LINE, after: 0 },
+    indent: { firstLine: 0 },
     children: [new TextRun({ text, font: FONT, size: SZ })],
   });
 }
@@ -157,8 +188,8 @@ function gostTable(caption, headers, rows, widths) {
 }
 
 const TABLES = {
-  "Признак": gostTable(
-    "Таблица 1.1 — Сопоставление программных решений автомобильной физики",
+  "@@T1@@": gostTable(
+    "Таблица 1.1 – Сопоставление программных решений автомобильной физики",
     ["Признак", "VPP", "PhysX", "Chrono", "Модуль"],
     [
       ["Открытый код", "нет", "частично", "да", "да"],
@@ -168,8 +199,8 @@ const TABLES = {
       ["Реальное время", "да", "да", "нет", "да"],
     ],
     [3355, 1500, 1500, 1500, 1500]),
-  "Критерий": gostTable(
-    "Таблица 1.2 — Сравнение математических моделей покрышки",
+  "@@T2@@": gostTable(
+    "Таблица 1.2 – Сравнение математических моделей покрышки",
     ["Критерий", "Пасейка", "Щёточная", "Фиала", "Дугофф"],
     [
       ["Точность", "высокая", "средняя", "средняя", "средняя"],
@@ -179,8 +210,8 @@ const TABLES = {
       ["Требования к данным", "высокие", "низкие", "низкие", "низкие"],
     ],
     [2755, 1650, 1650, 1650, 1650]),
-  "Частота, Гц": gostTable(
-    "Таблица 4.1 — Затраты времени на расчёт физики при различных частотах обновления",
+  "@@T3@@": gostTable(
+    "Таблица 4.1 – Затраты времени на расчёт физики при различных частотах обновления",
     ["Частота, Гц", "Шаг, мс", "Время расчёта, мс", "Доля кадра, %"],
     [
       ["100", "10", "≈ 0,005", "0,03"],
@@ -190,48 +221,98 @@ const TABLES = {
     ],
     [2339, 2339, 2339, 2338]),
 };
-const TABLE_SKIP_UNTIL = {
-  "Признак": "Таблица 1.2",
-  "Критерий": "Таблица 1.1",
-  "Частота, Гц": "Таблица 4.1",
-};
+/* ---------- титульный лист (по образцу КубГУ) ---------- */
+const YEAR = "2026";
 
-/* ---------- титульный лист ---------- */
 function tline(text, opts = {}) {
   return new Paragraph({
     alignment: AlignmentType.CENTER,
     spacing: { line: 240, after: opts.after ?? 0, before: opts.before ?? 0 },
-    children: [new TextRun({ text, font: FONT, size: opts.size ?? SZ, bold: !!opts.bold, allCaps: !!opts.caps })],
+    children: [new TextRun({ text, font: FONT, size: opts.size ?? SZ, bold: !!opts.bold })],
   });
 }
-function sigLine(label, name) {
+function tleft(text, opts = {}) {
   return new Paragraph({
-    spacing: { line: 240, before: 160 },
-    tabStops: [{ type: TabStopType.RIGHT, position: CW }],
-    children: [new TextRun({ text: label + "\t" + name, font: FONT, size: SZ })],
+    alignment: AlignmentType.LEFT,
+    spacing: { line: 240, after: opts.after ?? 0, before: opts.before ?? 0 },
+    indent: { left: opts.indent ?? 0 },
+    children: [new TextRun({ text, font: FONT, size: SZ, bold: !!opts.bold })],
   });
 }
+// строка подписи: «роль ______ И.О. Фамилия» + подпись по центру линии
+function sigRow(label, name, opts = {}) {
+  const dash = "______________________";
+  return [
+    new Paragraph({
+      spacing: { line: 240, before: opts.before ?? 160 },
+      tabStops: [{ type: TabStopType.RIGHT, position: CW }],
+      children: [new TextRun({ text: label + " " + dash + "\t" + name, font: FONT, size: SZ })],
+    }),
+    new Paragraph({
+      spacing: { line: 200, after: opts.after ?? 60 },
+      indent: { left: 2900 },
+      children: [new TextRun({ text: "(подпись)", font: FONT, size: 22 })],
+    }),
+  ];
+}
+
 function titlePage() {
   return [
-    tline("Министерство науки и высшего образования Российской Федерации"),
+    tline("МИНИСТЕРСТВО НАУКИ И ВЫСШЕГО ОБРАЗОВАНИЯ РОССИЙСКОЙ ФЕДЕРАЦИИ"),
     tline("Федеральное государственное бюджетное образовательное учреждение"),
     tline("высшего образования"),
-    tline("«Кубанский государственный университет»", { bold: true, after: 120 }),
-    tline("Факультет компьютерных технологий и прикладной математики"),
-    tline("Кафедра прикладной математики", { after: 480 }),
+    tline("«КУБАНСКИЙ ГОСУДАРСТВЕННЫЙ УНИВЕРСИТЕТ»", { bold: true }),
+    tline("(ФГБОУ ВО «КубГУ»)", { bold: true, after: 360 }),
+    tline("Факультет компьютерных технологий и прикладной математики", { bold: true }),
+    tline("Кафедра прикладной математики", { bold: true, after: 480 }),
+    tleft("Допустить к защите", { indent: 4600 }),
+    tleft("Заведующий кафедрой", { indent: 4600 }),
+    tleft("_________________________", { indent: 4600, before: 60 }),
+    new Paragraph({ spacing: { line: 200 }, indent: { left: 6100 }, children: [new TextRun({ text: "(подпись)", font: FONT, size: 22 })] }),
+    tleft("«___» ____________ " + YEAR + " г.", { indent: 4600, before: 60, after: 600 }),
     tline("ВЫПУСКНАЯ КВАЛИФИКАЦИОННАЯ РАБОТА", { bold: true }),
-    tline("(МАГИСТЕРСКАЯ ДИССЕРТАЦИЯ)", { bold: true, after: 360 }),
+    tline("(МАГИСТЕРСКАЯ РАБОТА)", { bold: true, after: 300 }),
     tline("РАЗРАБОТКА КРОСС-ПЛАТФОРМЕННОГО МОДУЛЯ", { bold: true }),
     tline("АВТОМОБИЛЬНОЙ СИМУЛЯЦИИ НА ОСНОВЕ", { bold: true }),
-    tline("ДИНАМИЧЕСКОЙ БИБЛИОТЕКИ C++", { bold: true, after: 480 }),
-    sigLine("Работу выполнил _________________________", "А.А. Мирошниченко"),
-    new Paragraph({ spacing: { line: 240 }, children: [new TextRun({ text: "Направление подготовки 01.04.02 Прикладная математика и информатика", font: FONT, size: SZ })] }),
-    sigLine("Научный руководитель", ""),
-    new Paragraph({ spacing: { line: 240 }, children: [new TextRun({ text: "_________________________________________________", font: FONT, size: SZ })] }),
-    sigLine("Нормоконтролёр", ""),
-    new Paragraph({ spacing: { line: 240, after: 720 }, children: [new TextRun({ text: "_________________________________________________", font: FONT, size: SZ })] }),
+    tline("ДИНАМИЧЕСКОЙ БИБЛИОТЕКИ C++", { bold: true, after: 600 }),
+    ...sigRow("Работу выполнил", "А.А. Мирошниченко", { before: 0 }),
+    tleft("Направление подготовки 01.04.02 Прикладная математика и информатика", { before: 120 }),
+    tleft("Направленность Математическое моделирование в естествознании и технологиях", { before: 120, after: 60 }),
+    tleft("Научный руководитель,", { before: 120 }),
+    tleft("(уч. степень, уч. звание)"),
+    ...sigRow("", "________________________", { before: 20 }),
+    tleft("Нормоконтролёр,", { before: 120 }),
+    tleft("(уч. степень, уч. звание)"),
+    ...sigRow("", "________________________", { before: 20 }),
     tline("Краснодар", { before: 480 }),
-    tline("2025"),
+    tline(YEAR),
+  ];
+}
+
+/* ---------- РЕФЕРАТ ---------- */
+const TOTAL_PAGES = "76"; // общее число страниц (после финального рендера)
+
+function referatBlock() {
+  const kw = "АВТОМОБИЛЬНЫЙ СИМУЛЯТОР, ДИНАМИКА АВТОМОБИЛЯ, МОДЕЛЬ ПОКРЫШКИ, ФОРМУЛА ПАСЕЙКИ, ЭЛЛИПС ТРЕНИЯ, КРОСС-ПЛАТФОРМЕННАЯ БИБЛИОТЕКА, ДИНАМИЧЕСКАЯ БИБЛИОТЕКА, C-ABI, ЧИСЛЕННОЕ ИНТЕГРИРОВАНИЕ, C++, UNITY";
+  const rp = (text) => new Paragraph({
+    alignment: AlignmentType.JUSTIFIED,
+    spacing: { line: 240, after: 0 },
+    indent: { firstLine: INDENT },
+    children: [new TextRun({ text, font: FONT, size: SZ })],
+  });
+  return [
+    new Paragraph({
+      pageBreakBefore: true,
+      alignment: AlignmentType.CENTER,
+      spacing: { line: 240, after: 120 },
+      children: [new TextRun({ text: "РЕФЕРАТ", font: FONT, size: SZ, bold: true })],
+    }),
+    rp("Выпускная квалификационная работа " + TOTAL_PAGES + " с., 3 табл., 19 источников, 4 прил."),
+    rp(kw),
+    rp("Цель работы: разработать кросс-платформенный модуль автомобильной симуляции в виде самостоятельной динамически подключаемой библиотеки на языке C++, обеспечивающий реалистичность поведения автомобиля при высокой вычислительной производительности и независимости от конкретного игрового движка."),
+    rp("В процессе работы изучены математические модели взаимодействия автомобильной покрышки с дорогой – модель Пасейки, щёточная модель, модели Фиалы и Дугоффа, методы численного интегрирования уравнений движения в реальном времени, а также принципы построения переносимых программных модулей и приёмы их интеграции в игровые движки через двоичный интерфейс языка C."),
+    rp("В практической части спроектирована и реализована динамически подключаемая библиотека автомобильной физики на языке C++ с программным интерфейсом на основе чистого C-ABI; реализованы модели покрышки, независимой подвески, рулевого управления, дифференциала, двигателя и коробки передач; для устойчивости расчёта применена неявная схема интегрирования угловой скорости колеса, а для физически достоверного нарастания боковой силы введён динамический угол скольжения. Выполнена тестовая интеграция модуля в игровой движок Unity и проведена оценка производительности и корректности работы модели."),
+    rp("Средства разработки: язык программирования C++, язык программирования C#, игровой движок Unity, технология вызова неуправляемого кода P/Invoke."),
   ];
 }
 
@@ -273,16 +354,12 @@ function parseBody() {
   let state = "preface"; // preface -> skipToc -> body
   let refsMode = false;
   let expectTasks = false;
-  let skipUntilPrefix = null;
+  let inExpl = false; // внутри экспликации формулы («где ...»)
 
   for (let i = 0; i < lines.length; i++) {
     let line = lines[i].trim();
     if (line === "") continue;
 
-    if (skipUntilPrefix) {
-      if (line.startsWith(skipUntilPrefix)) skipUntilPrefix = null;
-      continue;
-    }
     if (state === "preface") {
       if (line === "СОДЕРЖАНИЕ") { out.push(...tocBlock()); state = "skipToc"; }
       continue;
@@ -293,13 +370,9 @@ function parseBody() {
     }
 
     // --- тело ---
-    if (TABLES[line]) {
-      out.push(...TABLES[line]);
-      skipUntilPrefix = TABLE_SKIP_UNTIL[line];
-      continue;
-    }
+    if (TABLES[line]) { out.push(...TABLES[line]); inExpl = false; continue; }
     if (line === "ВВЕДЕНИЕ") { out.push(h1struct("Введение")); continue; }
-    if (line === "ЗАКЛЮЧЕНИЕ") { out.push(h1struct("Заключение")); continue; }
+    if (line === "ЗАКЛЮЧЕНИЕ") { out.push(h1struct("Заключение")); inExpl = false; continue; }
     if (line === "СПИСОК ИСПОЛЬЗОВАННЫХ ИСТОЧНИКОВ") {
       out.push(h1struct("Список использованных источников"));
       refsMode = true;
@@ -307,11 +380,19 @@ function parseBody() {
     }
     if (refsMode) { out.push(refItem(line)); continue; }
 
-    if (/^\d+\.\d+\s+\S/.test(line)) { out.push(h2(line)); expectTasks = false; continue; }
-    if (/^[1-4]\s+[А-ЯЁ]/.test(line)) { out.push(h1chapter(line)); expectTasks = false; continue; }
+    if (/^\d+\.\d+\s+\S/.test(line)) { out.push(h2(line)); expectTasks = false; inExpl = false; continue; }
+    if (/^[1-4]\s+[А-ЯЁ]/.test(line)) { out.push(h1chapter(line)); expectTasks = false; inExpl = false; continue; }
 
     const fm = line.match(/^(.*?)\s*(\([0-9]+\.[0-9]+\))\s*$/);
-    if (fm && /[=←]/.test(fm[1])) { out.push(formula(fm[1].trim(), fm[2])); continue; }
+    if (fm && /[=←]/.test(fm[1])) { out.push(formula(fm[1].trim(), fm[2])); inExpl = false; continue; }
+
+    // экспликация переменных формулы: «где» отдельной строкой, далее «X – пояснение;»
+    if (line === "где") { out.push(body("где")); inExpl = true; continue; }
+    if (inExpl) {
+      const d = line.indexOf(" – ");
+      if (d >= 0 && d < 30) { out.push(explico(line)); continue; }
+      inExpl = false;
+    }
 
     line = improve(line);
 
@@ -432,6 +513,7 @@ const doc = new Document({
     },
     children: [
       ...titlePage(),
+      ...referatBlock(),
       ...parseBody(),
       ...appendices(),
     ],
@@ -439,7 +521,7 @@ const doc = new Document({
 });
 
 Packer.toBuffer(doc).then(buf => {
-  const out = path.join(ROOT, "МирошниченкоВКРМагистратура_ГОСТ.docx");
+  const out = path.join(ROOT, "МирошниченкоВКРМагистратура_ГОСТ_итог.docx");
   fs.writeFileSync(out, buf);
   console.log("WROTE", out, buf.length, "bytes");
 });

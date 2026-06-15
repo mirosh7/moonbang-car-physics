@@ -282,6 +282,11 @@ Vec3 TireWheel::update(const CP_WheelState& w, float slipRatio, float slipAngleR
     float fx0 = magicFormula(slipRatio,    m_bLong, m_info.pacejkaShapeLong, dLong, m_info.pacejkaCurveLong);
     float fy0 = magicFormula(slipAngleRad, m_bLat,  m_info.pacejkaShapeLat,  dLat,  m_info.pacejkaCurveLat);
 
+    // Camber thrust: a lateral force the tire makes from leaning, even at zero
+    // slip angle. First-order: Fy_camber = camberCoeff * sin(camber) * Fz. Added
+    // to the lateral demand so it is limited by the same friction ellipse below.
+    fy0 += m_info.camberCoeff * std::sin(m_info.camber * DEG2RAD) * suspensionForce;
+
     // Combined slip: keep the resultant inside the friction ellipse so the tire
     // cannot deliver more than its limit when slipping in both directions.
     float gx = dLong > 1e-4f ? fx0 / dLong : 0.0f;
@@ -290,12 +295,12 @@ Vec3 TireWheel::update(const CP_WheelState& w, float slipRatio, float slipAngleR
     float scale = g > 1.0f ? 1.0f / g : 1.0f;
 
     m_fx = fx0 * scale;
-    float fY = fy0 * scale;
+    m_fy = fy0 * scale;
 
     // Skid intensity: how close the tire is to (or beyond) its friction limit.
     m_normalizedMagnitude = clamp01(g);
 
-    return forwardProj * m_fx + sideProj * fY;  // force to add at hitPoint
+    return forwardProj * m_fx + sideProj * m_fy;  // force to add at hitPoint
 }
 
 /* ------------------------------------------------------------------ visual */

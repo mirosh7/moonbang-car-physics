@@ -41,7 +41,7 @@ public class RaceCarState : MonoBehaviour
     private void Start()
     {
         m_inputManager = InputManager.instance;
-        m_carBuilder = new CarBuilder(m_carDesc, "jeep", "jeepWheel");
+        m_carBuilder = new CarBuilder(m_carDesc, "porsche", "porscheWheel");
         ResetCar();
         CreateModels();
         CreateControllers();

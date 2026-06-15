@@ -33,6 +33,10 @@ private:
 
     /* steer angles produced by the drivetrain phase, consumed by visuals */
     float m_steerAngles[CARSIM_WHEEL_COUNT] = { 0 };
+
+    /* chassis config kept for the wheel phase */
+    CP_AntirollBarInfo m_antiroll{};
+    float m_restLength[CARSIM_WHEEL_COUNT] = { 0 };
 };
 
 } // namespace carsim

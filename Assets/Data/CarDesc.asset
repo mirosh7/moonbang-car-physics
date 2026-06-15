@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 976adcad29a84397ac125e708478a92e, type: 3}
   m_Name: CarDesc
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   m_engineInfo:
     m_torqueCurve:
       serializedVersion: 2
@@ -65,29 +65,29 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     m_engineOrientation: {x: 0, y: 0, z: 0}
-    m_engineIdleRpm: 800
-    m_engineMaxRpm: 9500
+    m_engineIdleRpm: 900
+    m_engineMaxRpm: 7000
     m_engineMul: 1
     m_engineFrictionCoefficient: 0.04
     m_startFriction: 1.19
     m_engineInertia: 0.2
   m_gearboxInfo:
     m_gearBoxRatios:
-    - -3.55
+    - -2.857
     - 0
-    - 3.483
-    - 2.015
-    - 1.391
-    - 1
-    - 0.719
-    m_shiftTime: 0.01
+    - 3.154
+    - 1.789
+    - 1.269
+    - 0.967
+    - 0.756
+    m_shiftTime: 0.05
   m_clutchInfo:
     m_clutchStiffness: 30
     m_clutchCapacity: 1.3
     m_clutchDamping: 0.903
   m_differentialInfo:
     m_isDiffLocked: 1
-    m_differentialRatio: 4
+    m_differentialRatio: 3.44
   m_brakesInfo:
     m_brakeTorqueCurve:
       serializedVersion: 2
@@ -113,24 +113,27 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    m_maxTorque: 2000
+    m_maxTorque: 2200
     m_brakeBias:
-    - 0.7
+    - 0.65
     - 1
   m_wheelInfos:
   - m_restLength: 0.6
-    m_suspensionStiffness: 50000
-    m_damperStiffness: 1500
-    m_slipAnglePeak: 15
-    m_camber: 0
-    m_caster: 0
+    m_suspensionStiffness: 52000
+    m_damperStiffness: 1600
+    m_slipAnglePeak: 14
+    m_camber: -1.5
+    m_caster: 6
+    m_toe: 0.1
+    m_kingpinInclination: 8
+    m_camberCoeff: 0.6
     m_longitudinalCoeff: 1
     m_lateralCoeff: 1
-    m_wheelRadius: 0.33
+    m_wheelRadius: 0.31
     m_raycastLayer:
       serializedVersion: 2
       m_Bits: 8
-    m_wheelMass: 15
+    m_wheelMass: 14
     m_longFrictionCoeff: 1
     m_relaxationLength: 0.05
     m_longSlipPeak: 0.12
@@ -139,18 +142,21 @@ MonoBehaviour:
     m_pacejkaShapeLat: 1.35
     m_pacejkaCurveLat: 0.96
   - m_restLength: 0.6
-    m_suspensionStiffness: 50000
-    m_damperStiffness: 1500
-    m_slipAnglePeak: 15
-    m_camber: 0
-    m_caster: 0
+    m_suspensionStiffness: 52000
+    m_damperStiffness: 1600
+    m_slipAnglePeak: 14
+    m_camber: -1.5
+    m_caster: 6
+    m_toe: 0.1
+    m_kingpinInclination: 8
+    m_camberCoeff: 0.6
     m_longitudinalCoeff: 1
     m_lateralCoeff: 1
-    m_wheelRadius: 0.33
+    m_wheelRadius: 0.31
     m_raycastLayer:
       serializedVersion: 2
       m_Bits: 8
-    m_wheelMass: 15
+    m_wheelMass: 14
     m_longFrictionCoeff: 1
     m_relaxationLength: 0.05
     m_longSlipPeak: 0.12
@@ -159,18 +165,21 @@ MonoBehaviour:
     m_pacejkaShapeLat: 1.35
     m_pacejkaCurveLat: 0.96
   - m_restLength: 0.6
-    m_suspensionStiffness: 50000
-    m_damperStiffness: 1500
+    m_suspensionStiffness: 58000
+    m_damperStiffness: 1800
     m_slipAnglePeak: 15
-    m_camber: 0
+    m_camber: -2.5
     m_caster: 0
+    m_toe: 0.3
+    m_kingpinInclination: 0
+    m_camberCoeff: 0.6
     m_longitudinalCoeff: 1
-    m_lateralCoeff: 1
+    m_lateralCoeff: 1.1
     m_wheelRadius: 0.33
     m_raycastLayer:
       serializedVersion: 2
       m_Bits: 8
-    m_wheelMass: 15
+    m_wheelMass: 16
     m_longFrictionCoeff: 1
     m_relaxationLength: 0.05
     m_longSlipPeak: 0.12
@@ -179,18 +188,21 @@ MonoBehaviour:
     m_pacejkaShapeLat: 1.35
     m_pacejkaCurveLat: 0.96
   - m_restLength: 0.6
-    m_suspensionStiffness: 50000
-    m_damperStiffness: 1500
+    m_suspensionStiffness: 58000
+    m_damperStiffness: 1800
     m_slipAnglePeak: 15
-    m_camber: 0
+    m_camber: -2.5
     m_caster: 0
+    m_toe: 0.3
+    m_kingpinInclination: 0
+    m_camberCoeff: 0.6
     m_longitudinalCoeff: 1
-    m_lateralCoeff: 1
+    m_lateralCoeff: 1.1
     m_wheelRadius: 0.33
     m_raycastLayer:
       serializedVersion: 2
       m_Bits: 8
-    m_wheelMass: 15
+    m_wheelMass: 16
     m_longFrictionCoeff: 1
     m_relaxationLength: 0.05
     m_longSlipPeak: 0.12
@@ -204,6 +216,8 @@ MonoBehaviour:
     m_maxCorrectionAngle: 60
     m_correctionSpeed: 1
   m_antirollBarInfo:
-    m_isEnabled: 0
-    m_stiffnessFront: 10000
-    m_stiffnessRear: 10000
+    m_isEnabled: 1
+    m_stiffnessFront: 20000
+    m_stiffnessRear: 12000
+  m_trackFront: 1.45
+  m_trackRear: 1.52
