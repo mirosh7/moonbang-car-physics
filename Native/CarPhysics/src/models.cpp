@@ -115,13 +115,18 @@ void DifferentialModel::update(float inputTorque,
     if (!m_info.isLocked) {
         float vel = (m_angularVelocityL - m_angularVelocityR) * 0.5f / dt * m_wheelInertia;
         float base = inputTorque * 0.5f * m_info.ratio;
-        m_outputTorque[0] = base - vel;
-        m_outputTorque[1] = base + vel;
+        m_outputTorque[0] = 0;
+        m_outputTorque[1] = 0;
         m_outputTorque[2] = base - vel;
         m_outputTorque[3] = base + vel;
     } else {
         float base = inputTorque * m_info.ratio * 0.5f;
-        for (int i = 0; i < CARSIM_WHEEL_COUNT; ++i) m_outputTorque[i] = base;
+        for (int i = 0; i < CARSIM_WHEEL_COUNT; ++i) {
+            m_outputTorque[0] = 0;
+            m_outputTorque[1] = 0;
+            m_outputTorque[2] = base;
+            m_outputTorque[3] = base;
+        }
     }
 }
 

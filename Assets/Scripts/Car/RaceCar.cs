@@ -163,6 +163,8 @@ namespace Car
 				gearUp = m_gearUpRequested ? 1 : 0,
 				gearDown = m_gearDownRequested ? 1 : 0,
 			};
+			
+			m_rb.constraints = m_input.blockCar ? RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationY : RigidbodyConstraints.None;
 			m_gearUpRequested = false;
 			m_gearDownRequested = false;
 
@@ -307,7 +309,7 @@ namespace Car
 				var w = m_desc.wheelInfos[i];
 				float side = (i % 2 == 0) ? -1f : 1f;   // even = left, odd = right
 				m_wheelToe[i] = -side * w.toe;           // toe-in: noses point inward
-				m_wheelCamber[i] = side * w.camber;       // visual lean
+				m_wheelCamber[i] = -w.camber;       // visual lean
 				m_wheelCaster[i] = w.caster;
 			}
 		}

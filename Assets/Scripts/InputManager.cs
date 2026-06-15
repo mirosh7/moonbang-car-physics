@@ -23,6 +23,10 @@ public class InputManager : MonoBehaviour
 
 	public Action gearUp;
 	public Action gearDown;
+	public float clutch;
+	public float handbrake;
+
+	public bool blockCar = false;
 
 	private InputAction m_steeringAction;
 	private InputAction m_brakesAction;
@@ -31,18 +35,19 @@ public class InputManager : MonoBehaviour
 	private InputAction m_handBrakeAction;
 	private InputAction m_accelerationAction;
 	private InputAction m_rotationAction;
-	
+	private InputAction m_clutchAction;
+
 	private InputAction m_enableEditAction;
 
 	private string m_steeringActionName = "Steering";
 	private string m_brakesActionName = "Brakes";
 	private string m_gearUpActionName = "Gear Up";
 	private string m_gearDownActionName = "Gear Down";
-	private string m_handBrakeActionName = "Hand Brake";
+	private string m_handBrakeActionName = "HandBrake";
 	private string m_accelerationActionName = "Acceleration";
 	private string m_rotationActionName = "Rotation";
 
-	
+
 	private void Awake()
 	{
 		if (instance == null)
@@ -66,27 +71,32 @@ public class InputManager : MonoBehaviour
 			m_handBrakeAction = currentActionMap.FindAction(m_handBrakeActionName);
 			m_accelerationAction = currentActionMap.FindAction(m_accelerationActionName);
 			m_rotationAction = currentActionMap.FindAction(m_rotationActionName);
+			m_clutchAction = currentActionMap.FindAction("Clutch");
+			currentActionMap.Enable();
 		}
 
-		SetRaceActionMapActive(true);
 		var persistant = m_inputActionAsset.FindActionMap("General");
 		persistant.Enable();
 		m_enableEditAction = persistant.FindAction("Edit");
 		RegisterInputActions();
 	}
-	
+
 	private bool m_raceActionMapActive = true;
 
-	private void SetRaceActionMapActive(bool active)
+	private void SwitchActionMapActive()
 	{
+		m_raceActionMapActive = !m_raceActionMapActive;
+
 		var currentActionMap = m_inputActionAsset.FindActionMap(m_actionMapName);
 
-		if (active)
+		if (m_raceActionMapActive)
 		{
+			blockCar = false;
 			currentActionMap.Enable();
 		}
 		else
 		{
+			blockCar = true;
 			currentActionMap.Disable();
 		}
 	}
@@ -98,6 +108,9 @@ public class InputManager : MonoBehaviour
 
 		m_brakesAction.performed += ctx => m_brakes = ctx.ReadValue<float>();
 		m_brakesAction.canceled += ctx => m_brakes = 0f;
+		
+		m_clutchAction.performed += ctx => clutch = ctx.ReadValue<float>();
+		m_clutchAction.canceled += ctx => clutch = 0f;
 
 		m_rotationAction.performed += ctx => m_rotation = ctx.ReadValue<Vector2>();
 		m_rotationAction.canceled += ctx => m_rotation = Vector2.zero;
@@ -108,27 +121,9 @@ public class InputManager : MonoBehaviour
 		m_accelerationAction.performed += ctx => m_acceleration = ctx.ReadValue<float>();
 		m_accelerationAction.canceled += ctx => m_acceleration = 0f;
 		
-		m_enableEditAction.performed += ctx => SetRaceActionMapActive(!m_raceActionMapActive);
-	}
+		m_handBrakeAction.performed += ctx => handbrake = ctx.ReadValue<float>();
+		m_handBrakeAction.canceled += ctx => handbrake = 0f;
 
-	private void OnEnable()
-	{
-		//m_steeringAction.Enable();
-		//m_brakesAction.Enable();
-		//m_gearUpAction.Enable();
-		//m_gearDownAction.Enable();
-		//m_accelerationAction.Enable();
-		//m_rotationAction.Enable();
-		//m_enableEditAction.Enable();
-	}
-
-	private void OnDisable()
-	{
-		//m_steeringAction.Disable();
-		//m_brakesAction.Disable();
-		//m_gearUpAction.Disable();
-		//m_gearDownAction.Disable();
-		//m_accelerationAction.Disable();
-		//m_rotationAction.Disable();
+		m_enableEditAction.performed += ctx => SwitchActionMapActive();
 	}
 }

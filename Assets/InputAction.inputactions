@@ -16,6 +16,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "Look",
+                    "type": "Value",
+                    "id": "64555980-f4b5-4a2d-b4e2-914c7f940893",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "Acceleration",
                     "type": "Value",
                     "id": "1efca557-25f5-4be7-8944-6a86d02d0349",
@@ -52,10 +61,10 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Hand Brake",
+                    "name": "HandBrake",
                     "type": "Button",
                     "id": "a18a107f-96b9-441e-8ffb-782f316dc9e1",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -68,6 +77,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Clutch",
+                    "type": "Button",
+                    "id": "4779cc54-ee56-4479-9e5e-d495eb8eac26",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -144,7 +162,18 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Hand Brake",
+                    "action": "HandBrake",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d10a5a0c-ae2a-40a4-abd0-67830e151e41",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "HandBrake",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -194,6 +223,39 @@
                 },
                 {
                     "name": "",
+                    "id": "6fa8ff00-87f0-4442-824d-dadccde644e6",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7cb533b5-e304-42a3-9be2-c317cdfa074a",
+                    "path": "<Pointer>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse;Touch",
+                    "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ce703cd2-ae85-4f4a-964a-a8613d6de6c4",
+                    "path": "<Joystick>/{Hatswitch}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Joystick",
+                    "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "bb3d0ed0-ba28-4758-b914-b593b14f9396",
                     "path": "<Keyboard>/w",
                     "interactions": "",
@@ -222,6 +284,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Rotation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2f0450f8-89f3-4c5d-b0c1-2568f24bd3af",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Clutch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1cc1889f-20cb-4d98-b3a0-916bfcb8c653",
+                    "path": "<Keyboard>/ctrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Clutch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

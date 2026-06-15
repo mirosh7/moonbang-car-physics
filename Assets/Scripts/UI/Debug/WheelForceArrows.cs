@@ -89,7 +89,7 @@ namespace UI.Debug
                 var lbl = m_labels[i];
                 if (lbl != null)
                 {
-                    lbl.transform.position = baseP + t.contactNormal * 0.55f;
+                    lbl.transform.position = baseP + t.contactNormal * 0.55f + Vector3.right * 1;
                     if (m_cam != null)
                         lbl.transform.rotation = Quaternion.LookRotation(lbl.transform.position - camPos);
                     lbl.text = $"Fx {t.fx:0}\nFy {t.fy:0}\nFz {t.fz:0}";
@@ -101,7 +101,7 @@ namespace UI.Debug
         {
             var go = new GameObject("ForceLabel", typeof(RectTransform));
             var tmp = go.AddComponent<TextMeshPro>();
-            tmp.fontSize = 3.5f;
+            tmp.fontSize = 2.5f;
             tmp.alignment = TextAlignmentOptions.Center;
             tmp.color = Color.white;
             tmp.rectTransform.sizeDelta = new Vector2(4f, 3f);
