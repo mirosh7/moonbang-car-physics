@@ -60,6 +60,8 @@ public class InputManager : MonoBehaviour
 			Destroy(gameObject);
 		}
 
+		blockCar = false;
+		m_raceActionMapActive = true;
 		var currentActionMap = m_inputActionAsset.FindActionMap(m_actionMapName);
 
 		if (currentActionMap != null)
@@ -81,9 +83,14 @@ public class InputManager : MonoBehaviour
 		RegisterInputActions();
 	}
 
+	private void OnDestroy()
+	{
+		m_enableEditAction.performed -= SwitchActionMapActive;
+	}
+
 	private bool m_raceActionMapActive = true;
 
-	private void SwitchActionMapActive()
+	private void SwitchActionMapActive(InputAction.CallbackContext ctx)
 	{
 		m_raceActionMapActive = !m_raceActionMapActive;
 
@@ -124,6 +131,6 @@ public class InputManager : MonoBehaviour
 		m_handBrakeAction.performed += ctx => handbrake = ctx.ReadValue<float>();
 		m_handBrakeAction.canceled += ctx => handbrake = 0f;
 
-		m_enableEditAction.performed += ctx => SwitchActionMapActive();
+		m_enableEditAction.performed += SwitchActionMapActive;
 	}
 }
