@@ -85,7 +85,7 @@ void ClutchModel::init(const CP_ClutchInfo& info, float maxEngineTorque) {
 }
 
 void ClutchModel::update(float engineAngularVelocity, float currentGearRatio,
-                         float gearBoxInputShaftVelocity) {
+                         float gearBoxInputShaftVelocity, float clutchInput) {
     float clutchMaxTorque = m_maxEngineTorque * m_info.capacity;
     float clutchSlip = (engineAngularVelocity - gearBoxInputShaftVelocity)
                        * std::fabs(signf(currentGearRatio));
@@ -93,6 +93,8 @@ void ClutchModel::update(float engineAngularVelocity, float currentGearRatio,
                        ? 0.0f
                        : mapRangeClamped(engineAngularVelocity * RAD_TO_RPM,
                                          1000.0f, 1300.0f, 0.0f, 1.0f);
+    // Manual clutch pedal disengages the drive: 0 = engaged, 1 = fully pressed.
+    m_clutchLock *= clamp01(1.0f - clutchInput);
     float clt = clampf(clutchSlip * m_clutchLock * m_info.stiffness,
                        -clutchMaxTorque, clutchMaxTorque);
     m_clutchTorque = clt + ((m_clutchTorque - clt) * m_info.damping);
@@ -106,28 +108,56 @@ void DifferentialModel::init(const CP_DifferentialInfo& info,
     for (int i = 0; i < CARSIM_WHEEL_COUNT; ++i) m_outputTorque[i] = 0.0f;
 }
 
+void DifferentialModel::applyAxle(int l, int r, float axleTorque,
+                                  const float av[CARSIM_WHEEL_COUNT]) {
+    if (axleTorque == 0.0f) {            // axle not driven
+        m_outputTorque[l] = 0.0f;
+        m_outputTorque[r] = 0.0f;
+        return;
+    }
+    float base = axleTorque * 0.5f;
+
+    // Bias torque toward the slower wheel to limit the speed difference. The
+    // coefficient sets how aggressively: 0 = open, large = locked/spool.
+    float coeff = 0.0f;
+    switch (m_info.diffType) {
+        case CP_DIFF_LOCKED: coeff = 2000.0f; break;          // rigid-ish
+        case CP_DIFF_LSD:    coeff = m_info.lockingCoeff; break;
+        default:             coeff = 0.0f; break;             // CP_DIFF_OPEN
+    }
+    float bias = coeff * (av[l] - av[r]);
+    float maxBias = std::fabs(axleTorque) + 200.0f;
+    bias = clampf(bias, -maxBias, maxBias);
+
+    m_outputTorque[l] = base - bias;
+    m_outputTorque[r] = base + bias;
+}
+
 void DifferentialModel::update(float inputTorque,
                                const float angularVelocities[CARSIM_WHEEL_COUNT],
                                float dt) {
-    m_angularVelocityL = angularVelocities[2];
-    m_angularVelocityR = angularVelocities[3];
+    (void)dt;
+    float total = inputTorque * m_info.ratio;
 
-    if (!m_info.isLocked) {
-        float vel = (m_angularVelocityL - m_angularVelocityR) * 0.5f / dt * m_wheelInertia;
-        float base = inputTorque * 0.5f * m_info.ratio;
-        m_outputTorque[0] = 0;
-        m_outputTorque[1] = 0;
-        m_outputTorque[2] = base - vel;
-        m_outputTorque[3] = base + vel;
-    } else {
-        float base = inputTorque * m_info.ratio * 0.5f;
-        for (int i = 0; i < CARSIM_WHEEL_COUNT; ++i) {
-            m_outputTorque[0] = 0;
-            m_outputTorque[1] = 0;
-            m_outputTorque[2] = base;
-            m_outputTorque[3] = base;
-        }
+    // Split the drive torque between the axles per the drive mode.
+    float frontT, rearT;
+    switch (m_info.driveMode) {
+        case CP_DRIVE_FWD: frontT = total; rearT = 0.0f; break;
+        case CP_DRIVE_AWD: frontT = total * m_info.torqueSplitFront;
+                           rearT  = total - frontT; break;
+        default:           frontT = 0.0f; rearT = total; break;  // CP_DRIVE_RWD
     }
+
+    applyAxle(0, 1, frontT, angularVelocities);  // front axle
+    applyAxle(2, 3, rearT,  angularVelocities);  // rear axle
+
+    // Input-shaft speed from the driven wheels (feeds clutch / gearbox feel).
+    float sum = 0.0f;
+    int count = 0;
+    if (m_info.driveMode != CP_DRIVE_RWD) { sum += angularVelocities[0] + angularVelocities[1]; count += 2; }
+    if (m_info.driveMode != CP_DRIVE_FWD) { sum += angularVelocities[2] + angularVelocities[3]; count += 2; }
+    float avg = count > 0 ? sum / count : 0.0f;
+    m_inputShaftVelocity = avg * m_info.ratio;
 }
 
 /* ------------------------------------------------------------------ brakes */
@@ -137,7 +167,7 @@ void BrakesModel::init(const CP_BrakesInfo& info) {
     for (int i = 0; i < CARSIM_WHEEL_COUNT; ++i) m_brakeTorque[i] = 0.0f;
 }
 
-void BrakesModel::update(float brakeInput,
+void BrakesModel::update(float brakeInput, float handbrakeInput,
                          const float angularVelocities[CARSIM_WHEEL_COUNT]) {
     // Index convention: 0=FL, 1=FR, 2=RL, 3=RR. The brake-torque curve is
     // looked up per axle from that axle's mean wheel speed.
@@ -147,6 +177,10 @@ void BrakesModel::update(float brakeInput,
     m_brakeTorque[0] = brakeInput * m_info.biasFront * m_info.maxTorque * m_curve.evaluate(frontSpeed);
     m_brakeTorque[1] = m_brakeTorque[0];
     m_brakeTorque[2] = brakeInput * m_info.biasRear * m_info.maxTorque * m_curve.evaluate(rearSpeed);
+
+    // Handbrake adds a strong, foot-brake-independent torque to the rear wheels.
+    float hb = clamp01(handbrakeInput) * m_info.handbrakeTorque;
+    m_brakeTorque[2] += hb;
     m_brakeTorque[3] = m_brakeTorque[2];
 }
 

@@ -28,6 +28,8 @@ namespace UI.Debug
         [SerializeField] private bool m_showArrows = true;
         [SerializeField] private bool m_showEditor = false;
         [SerializeField] private bool m_showSuspension = true;
+        [SerializeField] private bool m_showTelemetry = true;
+        [SerializeField] private bool m_showInput = true;
 
         private static readonly string[] WheelNames = { "FL", "FR", "RL", "RR" };
         private static readonly Color Accent = new Color(0.30f, 0.75f, 1f);
@@ -41,8 +43,10 @@ namespace UI.Debug
         private ScrollingGraphPanel m_panelSusp;
         private WheelForceArrows m_arrows;
         private CarTuneEditor m_editor;
+        private TelemetryHud m_telemetry;
+        private InputHud m_inputHud;
         private readonly Button[] m_wheelButtons = new Button[4];
-        private Button m_btnFx, m_btnFy, m_btnArrows, m_btnEditor, m_btnSusp;
+        private Button m_btnFx, m_btnFy, m_btnArrows, m_btnEditor, m_btnSusp, m_btnTelem, m_btnInput;
 
         private void Start()
         {
@@ -104,6 +108,11 @@ namespace UI.Debug
             m_panelFy.gameObject.SetActive(m_showFy);
             m_panelSusp.gameObject.SetActive(m_showSuspension);
 
+            m_telemetry = TelemetryHud.Create(root, m_car);
+            m_telemetry.SetVisible(m_showTelemetry && m_car != null);
+            m_inputHud = InputHud.Create(root);
+            m_inputHud.SetVisible(m_showInput);
+
             if (m_car != null)
             {
                 m_arrows = WheelForceArrows.Create(m_car);
@@ -113,6 +122,9 @@ namespace UI.Debug
             }
         }
 
+        private float m_menuX;
+        private Transform m_menuBar;
+
         private void BuildMenu(RectTransform root)
         {
             var bar = DebugUI.Panel("MenuBar", root, new Color(0.04f, 0.04f, 0.06f, 0.9f));
@@ -120,54 +132,47 @@ namespace UI.Debug
             rt.anchorMin = new Vector2(0, 1);
             rt.anchorMax = new Vector2(1, 1);
             rt.pivot = new Vector2(0.5f, 1f);
-            rt.sizeDelta = new Vector2(0, 72);
+            rt.sizeDelta = new Vector2(0, 64);
             rt.anchoredPosition = Vector2.zero;
             bar.raycastTarget = true;
+            m_menuBar = bar.transform;
 
-            float x = 16f;
-            var wheelLbl = DebugUI.Text("Lbl", bar.transform, "Колесо:", 24, TextAlignmentOptions.Left);
-            DebugUI.Place(wheelLbl.rectTransform, new Vector2(x, -12), new Vector2(120, 48));
-            x += 130f;
+            m_menuX = 14f;
+            var wheelLbl = DebugUI.Text("Lbl", m_menuBar, "Колесо:", 22, TextAlignmentOptions.Left);
+            DebugUI.Place(wheelLbl.rectTransform, new Vector2(m_menuX, -10), new Vector2(100, 44));
+            m_menuX += 104f;
 
             for (int i = 0; i < 4; i++)
             {
                 int idx = i;
-                var btn = DebugUI.Button("W" + WheelNames[i], bar.transform, WheelNames[i], 24, out _);
-                DebugUI.Place(btn.GetComponent<RectTransform>(), new Vector2(x, -12), new Vector2(72, 48));
+                var btn = AddMenuButton(WheelNames[i], 56);
                 btn.onClick.AddListener(() => SelectWheel(idx));
                 m_wheelButtons[i] = btn;
-                x += 80f;
             }
+            m_menuX += 14f;
 
-            x += 24f;
-            m_btnFx = DebugUI.Button("ToggleFx", bar.transform, "График Fx", 24, out _);
-            DebugUI.Place(m_btnFx.GetComponent<RectTransform>(), new Vector2(x, -12), new Vector2(180, 48));
+            m_btnFx = AddMenuButton("Fx", 80);
             m_btnFx.onClick.AddListener(() => { m_showFx = !m_showFx; m_panelFx.gameObject.SetActive(m_showFx); RefreshButtonTints(); });
-            x += 192f;
-
-            m_btnFy = DebugUI.Button("ToggleFy", bar.transform, "График Fy", 24, out _);
-            DebugUI.Place(m_btnFy.GetComponent<RectTransform>(), new Vector2(x, -12), new Vector2(180, 48));
+            m_btnFy = AddMenuButton("Fy", 80);
             m_btnFy.onClick.AddListener(() => { m_showFy = !m_showFy; m_panelFy.gameObject.SetActive(m_showFy); RefreshButtonTints(); });
-            x += 192f;
-
-            m_btnArrows = DebugUI.Button("ToggleArrows", bar.transform, "3D Силы", 24, out _);
-            DebugUI.Place(m_btnArrows.GetComponent<RectTransform>(), new Vector2(x, -12), new Vector2(170, 48));
+            m_btnArrows = AddMenuButton("3D Силы", 130);
             m_btnArrows.onClick.AddListener(() => { m_showArrows = !m_showArrows; if (m_arrows != null) m_arrows.SetVisible(m_showArrows); RefreshButtonTints(); });
-            x += 182f;
-
-            m_btnSusp = DebugUI.Button("ToggleSusp", bar.transform, "Подвеска", 24, out _);
-            DebugUI.Place(m_btnSusp.GetComponent<RectTransform>(), new Vector2(x, -12), new Vector2(180, 48));
+            m_btnSusp = AddMenuButton("Подвеска", 150);
             m_btnSusp.onClick.AddListener(() => { m_showSuspension = !m_showSuspension; if (m_panelSusp != null) m_panelSusp.gameObject.SetActive(m_showSuspension); RefreshButtonTints(); });
-            x += 192f;
-
-            m_btnEditor = DebugUI.Button("ToggleEditor", bar.transform, "Настройки", 24, out _);
-            DebugUI.Place(m_btnEditor.GetComponent<RectTransform>(), new Vector2(x, -12), new Vector2(190, 48));
+            m_btnTelem = AddMenuButton("Телеметрия", 170);
+            m_btnTelem.onClick.AddListener(() => { m_showTelemetry = !m_showTelemetry; if (m_telemetry != null) m_telemetry.SetVisible(m_showTelemetry); RefreshButtonTints(); });
+            m_btnInput = AddMenuButton("Инпут", 120);
+            m_btnInput.onClick.AddListener(() => { m_showInput = !m_showInput; if (m_inputHud != null) m_inputHud.SetVisible(m_showInput); RefreshButtonTints(); });
+            m_btnEditor = AddMenuButton("Настройки", 160);
             m_btnEditor.onClick.AddListener(() => { m_showEditor = !m_showEditor; if (m_editor != null) m_editor.SetVisible(m_showEditor); RefreshButtonTints(); });
-            x += 202f;
+        }
 
-            var hint = DebugUI.Text("Hint", bar.transform, "1-4: колесо   F1: скрыть", 20,
-                TextAlignmentOptions.Left, new Color(1, 1, 1, 0.5f));
-            DebugUI.Place(hint.rectTransform, new Vector2(x, -16), new Vector2(360, 40));
+        private Button AddMenuButton(string label, float width)
+        {
+            var btn = DebugUI.Button("Btn_" + label, m_menuBar, label, 22, out _);
+            DebugUI.Place(btn.GetComponent<RectTransform>(), new Vector2(m_menuX, -10), new Vector2(width, 44));
+            m_menuX += width + 8f;
+            return btn;
         }
 
         // -------------------------------------------------------------- refresh
@@ -225,6 +230,8 @@ namespace UI.Debug
             if (m_btnFy != null) m_btnFy.targetGraphic.GetComponent<Image>().color = m_showFy ? BtnOn : BtnOff;
             if (m_btnArrows != null) m_btnArrows.targetGraphic.GetComponent<Image>().color = m_showArrows ? BtnOn : BtnOff;
             if (m_btnSusp != null) m_btnSusp.targetGraphic.GetComponent<Image>().color = m_showSuspension ? BtnOn : BtnOff;
+            if (m_btnTelem != null) m_btnTelem.targetGraphic.GetComponent<Image>().color = m_showTelemetry ? BtnOn : BtnOff;
+            if (m_btnInput != null) m_btnInput.targetGraphic.GetComponent<Image>().color = m_showInput ? BtnOn : BtnOff;
             if (m_btnEditor != null) m_btnEditor.targetGraphic.GetComponent<Image>().color = m_showEditor ? BtnOn : BtnOff;
         }
 

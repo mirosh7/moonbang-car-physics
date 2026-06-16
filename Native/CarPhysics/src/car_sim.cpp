@@ -59,7 +59,7 @@ void CarSim::updateDrivetrain(const CP_DrivetrainInput& in, CP_DrivetrainOutput&
     float diffShaftVelocity = m_differential.inputShaftVelocity();
     float gearBoxInputShaftVelocity = m_gearbox.inputShaftVelocity(diffShaftVelocity);
     m_clutch.update(m_engine.angularVelocity(), m_gearbox.currentGearRatio(),
-                    gearBoxInputShaftVelocity);
+                    gearBoxInputShaftVelocity, in.clutch);
 
     // 3. engine
     Vec3 bodyTorque;
@@ -70,8 +70,8 @@ void CarSim::updateDrivetrain(const CP_DrivetrainInput& in, CP_DrivetrainOutput&
     float gearBoxTorque = m_gearbox.outputTorque(m_clutch.torque());
     m_differential.update(gearBoxTorque, angularVelocities, in.dt);
 
-    // 5. brakes
-    m_brakes.update(in.brake, angularVelocities);
+    // 5. brakes (+ handbrake on the rear)
+    m_brakes.update(in.brake, in.handbrake, angularVelocities);
 
     // outputs
     for (int i = 0; i < CARSIM_WHEEL_COUNT; ++i) out.steerAngles[i] = m_steerAngles[i];

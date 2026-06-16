@@ -68,7 +68,7 @@ public:
     void init(const CP_ClutchInfo& info, float maxEngineTorque);
 
     void update(float engineAngularVelocity, float currentGearRatio,
-                float gearBoxInputShaftVelocity);
+                float gearBoxInputShaftVelocity, float clutchInput);
 
     float torque() const { return m_clutchTorque; }
     float lock() const   { return m_clutchLock; }
@@ -88,17 +88,19 @@ public:
     void update(float inputTorque, const float angularVelocities[CARSIM_WHEEL_COUNT],
                 float dt);
 
-    float inputShaftVelocity() const {
-        return (m_angularVelocityL + m_angularVelocityR) * 0.5f * m_info.ratio;
-    }
+    float inputShaftVelocity() const { return m_inputShaftVelocity; }
     const float* outputTorque() const { return m_outputTorque; }
 
 private:
+    /* Splits an axle's drive torque to its two wheels per the diff type
+     * (open / locked / LSD). axleTorque == 0 means the axle isn't driven. */
+    void applyAxle(int l, int r, float axleTorque,
+                   const float angularVelocities[CARSIM_WHEEL_COUNT]);
+
     CP_DifferentialInfo m_info{};
     float m_wheelInertia = 0.0f;
     float m_outputTorque[CARSIM_WHEEL_COUNT] = { 0 };
-    float m_angularVelocityL = 0.0f;
-    float m_angularVelocityR = 0.0f;
+    float m_inputShaftVelocity = 0.0f;
 };
 
 /* ------------------------------------------------------------------ brakes */
@@ -106,7 +108,8 @@ class BrakesModel {
 public:
     void init(const CP_BrakesInfo& info);
 
-    void update(float brakeInput, const float angularVelocities[CARSIM_WHEEL_COUNT]);
+    void update(float brakeInput, float handbrakeInput,
+                const float angularVelocities[CARSIM_WHEEL_COUNT]);
 
     const float* brakeTorque() const { return m_brakeTorque; }
 

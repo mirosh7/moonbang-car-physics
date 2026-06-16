@@ -116,17 +116,32 @@ namespace Car.Data
             private float m_shiftTime;
         }
         
+        // Values must match the CP_DRIVE_* / CP_DIFF_* enums in car_physics.h.
+        public enum DriveMode { FWD = 0, RWD = 1, AWD = 2 }
+        public enum DiffType { Open = 0, Locked = 1, LSD = 2 }
+
         [Serializable]
         public class DifferentialInfo
         {
             [SerializeField]
-            private bool m_isDiffLocked;
+            private DriveMode m_driveMode = DriveMode.RWD;
             [SerializeField]
-            private float m_differentialRatio;
+            private DiffType m_diffType = DiffType.Locked;
+            [SerializeField]
+            private float m_differentialRatio = 3.44f;
+            [Tooltip("AWD: доля момента на переднюю ось (0..1).")]
+            [Range(0f, 1f)]
+            [SerializeField]
+            private float m_torqueSplitFront = 0.4f;
+            [Tooltip("LSD: преднатяг блокировки, Н·м на рад/с разницы скоростей колёс.")]
+            [SerializeField]
+            private float m_lockingCoeff = 80f;
 
-            public bool isDiffLocked { get => m_isDiffLocked; set => m_isDiffLocked = value; }
-
+            public DriveMode driveMode { get => m_driveMode; set => m_driveMode = value; }
+            public DiffType diffType { get => m_diffType; set => m_diffType = value; }
             public float differentialRatio { get => m_differentialRatio; set => m_differentialRatio = value; }
+            public float torqueSplitFront { get => m_torqueSplitFront; set => m_torqueSplitFront = value; }
+            public float lockingCoeff { get => m_lockingCoeff; set => m_lockingCoeff = value; }
         }
 
         [Serializable]
@@ -273,10 +288,15 @@ namespace Car.Data
 
             [SerializeField]
             private List<float> m_brakeBias;
+            [Tooltip("Момент ручника на задние колёса, Н·м.")]
+            [SerializeField]
+            private float m_handbrakeTorque = 4000f;
 
             public AnimationCurve brakeTorqueCurve => m_brakeTorqueCurve;
 
             public float maxTorque { get => m_maxTorque; set => m_maxTorque = value; }
+
+            public float handbrakeTorque { get => m_handbrakeTorque; set => m_handbrakeTorque = value; }
 
             public List<float> brakeBias => m_brakeBias;
         }

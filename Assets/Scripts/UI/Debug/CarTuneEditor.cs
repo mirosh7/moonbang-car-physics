@@ -112,7 +112,22 @@ namespace UI.Debug
             DebugUI.Place(valText.rectTransform, new Vector2(-10, -8), new Vector2(110, RowH - 12),
                 new Vector2(1, 1), new Vector2(1, 1));
 
-            if (p.isToggle)
+            if (p.options != null)
+            {
+                int idx = Mathf.Clamp(Mathf.RoundToInt(cur), 0, p.options.Length - 1);
+                var btn = DebugUI.Button("E", row, p.options[idx], 20, out var btnLabel);
+                DebugUI.Place(btn.GetComponent<RectTransform>(), new Vector2(300, -8),
+                    new Vector2(250, RowH - 16), new Vector2(0, 1), new Vector2(0, 1));
+                valText.text = "";
+                btn.onClick.AddListener(() =>
+                {
+                    int i = m_desc != null ? Mathf.Clamp(Mathf.RoundToInt(p.get(m_desc)), 0, p.options.Length - 1) : 0;
+                    i = (i + 1) % p.options.Length;
+                    Apply(p, i);
+                    btnLabel.text = p.options[i];
+                });
+            }
+            else if (p.isToggle)
             {
                 var btn = DebugUI.Button("T", row, cur >= 0.5f ? "ВКЛ" : "ВЫКЛ", 20, out var btnLabel);
                 DebugUI.Place(btn.GetComponent<RectTransform>(), new Vector2(300, -8),

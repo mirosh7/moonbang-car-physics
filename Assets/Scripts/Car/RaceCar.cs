@@ -160,6 +160,8 @@ namespace Car
 				throttle = m_input != null ? m_input.acceleration : 0f,
 				brake = m_input != null ? m_input.brakes : 0f,
 				steer = m_input != null ? m_input.steering : 0f,
+				clutch = m_input != null ? m_input.clutch : 0f,
+				handbrake = m_input != null ? m_input.handbrake : 0f,
 				gearUp = m_gearUpRequested ? 1 : 0,
 				gearDown = m_gearDownRequested ? 1 : 0,
 			};

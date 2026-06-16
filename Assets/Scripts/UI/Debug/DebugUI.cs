@@ -85,6 +85,20 @@ namespace UI.Debug
             return slider;
         }
 
+        /// <summary>A background panel with a fill child. The caller drives the fill
+        /// amount by setting <paramref name="fillRt"/>.anchorMax each frame.</summary>
+        public static Image Bar(string name, Transform parent, Color bg, Color fillColor, out RectTransform fillRt)
+        {
+            var b = Panel(name, parent, bg);
+            var f = Panel(name + "_Fill", b.transform, fillColor);
+            f.rectTransform.anchorMin = Vector2.zero;
+            f.rectTransform.anchorMax = Vector2.one;
+            f.rectTransform.offsetMin = Vector2.zero;
+            f.rectTransform.offsetMax = Vector2.zero;
+            fillRt = f.rectTransform;
+            return b;
+        }
+
         /// <summary>Anchor a RectTransform to fill its parent.</summary>
         public static void Stretch(RectTransform rt)
         {

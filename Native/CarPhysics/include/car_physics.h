@@ -87,9 +87,17 @@ typedef struct CP_ClutchInfo {
     float damping;
 } CP_ClutchInfo;
 
+/* Drive layout: which axle(s) receive engine torque. */
+enum { CP_DRIVE_FWD = 0, CP_DRIVE_RWD = 1, CP_DRIVE_AWD = 2 };
+/* Differential behaviour between the two wheels of a driven axle. */
+enum { CP_DIFF_OPEN = 0, CP_DIFF_LOCKED = 1, CP_DIFF_LSD = 2 };
+
 typedef struct CP_DifferentialInfo {
-    int   isLocked;             /* 0 = open, non-zero = locked */
-    float ratio;                /* differentialRatio */
+    int   driveMode;            /* CP_DRIVE_* (FWD / RWD / AWD) */
+    int   diffType;             /* CP_DIFF_* (open / locked / LSD) */
+    float ratio;                /* final drive ratio */
+    float torqueSplitFront;     /* AWD: fraction of torque to the front axle, 0..1 */
+    float lockingCoeff;         /* LSD bias, N*m per rad/s of wheel-speed difference */
 } CP_DifferentialInfo;
 
 typedef struct CP_BrakesInfo {
@@ -97,6 +105,7 @@ typedef struct CP_BrakesInfo {
     float    maxTorque;
     float    biasFront;         /* brakeBias[0] */
     float    biasRear;          /* brakeBias[1] */
+    float    handbrakeTorque;   /* extra torque applied to the rear wheels by the handbrake */
 } CP_BrakesInfo;
 
 typedef struct CP_SteeringInfo {
@@ -176,6 +185,8 @@ typedef struct CP_DrivetrainInput {
     float throttle;  /* 0..1 */
     float brake;     /* 0..1 */
     float steer;     /* -1..1 */
+    float clutch;    /* 0..1: 0 = engaged, 1 = fully depressed (disengaged) */
+    float handbrake; /* 0..1: locks the rear wheels */
     int   gearUp;    /* 1 on the frame the shift-up was requested, else 0 */
     int   gearDown;  /* 1 on the frame the shift-down was requested, else 0 */
 } CP_DrivetrainInput;

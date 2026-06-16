@@ -46,10 +46,14 @@ namespace Car
         private struct ClutchInfo { public float stiffness, capacity, damping; }
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct DifferentialInfo { public int isLocked; public float ratio; }
+        private struct DifferentialInfo
+        {
+            public int driveMode, diffType;
+            public float ratio, torqueSplitFront, lockingCoeff;
+        }
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct BrakesInfo { public Curve brakeTorqueCurve; public float maxTorque, biasFront, biasRear; }
+        private struct BrakesInfo { public Curve brakeTorqueCurve; public float maxTorque, biasFront, biasRear, handbrakeTorque; }
 
         [StructLayout(LayoutKind.Sequential)]
         private struct SteeringInfo { public float turnRadius, steerForce, maxCorrectionAngle, correctionSpeed; }
@@ -88,7 +92,7 @@ namespace Car
         [StructLayout(LayoutKind.Sequential)]
         public struct DrivetrainInput
         {
-            public float dt, throttle, brake, steer;
+            public float dt, throttle, brake, steer, clutch, handbrake;
             public int gearUp, gearDown;
         }
 
@@ -191,8 +195,11 @@ namespace Car
                     },
                     differential = new DifferentialInfo
                     {
-                        isLocked = desc.differentialInfo.isDiffLocked ? 1 : 0,
+                        driveMode = (int)desc.differentialInfo.driveMode,
+                        diffType = (int)desc.differentialInfo.diffType,
                         ratio = desc.differentialInfo.differentialRatio,
+                        torqueSplitFront = desc.differentialInfo.torqueSplitFront,
+                        lockingCoeff = desc.differentialInfo.lockingCoeff,
                     },
                     brakes = new BrakesInfo
                     {
@@ -200,6 +207,7 @@ namespace Car
                         maxTorque = desc.brakesInfo.maxTorque,
                         biasFront = desc.brakesInfo.brakeBias[0],
                         biasRear = desc.brakesInfo.brakeBias[1],
+                        handbrakeTorque = desc.brakesInfo.handbrakeTorque,
                     },
                     steering = new SteeringInfo
                     {

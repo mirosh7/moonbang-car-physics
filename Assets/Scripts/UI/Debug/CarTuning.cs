@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Car.Data;
+using UnityEngine;
 
 namespace UI.Debug
 {
@@ -13,6 +14,7 @@ namespace UI.Debug
         public string label;
         public float min, max;
         public bool isToggle;
+        public string[] options;          // non-null => enum cycle control (get/set is the index)
         public Func<CarDesc, float> get;
         public Action<CarDesc, float> set;
     }
@@ -59,13 +61,23 @@ namespace UI.Debug
             AddSingle(list, "Колёса", "Колея зад, м", 1.0f, 2.0f,
                 d => d.trackRear, (d, v) => d.trackRear = v);
 
-            // --- Шасси / трансмиссия ---
+            // --- Трансмиссия ---
+            AddEnum(list, "Трансмиссия", "Привод", new[] { "FWD", "RWD", "AWD" },
+                d => (int)d.differentialInfo.driveMode,
+                (d, i) => d.differentialInfo.driveMode = (CarDesc.DriveMode)i);
+            AddEnum(list, "Трансмиссия", "Дифференциал", new[] { "Открытый", "Заблок.", "LSD" },
+                d => (int)d.differentialInfo.diffType,
+                (d, i) => d.differentialInfo.diffType = (CarDesc.DiffType)i);
+            AddSingle(list, "Трансмиссия", "AWD split (перёд)", 0f, 1f,
+                d => d.differentialInfo.torqueSplitFront, (d, v) => d.differentialInfo.torqueSplitFront = v);
+            AddSingle(list, "Трансмиссия", "LSD преднатяг", 0f, 300f,
+                d => d.differentialInfo.lockingCoeff, (d, v) => d.differentialInfo.lockingCoeff = v);
+            AddSingle(list, "Трансмиссия", "Главная пара", 2.0f, 6.0f,
+                d => d.differentialInfo.differentialRatio, (d, v) => d.differentialInfo.differentialRatio = v);
+
+            // --- Шасси ---
             AddSingle(list, "Шасси", "Тормоз макс, Н·м", 500f, 6000f,
                 d => d.brakesInfo.maxTorque, (d, v) => d.brakesInfo.maxTorque = v);
-            AddSingle(list, "Шасси", "Главная пара", 2.0f, 6.0f,
-                d => d.differentialInfo.differentialRatio, (d, v) => d.differentialInfo.differentialRatio = v);
-            AddToggle(list, "Шасси", "Диф. заблокирован",
-                d => d.differentialInfo.isDiffLocked, (d, b) => d.differentialInfo.isDiffLocked = b);
             AddToggle(list, "Шасси", "Стабилизатор вкл",
                 d => d.antirollBarInfo.isEnabled, (d, b) => d.antirollBarInfo.isEnabled = b);
             AddSingle(list, "Шасси", "Стаб. перёд", 0f, 50000f,
@@ -97,6 +109,17 @@ namespace UI.Debug
             Func<CarDesc, float> get, Action<CarDesc, float> set)
         {
             list.Add(new TuneParam { category = cat, label = label, min = min, max = max, get = get, set = set });
+        }
+
+        private static void AddEnum(List<TuneParam> list, string cat, string label, string[] options,
+            Func<CarDesc, int> get, Action<CarDesc, int> set)
+        {
+            list.Add(new TuneParam
+            {
+                category = cat, label = label, min = 0, max = options.Length - 1, options = options,
+                get = d => get(d),
+                set = (d, v) => set(d, Mathf.Clamp(Mathf.RoundToInt(v), 0, options.Length - 1))
+            });
         }
 
         private static void AddToggle(List<TuneParam> list, string cat, string label,
