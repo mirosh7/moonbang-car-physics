@@ -4,16 +4,14 @@ using UnityEngine.UI;
 
 namespace UI.Debug
 {
-    /// <summary>Pretty input display: vertical fill bars for throttle / brake /
-    /// clutch / handbrake and a steering indicator. Reads InputManager.instance.</summary>
     public class InputHud : MonoBehaviour
     {
         private GameObject m_panel;
-        private RectTransform[] m_fills;   // throttle, brake, clutch, handbrake
+        private RectTransform[] m_fills;
         private TextMeshProUGUI[] m_values;
         private RectTransform m_steerKnob;
 
-        private static readonly string[] Names = { "Газ", "Тормоз", "Сцепл.", "Ручник" };
+        private static readonly string[] Names = { "Throttle", "Brake", "Clutch", "H-Brake" };
         private static readonly Color[] Colors =
         {
             new Color(0.35f, 0.85f, 0.4f),
@@ -39,8 +37,8 @@ namespace UI.Debug
             m_panel = panel.gameObject;
             var pr = panel.rectTransform;
             pr.anchorMin = pr.anchorMax = pr.pivot = new Vector2(0.5f, 0f);
-            pr.sizeDelta = new Vector2(620f, 150f);
-            pr.anchoredPosition = new Vector2(0f, 200f);
+            pr.sizeDelta = new Vector2(560f, 150f);
+            pr.anchoredPosition = new Vector2(0f, 190f);
 
             m_fills = new RectTransform[4];
             m_values = new TextMeshProUGUI[4];
@@ -73,8 +71,7 @@ namespace UI.Debug
                 x += w + 16f;
             }
 
-            // steering indicator (horizontal track + knob), right side
-            var title = DebugUI.Text("SteerLbl", panel.transform, "Руль", 18,
+            var title = DebugUI.Text("SteerLbl", panel.transform, "Steering", 18,
                 TextAlignmentOptions.Center, new Color(1, 1, 1, 0.75f));
             var tr = title.rectTransform;
             tr.anchorMin = tr.anchorMax = tr.pivot = new Vector2(1, 1);
@@ -84,8 +81,8 @@ namespace UI.Debug
             var track = DebugUI.Panel("SteerTrack", panel.transform, new Color(1, 1, 1, 0.10f));
             var trr = track.rectTransform;
             trr.anchorMin = trr.anchorMax = trr.pivot = new Vector2(1, 1);
-            trr.sizeDelta = new Vector2(280, 26);
-            trr.anchoredPosition = new Vector2(-20, -44);
+            trr.sizeDelta = new Vector2(190, 26);
+            trr.anchoredPosition = new Vector2(-16, -44);
 
             var center = DebugUI.Panel("SteerCenter", track.transform, new Color(1, 1, 1, 0.3f));
             var cr = center.rectTransform;
@@ -115,8 +112,7 @@ namespace UI.Debug
 
             if (m_steerKnob != null)
             {
-                // map [-1..1] to the track width (track is 280 wide, pivot/anchor centre)
-                m_steerKnob.anchoredPosition = new Vector2(Mathf.Clamp(steer, -1f, 1f) * 130f, 0f);
+                m_steerKnob.anchoredPosition = new Vector2(Mathf.Clamp(steer, -1f, 1f) * 85f, 0f);
             }
         }
 

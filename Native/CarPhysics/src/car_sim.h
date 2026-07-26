@@ -1,7 +1,3 @@
-/*
- * car_sim.h - top-level orchestrator that wires the ported models together
- * in the same order the original Unity controllers ran them.
- */
 #ifndef CARSIM_CAR_SIM_H
 #define CARSIM_CAR_SIM_H
 
@@ -31,14 +27,12 @@ private:
     TireWheel         m_tire[CARSIM_WHEEL_COUNT];
     VisualWheel       m_visual[CARSIM_WHEEL_COUNT];
 
-    /* steer angles produced by the drivetrain phase, consumed by visuals */
     float m_steerAngles[CARSIM_WHEEL_COUNT] = { 0 };
 
-    /* chassis config kept for the wheel phase */
     CP_AntirollBarInfo m_antiroll{};
     float m_restLength[CARSIM_WHEEL_COUNT] = { 0 };
 };
 
 } // namespace carsim
 
-#endif // CARSIM_CAR_SIM_H
+#endif

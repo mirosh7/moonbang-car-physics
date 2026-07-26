@@ -70,3 +70,18 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# IDE
+.idea/
+
+# Profiler captures
+/ProfilerCaptures/
+
+# Native module build output (sources only; Unity loads the DLL from Assets/Plugins)
+/Native/CarPhysics/build/
+
+# Keep the native Visual Studio solution despite the global *.sln rule above
+!/Native/CarPhysics/CarPhysics.sln
+
+# Local archive, never published
+/.vkr_archive/

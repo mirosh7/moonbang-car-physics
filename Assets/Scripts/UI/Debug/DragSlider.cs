@@ -4,11 +4,6 @@ using UnityEngine.EventSystems;
 
 namespace UI.Debug
 {
-    /// <summary>
-    /// Minimal pointer-driven slider built for code-generated UI. Maps the local
-    /// pointer X inside its RectTransform to a value in [min..max] and drives a
-    /// fill RectTransform. Avoids the finicky anchor setup of UnityEngine.UI.Slider.
-    /// </summary>
     [RequireComponent(typeof(RectTransform))]
     public class DragSlider : MonoBehaviour, IPointerDownHandler, IDragHandler
     {

@@ -1,9 +1,3 @@
-/*
- * api.cpp - the exported C ABI. Thin: validates handles and forwards to the
- * CarSim orchestrator.
- */
-/* CARPHYSICS_BUILD_DLL is defined by the build (vcxproj / CMake) so the API
- * is exported with __declspec(dllexport). */
 #include <new>
 #include "car_physics.h"
 #include "car_sim.h"

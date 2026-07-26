@@ -1,11 +1,3 @@
-/*
- * models.h - C++ port of the C# physics models / wheel components.
- *
- * Each class reproduces the math of its Unity counterpart 1:1. All engine
- * coupling (raycasts, AddForce, GetPointVelocity, Transform reads) is
- * removed: inputs arrive as plain values, outputs are returned as plain
- * values, and the host applies them.
- */
 #ifndef CARSIM_MODELS_H
 #define CARSIM_MODELS_H
 
@@ -14,12 +6,10 @@
 
 namespace carsim {
 
-/* ------------------------------------------------------------------ engine */
 class EngineModel {
 public:
     void init(const CP_EngineInfo& info);
 
-    /* Returns true and fills outBodyTorque when the gear is neutral (0). */
     bool update(float throttle, float clutchTorque, int currentGear, float dt,
                 Vec3& outBodyTorque);
 
@@ -34,14 +24,13 @@ private:
     float m_angularVelocity = 100.0f;
 };
 
-/* ----------------------------------------------------------------- gearbox */
 class GearboxModel {
 public:
     void init(const CP_GearboxInfo& info);
 
     void requestShiftUp();
     void requestShiftDown();
-    void tick(float dt);                         /* advances shift timer */
+    void tick(float dt);
 
     float currentGearRatio() const { return m_ratios[m_currentGear]; }
     int   currentGear() const      { return m_currentGear; }
@@ -62,7 +51,6 @@ private:
     float m_shiftTimer = 0.0f;
 };
 
-/* ------------------------------------------------------------------ clutch */
 class ClutchModel {
 public:
     void init(const CP_ClutchInfo& info, float maxEngineTorque);
@@ -80,7 +68,6 @@ private:
     float m_clutchLock = 0.0f;
 };
 
-/* ------------------------------------------------------------ differential */
 class DifferentialModel {
 public:
     void init(const CP_DifferentialInfo& info, const CP_WheelInfo& wheel0);
@@ -92,8 +79,6 @@ public:
     const float* outputTorque() const { return m_outputTorque; }
 
 private:
-    /* Splits an axle's drive torque to its two wheels per the diff type
-     * (open / locked / LSD). axleTorque == 0 means the axle isn't driven. */
     void applyAxle(int l, int r, float axleTorque,
                    const float angularVelocities[CARSIM_WHEEL_COUNT]);
 
@@ -103,7 +88,6 @@ private:
     float m_inputShaftVelocity = 0.0f;
 };
 
-/* ------------------------------------------------------------------ brakes */
 class BrakesModel {
 public:
     void init(const CP_BrakesInfo& info);
@@ -119,7 +103,6 @@ private:
     float m_brakeTorque[CARSIM_WHEEL_COUNT] = { 0 };
 };
 
-/* ---------------------------------------------------------------- steering */
 class SteeringModel {
 public:
     void init(const CP_SteeringInfo& info, float wheelBase, float rearTrack);
@@ -139,14 +122,10 @@ private:
     float m_steerAngles[CARSIM_WHEEL_COUNT] = { 0 };
 };
 
-/* ------------------------------------------------- per-wheel components --- */
-
 class SuspensionWheel {
 public:
     void init(const CP_WheelInfo& info) { m_info = info; }
 
-    /* Computes suspension force + local point velocity, returns the world
-     * force to add at the contact point (= suspensionForce * up). */
     Vec3 update(const CP_WheelState& w, float dt);
 
     float suspensionForce() const { return m_suspensionForce; }
@@ -169,9 +148,6 @@ public:
         m_bLong = magicStiffnessFromPeak(info.pacejkaShapeLong, info.longSlipPeak);
     }
 
-    /* Integrates wheel spin. The longitudinal tire reaction is linearised about
-     * the current wheel speed (implicit) for stability, which needs the normal
-     * load via suspensionForce and the derived Pacejka stiffness m_bLong. */
     void update(float fx, float driveTorque, float brakeTorque,
                 float groundForwardSpeed, float suspensionForce, float dt);
 
@@ -180,7 +156,7 @@ public:
 private:
     CP_WheelInfo m_info{};
     float m_wheelInertia = 0.0f;
-    float m_bLong = 0.0f;   /* derived Pacejka longitudinal stiffness factor */
+    float m_bLong = 0.0f;
     float m_angularVelocity = 0.0f;
 };
 
@@ -194,16 +170,16 @@ public:
     void update(const Vec3& linearVelocity, float suspensionForce,
                 float angularVelocity, float dt);
 
-    float slipRatio() const     { return m_slipRatio; }          /* longitudinal, dimensionless */
-    float slipAngleRad() const  { return m_dynamicSlipAngle; }   /* lateral, radians (relaxed) */
-    float slipAngle() const     { return m_dynamicSlipAngle * RAD2DEG; } /* telemetry, degrees */
+    float slipRatio() const     { return m_slipRatio; }
+    float slipAngleRad() const  { return m_dynamicSlipAngle; }
+    float slipAngle() const     { return m_dynamicSlipAngle * RAD2DEG; }
     float lateralAcceleration() const { return m_lateralAcceleration; }
 
 private:
     CP_WheelInfo m_info{};
     float m_wheelInertia = 0.0f;
     float m_slipRatio = 0.0f;
-    float m_dynamicSlipAngle = 0.0f;   /* relaxed slip angle, radians */
+    float m_dynamicSlipAngle = 0.0f;
     float m_lateralAcceleration = 0.0f;
 };
 
@@ -211,19 +187,16 @@ class TireWheel {
 public:
     void init(const CP_WheelInfo& info);
 
-    /* Pacejka Magic Formula tire. Takes the longitudinal slip ratio and the
-     * (relaxed) slip angle in radians; returns the world tire force to add at
-     * the contact point. */
     Vec3 update(const CP_WheelState& w, float slipRatio, float slipAngleRad,
                 float suspensionForce);
 
     float fx() const { return m_fx; }
-    float fy() const { return m_fy; }   /* lateral tire force (after combined-slip scaling) */
+    float fy() const { return m_fy; }
     float normalizedMagnitude() const { return m_normalizedMagnitude; }
 
 private:
     CP_WheelInfo m_info{};
-    float m_bLong = 0.0f;   /* derived Pacejka stiffness factors */
+    float m_bLong = 0.0f;
     float m_bLat = 0.0f;
     float m_fx = 0.0f;
     float m_fy = 0.0f;
@@ -234,7 +207,6 @@ class VisualWheel {
 public:
     void init() {}
 
-    /* Accumulates spin and produces euler angles ready for the host. */
     void update(float angularVelocity, float steerAngle, bool isOppositeSide,
                 float dt, float& outSpinEulerX, float& outSteerEulerY);
 
@@ -244,4 +216,4 @@ private:
 
 } // namespace carsim
 
-#endif // CARSIM_MODELS_H
+#endif

@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Car.Models;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Car.Data
 {
-    [CreateAssetMenu(fileName = "Car Description",menuName = "Scriptable Objects/Car Description")]
+    [CreateAssetMenu(fileName = "Car Description", menuName = "Scriptable Objects/Car Description")]
     public class CarDesc : ScriptableObject
     {
         [SerializeField]
@@ -26,11 +24,11 @@ namespace Car.Data
         [SerializeField]
         private AntirollBarInfo m_antirollBarInfo;
 
-        [Header("Колея (расстояние между стойками)")]
-        [Tooltip("Передняя колея, м. 0 — не двигать wheelRoot, оставить как в префабе.")]
+        [Header("Track width (distance between struts)")]
+        [Tooltip("Front track width, m. 0 keeps the wheelRoot layout from the prefab.")]
         [SerializeField]
         private float m_trackFront;
-        [Tooltip("Задняя колея, м. 0 — не двигать wheelRoot, оставить как в префабе.")]
+        [Tooltip("Rear track width, m. 0 keeps the wheelRoot layout from the prefab.")]
         [SerializeField]
         private float m_trackRear;
 
@@ -45,8 +43,7 @@ namespace Car.Data
         public BrakesInfo brakesInfo => m_brakesInfo;
         public List<WheelInfo> wheelInfos => m_wheelInfos;
         public SteeringInfo steeringInfo => m_steeringInfo;
-     
-            
+
         [Serializable]
         public class EngineInfo
         {
@@ -66,7 +63,7 @@ namespace Car.Data
             private float m_startFriction;
             [SerializeField]
             private float m_engineInertia;
-            
+
             public AnimationCurve torqueCurve => m_torqueCurve;
 
             public Vector3 engineOrientation => m_engineOrientation;
@@ -102,7 +99,7 @@ namespace Car.Data
                 return maxValue;
             }
         }
-        
+
         [Serializable]
         public class GearboxInfo
         {
@@ -115,8 +112,7 @@ namespace Car.Data
             [SerializeField]
             private float m_shiftTime;
         }
-        
-        // Values must match the CP_DRIVE_* / CP_DIFF_* enums in car_physics.h.
+
         public enum DriveMode { FWD = 0, RWD = 1, AWD = 2 }
         public enum DiffType { Open = 0, Locked = 1, LSD = 2 }
 
@@ -129,11 +125,11 @@ namespace Car.Data
             private DiffType m_diffType = DiffType.Locked;
             [SerializeField]
             private float m_differentialRatio = 3.44f;
-            [Tooltip("AWD: доля момента на переднюю ось (0..1).")]
+            [Tooltip("AWD: fraction of drive torque sent to the front axle (0..1).")]
             [Range(0f, 1f)]
             [SerializeField]
             private float m_torqueSplitFront = 0.4f;
-            [Tooltip("LSD: преднатяг блокировки, Н·м на рад/с разницы скоростей колёс.")]
+            [Tooltip("LSD: locking bias, N·m per rad/s of wheel-speed difference.")]
             [SerializeField]
             private float m_lockingCoeff = 80f;
 
@@ -160,7 +156,7 @@ namespace Car.Data
 
             public float clutchDamping => m_clutchDamping;
         }
-        
+
         [Serializable]
         public class WheelInfo
         {
@@ -172,19 +168,19 @@ namespace Car.Data
             private float m_damperStiffness;
             [SerializeField]
             private float m_slipAnglePeak;
-            [Tooltip("Статический развал, град. >0 — верх колеса наружу.")]
+            [Tooltip("Static camber, deg. >0 leans the top of the wheel outward.")]
             [SerializeField]
             private float m_camber;
-            [Tooltip("Кастер (продольный наклон оси поворота), град. Даёт самовыравнивание и набор развала в повороте.")]
+            [Tooltip("Caster (longitudinal steering-axis tilt), deg. Gives self-centering and camber gain while cornering.")]
             [SerializeField]
             private float m_caster;
-            [Tooltip("Схождение, град на колесо. >0 — toe-in (носки внутрь).")]
+            [Tooltip("Toe, deg per wheel. >0 = toe-in (noses point inward).")]
             [SerializeField]
             private float m_toe;
-            [Tooltip("Поперечный наклон оси поворота (kingpin), град.")]
+            [Tooltip("Kingpin inclination (lateral steering-axis tilt), deg.")]
             [SerializeField]
             private float m_kingpinInclination;
-            [Tooltip("Коэффициент camber thrust: Fy_развал = coeff * sin(развал) * Fz.")]
+            [Tooltip("Camber thrust factor: Fy_camber = coeff * sin(camber) * Fz.")]
             [SerializeField]
             private float m_camberCoeff = 0.6f;
             [SerializeField]
@@ -258,7 +254,7 @@ namespace Car.Data
 
             public float relaxationLength { get => m_relaxationLength; set => m_relaxationLength = value; }
         }
-        
+
         [Serializable]
         public class SteeringInfo
         {
@@ -275,9 +271,8 @@ namespace Car.Data
             public float steerForce => m_steerForce;
             public float maxCorrectionAngle => m_maxCorrectionAngle;
             public float correctionSpeed => m_correctionSpeed;
-
         }
-        
+
         [Serializable]
         public class BrakesInfo
         {
@@ -288,7 +283,7 @@ namespace Car.Data
 
             [SerializeField]
             private List<float> m_brakeBias;
-            [Tooltip("Момент ручника на задние колёса, Н·м.")]
+            [Tooltip("Handbrake torque applied to the rear wheels, N·m.")]
             [SerializeField]
             private float m_handbrakeTorque = 4000f;
 
@@ -300,7 +295,7 @@ namespace Car.Data
 
             public List<float> brakeBias => m_brakeBias;
         }
-        
+
         [Serializable]
         public class AntirollBarInfo
         {

@@ -1,13 +1,3 @@
-/*
- * car_sim.cpp - orchestration. The two update phases mirror the order the
- * original Unity controllers executed inside one FixedUpdate:
- *
- *   drivetrain: steering -> gearbox/clutch -> engine -> differential -> brakes
- *   wheels:     visuals -> suspension -> acceleration -> slip -> tire
- *
- * Wheel acceleration deliberately consumes the tire fx from the PREVIOUS tick
- * (one-frame lag), exactly as in the C# version.
- */
 #include "car_sim.h"
 
 #include <algorithm>
@@ -45,35 +35,28 @@ void CarSim::updateDrivetrain(const CP_DrivetrainInput& in, CP_DrivetrainOutput&
         lateralAccelerations[i] = m_slip[i].lateralAcceleration();
     }
 
-    // gear shift requests (edge-triggered by the host) + timer
     if (in.gearUp)   m_gearbox.requestShiftUp();
     if (in.gearDown) m_gearbox.requestShiftDown();
     m_gearbox.tick(in.dt);
 
-    // 1. steering
     m_steering.update(in.steer, lateralAccelerations, in.dt);
     const float* steer = m_steering.steerAngles();
     for (int i = 0; i < CARSIM_WHEEL_COUNT; ++i) m_steerAngles[i] = steer[i];
 
-    // 2. gearbox + clutch
     float diffShaftVelocity = m_differential.inputShaftVelocity();
     float gearBoxInputShaftVelocity = m_gearbox.inputShaftVelocity(diffShaftVelocity);
     m_clutch.update(m_engine.angularVelocity(), m_gearbox.currentGearRatio(),
                     gearBoxInputShaftVelocity, in.clutch);
 
-    // 3. engine
     Vec3 bodyTorque;
     bool applyTorque = m_engine.update(in.throttle, m_clutch.torque(),
                                        m_gearbox.currentGear(), in.dt, bodyTorque);
 
-    // 4. differential
     float gearBoxTorque = m_gearbox.outputTorque(m_clutch.torque());
     m_differential.update(gearBoxTorque, angularVelocities, in.dt);
 
-    // 5. brakes (+ handbrake on the rear)
     m_brakes.update(in.brake, in.handbrake, angularVelocities);
 
-    // outputs
     for (int i = 0; i < CARSIM_WHEEL_COUNT; ++i) out.steerAngles[i] = m_steerAngles[i];
     out.neutralBodyTorque = bodyTorque.toC();
     out.applyNeutralTorque = applyTorque ? 1 : 0;
@@ -87,8 +70,6 @@ void CarSim::updateDrivetrain(const CP_DrivetrainInput& in, CP_DrivetrainOutput&
 void CarSim::updateWheels(const CP_WheelInput& in, CP_WheelOutput& out) {
     const float dt = in.dt;
 
-    // 0. visuals - use this tick's transforms but last tick's spin/length,
-    //    matching the original controller order (visual ran before suspension).
     for (int i = 0; i < CARSIM_WHEEL_COUNT; ++i) {
         const CP_WheelState& w = in.wheels[i];
         bool isOpposite = (i % 2 == 0);
@@ -98,7 +79,6 @@ void CarSim::updateWheels(const CP_WheelInput& in, CP_WheelOutput& out) {
                            isOpposite, dt, out.spinEulerX[i], out.steerEulerY[i]);
     }
 
-    // 1. suspension (only grounded wheels)
     Vec3 wheelForce[CARSIM_WHEEL_COUNT];
     for (int i = 0; i < CARSIM_WHEEL_COUNT; ++i) {
         if (in.wheels[i].hit) {
@@ -108,7 +88,6 @@ void CarSim::updateWheels(const CP_WheelInput& in, CP_WheelOutput& out) {
         }
     }
 
-    // 2. wheel acceleration (uses previous-tick tire fx + this-tick drivetrain)
     const float* driveTorque = m_differential.outputTorque();
     const float* brakeTorque = m_brakes.brakeTorque();
     for (int i = 0; i < CARSIM_WHEEL_COUNT; ++i) {
@@ -118,7 +97,6 @@ void CarSim::updateWheels(const CP_WheelInput& in, CP_WheelOutput& out) {
                                  m_suspension[i].suspensionForce(), dt);
     }
 
-    // 3. slip forces
     for (int i = 0; i < CARSIM_WHEEL_COUNT; ++i) {
         if (!in.wheels[i].hit) continue;
         m_slip[i].update(m_suspension[i].linearVelocity(),
@@ -126,7 +104,6 @@ void CarSim::updateWheels(const CP_WheelInput& in, CP_WheelOutput& out) {
                          m_acceleration[i].angularVelocity(), dt);
     }
 
-    // 4. tire forces (accumulate onto the suspension force)
     for (int i = 0; i < CARSIM_WHEEL_COUNT; ++i) {
         if (!in.wheels[i].hit) continue;
         Vec3 tireForce = m_tire[i].update(in.wheels[i], m_slip[i].slipRatio(),
@@ -135,9 +112,6 @@ void CarSim::updateWheels(const CP_WheelInput& in, CP_WheelOutput& out) {
         wheelForce[i] = wheelForce[i] + tireForce;
     }
 
-    // 5. anti-roll (stabiliser) bars: couple the L/R wheels of an axle by the
-    //    difference in suspension travel. The more-compressed side gets pushed
-    //    up, resisting body roll. Needs both wheels of the axle grounded.
     if (m_antiroll.isEnabled) {
         const int axle[2][2] = { {0, 1}, {2, 3} };
         const float k[2] = { m_antiroll.stiffnessFront, m_antiroll.stiffnessRear };
@@ -152,7 +126,6 @@ void CarSim::updateWheels(const CP_WheelInput& in, CP_WheelOutput& out) {
         }
     }
 
-    // outputs
     for (int i = 0; i < CARSIM_WHEEL_COUNT; ++i) {
         out.applyForce[i] = wheelForce[i].toC();
         out.applyPoint[i] = in.wheels[i].hitPoint;

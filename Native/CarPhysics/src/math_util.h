@@ -1,9 +1,3 @@
-/*
- * math_util.h - engine-independent vector math and helpers.
- *
- * Mirrors the small subset of UnityEngine.Mathf / Vector3 used by the
- * original C# models so the ported formulas stay identical.
- */
 #ifndef CARSIM_MATH_UTIL_H
 #define CARSIM_MATH_UTIL_H
 
@@ -42,21 +36,17 @@ inline Vec3 normalized(const Vec3& a) {
     return m > 1e-8f ? a * (1.0f / m) : Vec3{ 0.f, 0.f, 0.f };
 }
 
-/* Unity's Vector3.ProjectOnPlane(v, n) = v - n * (dot(v,n)/dot(n,n)). */
 inline Vec3 projectOnPlane(const Vec3& v, const Vec3& n) {
     float nn = dot(n, n);
     if (nn < 1e-12f) return v;
     return v - n * (dot(v, n) / nn);
 }
 
-/* Unity's Transform.InverseTransformDirection for an orthonormal basis:
- * express world direction v in the local (right, up, forward) frame. */
 inline Vec3 inverseTransformDirection(const Vec3& v, const Vec3& right,
                                       const Vec3& up, const Vec3& forward) {
     return { dot(v, right), dot(v, up), dot(v, forward) };
 }
 
-/* Unity Mathf helpers. */
 inline float clampf(float v, float lo, float hi) {
     return v < lo ? lo : (v > hi ? hi : v);
 }
@@ -70,29 +60,22 @@ inline float inverseLerp(float a, float b, float v) {
     return clamp01((v - a) / (b - a));
 }
 
-/* Mathf.Sign: returns +1 for v >= 0, -1 otherwise. */
 inline float signf(float v) { return v >= 0.0f ? 1.0f : -1.0f; }
 
 inline float mapRangeClamped(float value, float inA, float inB, float outA, float outB) {
     return lerp(outA, outB, inverseLerp(inA, inB, value));
 }
 
-/* Pacejka Magic Formula (simplified, no Sh/Sv offsets):
- *   F(x) = D * sin(C * atan(B*x - E*(B*x - atan(B*x))))
- * x is the slip ratio (longitudinal) or slip angle in radians (lateral). */
 inline float magicFormula(float slip, float B, float C, float D, float E) {
     float bx = B * slip;
     return D * std::sin(C * std::atan(bx - E * (bx - std::atan(bx))));
 }
 
-/* Stiffness factor B so the Magic Formula peaks at |slip| = peakSlip. */
 inline float magicStiffnessFromPeak(float C, float peakSlip) {
     if (peakSlip < 1e-6f || C < 1e-6f) return 0.0f;
     return std::tan(PI / (2.0f * C)) / peakSlip;
 }
 
-/* Local slope dF/dslip of the Magic Formula at the given slip. Used to treat
- * the tire force implicitly w.r.t. wheel speed (numerical stability). */
 inline float magicFormulaSlope(float slip, float B, float C, float D, float E) {
     float bx = B * slip;
     float phi = bx - E * (bx - std::atan(bx));
@@ -101,7 +84,6 @@ inline float magicFormulaSlope(float slip, float B, float C, float D, float E) {
     return D * C * std::cos(C * a) * (1.0f / (1.0f + phi * phi)) * dphi;
 }
 
-/* Owns its keyframes; evaluates with clamped linear interpolation. */
 class Curve {
 public:
     Curve() = default;
@@ -144,4 +126,4 @@ private:
 
 } // namespace carsim
 
-#endif // CARSIM_MATH_UTIL_H
+#endif

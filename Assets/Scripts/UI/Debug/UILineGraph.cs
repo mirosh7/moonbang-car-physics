@@ -4,13 +4,6 @@ using UnityEngine.UI;
 
 namespace UI.Debug
 {
-    /// <summary>
-    /// Lightweight uGUI polyline. Points are given in normalized [0..1] coordinates
-    /// inside the RectTransform (0,0 = bottom-left, 1,1 = top-right). It builds a
-    /// triangle mesh in a Canvas Graphic, so it renders in ANY render pipeline
-    /// (Built-in / URP / HDRP) - unlike GL immediate-mode overlays, which need a
-    /// custom pass under HDRP.
-    /// </summary>
     [RequireComponent(typeof(CanvasRenderer))]
     public class UILineGraph : MaskableGraphic
     {

@@ -6,19 +6,12 @@ using UnityEngine;
 
 namespace Car
 {
-    /// <summary>
-    /// Thin P/Invoke binding over CarPhysics.dll (the native, engine-agnostic
-    /// car-simulation module). Mirrors include/car_physics.h. All the physics
-    /// math lives in the DLL; this file only marshals data in and out.
-    /// </summary>
     public static class CarPhysicsNative
     {
         private const string DLL = "CarPhysics";
         public const int WheelCount = 4;
         public const float RPM_TO_RAD = Mathf.PI * 2f / 60f;
         public const float RAD_TO_RPM = 1f / RPM_TO_RAD;
-
-        // ----- structs (layout identical to car_physics.h) -----
 
         [StructLayout(LayoutKind.Sequential)]
         public struct Vec3
@@ -64,10 +57,8 @@ namespace Car
             public float restLength, suspensionStiffness, damperStiffness, slipAnglePeak,
                          camber, caster, longitudinalCoeff, lateralCoeff, wheelRadius,
                          wheelMass, longFrictionCoeff, relaxationLength;
-            // Pacejka Magic Formula shape parameters (must match CP_WheelInfo order).
             public float longSlipPeak, pacejkaShapeLong, pacejkaCurveLong,
                          pacejkaShapeLat, pacejkaCurveLat;
-            // Alignment (first-order). Must match CP_WheelInfo tail order.
             public float toe, kingpinInclination, camberCoeff;
         }
 
@@ -83,7 +74,7 @@ namespace Car
             public DifferentialInfo differential;
             public BrakesInfo brakes;
             public SteeringInfo steering;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount, ArraySubType = UnmanagedType.Struct)]
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount)]
             public WheelInfo[] wheels;
             public AntirollBarInfo antiroll;
             public float wheelBase, rearTrack;
@@ -120,22 +111,22 @@ namespace Car
         public struct WheelInput
         {
             public float dt;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount, ArraySubType = UnmanagedType.Struct)]
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount)]
             public WheelState[] wheels;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct WheelOutput
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount, ArraySubType = UnmanagedType.Struct)] public Vec3[] applyForce;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount, ArraySubType = UnmanagedType.Struct)] public Vec3[] applyPoint;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount, ArraySubType = UnmanagedType.Struct)] public Vec3[] visualPosition;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount)] public Vec3[] applyForce;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount)] public Vec3[] applyPoint;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount)] public Vec3[] visualPosition;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount)] public float[] spinEulerX;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount)] public float[] steerEulerY;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount)] public float[] angularVelocity;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount)] public float[] suspensionForce;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount)] public float[] currentLength;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount, ArraySubType = UnmanagedType.Struct)] public Vec3[] linearVelocity;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount)] public Vec3[] linearVelocity;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount)] public float[] slipAngle;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount)] public float[] lateralAcceleration;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount)] public float[] slipForceLong;
@@ -144,8 +135,6 @@ namespace Car
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount)] public float[] fx;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = WheelCount)] public float[] fy;
         }
-
-        // ----- exported entry points -----
 
         [DllImport(DLL, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr carsim_create(ref CarConfig config);
@@ -163,11 +152,8 @@ namespace Car
         [return: MarshalAs(UnmanagedType.LPStr)]
         public static extern string carsim_version();
 
-        // ----- convenience: build a sim from a CarDesc -----
-
         private const int CurveSamples = 64;
 
-        /// <summary>Creates a native sim from the scriptable CarDesc. Returns the opaque handle.</summary>
         public static IntPtr Create(CarDesc desc, float wheelBase, float rearTrack)
         {
             var pins = new List<GCHandle>();
@@ -241,7 +227,7 @@ namespace Car
                         longitudinalCoeff = w.longitudinalCoeff,
                         lateralCoeff = w.lateralCoeff,
                         wheelRadius = w.wheelRadius,
-                        wheelMass = w.wheelInertia / (w.wheelRadius * w.wheelRadius), // recover mass
+                        wheelMass = w.wheelInertia / (w.wheelRadius * w.wheelRadius),
                         longFrictionCoeff = w.longFrictionCoeff,
                         relaxationLength = w.relaxationLength,
                         longSlipPeak = w.longSlipPeak,
@@ -265,8 +251,6 @@ namespace Car
 
         private static Curve MakeCurve(AnimationCurve curve, List<GCHandle> pins)
         {
-            // Sample Unity's (Hermite) curve into a dense piecewise-linear table
-            // so the DLL's linear evaluation closely matches the editor curve.
             float[] times, values;
             if (curve == null || curve.length == 0)
             {

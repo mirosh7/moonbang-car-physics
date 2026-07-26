@@ -4,12 +4,6 @@ using UnityEngine;
 
 namespace UI.Debug
 {
-    /// <summary>
-    /// Draws the per-wheel tire forces as 3D arrows at the contact point:
-    /// longitudinal Fx (blue, along wheel forward), lateral Fy (red, along wheel
-    /// right) and vertical Fz (green, along the contact normal), with a numeric
-    /// label per wheel. Uses LineRenderer + HDRP/Unlit so it renders under HDRP.
-    /// </summary>
     public class WheelForceArrows : MonoBehaviour
     {
         public RaceCar car;
@@ -121,7 +115,6 @@ namespace UI.Debug
             return m;
         }
 
-        /// <summary>A shaft line + a 2-segment "V" arrowhead, camera-facing.</summary>
         private class ForceArrow
         {
             private readonly LineRenderer m_shaft;

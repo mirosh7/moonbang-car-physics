@@ -4,8 +4,6 @@ using UnityEngine.UI;
 
 namespace UI.Debug
 {
-    /// <summary>Small factory helpers for building the debug HUD entirely in code,
-    /// so the only thing the user has to do in the editor is add one component.</summary>
     public static class DebugUI
     {
         public static RectTransform Container(string name, Transform parent)
@@ -85,8 +83,6 @@ namespace UI.Debug
             return slider;
         }
 
-        /// <summary>A background panel with a fill child. The caller drives the fill
-        /// amount by setting <paramref name="fillRt"/>.anchorMax each frame.</summary>
         public static Image Bar(string name, Transform parent, Color bg, Color fillColor, out RectTransform fillRt)
         {
             var b = Panel(name, parent, bg);
@@ -99,7 +95,6 @@ namespace UI.Debug
             return b;
         }
 
-        /// <summary>Anchor a RectTransform to fill its parent.</summary>
         public static void Stretch(RectTransform rt)
         {
             rt.anchorMin = Vector2.zero;
@@ -108,11 +103,10 @@ namespace UI.Debug
             rt.offsetMax = Vector2.zero;
         }
 
-        /// <summary>Place a RectTransform with explicit bottom-left anchored layout.</summary>
         public static void Place(RectTransform rt, Vector2 anchoredPos, Vector2 size,
             Vector2? anchor = null, Vector2? pivot = null)
         {
-            Vector2 a = anchor ?? new Vector2(0f, 1f);   // default: top-left
+            Vector2 a = anchor ?? new Vector2(0f, 1f);
             rt.anchorMin = a;
             rt.anchorMax = a;
             rt.pivot = pivot ?? new Vector2(0f, 1f);

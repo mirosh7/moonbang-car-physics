@@ -1,15 +1,9 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace UI.Debug
 {
-    /// <summary>
-    /// A scrolling time-series graph with several channels sharing one symmetric
-    /// Y axis (auto-scaled). Built in code; feed it one value per channel each
-    /// frame via <see cref="Push"/>. Used for the suspension / damper graph.
-    /// </summary>
     public class ScrollingGraphPanel : MonoBehaviour
     {
         private const int Capacity = 256;
@@ -50,7 +44,6 @@ namespace UI.Debug
             rr.sizeDelta = new Vector2(360, 40);
             rr.anchoredPosition = new Vector2(-14, -8);
 
-            // legend (colored channel names) on its own row under the title
             float lx = 16f;
             foreach (var ch in channels)
             {
@@ -83,7 +76,6 @@ namespace UI.Debug
             }
         }
 
-        /// <summary>Append one sample per channel (length must match channel count).</summary>
         public void Push(float[] values, string readout)
         {
             if (m_data == null) return;
@@ -102,7 +94,6 @@ namespace UI.Debug
                 }
             }
 
-            // ease the axis scale so it doesn't jump around
             m_yMax = Mathf.Lerp(m_yMax, maxAbs * 1.1f, 0.15f);
             m_yMax = Mathf.Max(m_minYMax, m_yMax);
 

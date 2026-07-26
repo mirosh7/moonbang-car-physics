@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Car;
 using Car.Data;
 using TMPro;
@@ -7,11 +6,6 @@ using UnityEngine.UI;
 
 namespace UI.Debug
 {
-    /// <summary>
-    /// Runtime CarDesc editor. Generates a scrollable list of sliders/toggles from
-    /// <see cref="CarTuning"/>; every change writes the CarDesc (symmetrically for
-    /// per-axle wheel params) and asks the car to rebuild its native sim live.
-    /// </summary>
     public class CarTuneEditor : MonoBehaviour
     {
         private RaceCar m_car;
@@ -47,11 +41,10 @@ namespace UI.Debug
             pr.sizeDelta = new Vector2(640f, 940f);
             pr.anchoredPosition = new Vector2(-16f, -84f);
 
-            var header = DebugUI.Text("Header", panel.transform, "Настройки автомобиля (live)",
+            var header = DebugUI.Text("Header", panel.transform, "Car setup (live)",
                 28, TextAlignmentOptions.TopLeft, new Color(0.6f, 0.85f, 1f));
             DebugUI.Place(header.rectTransform, new Vector2(14, -8), new Vector2(600, 36));
 
-            // viewport (clips) + scrollable content
             var viewport = DebugUI.Panel("Viewport", panel.transform, new Color(1, 1, 1, 0.02f));
             viewport.raycastTarget = true;
             var vp = viewport.rectTransform;
@@ -129,7 +122,7 @@ namespace UI.Debug
             }
             else if (p.isToggle)
             {
-                var btn = DebugUI.Button("T", row, cur >= 0.5f ? "ВКЛ" : "ВЫКЛ", 20, out var btnLabel);
+                var btn = DebugUI.Button("T", row, cur >= 0.5f ? "ON" : "OFF", 20, out var btnLabel);
                 DebugUI.Place(btn.GetComponent<RectTransform>(), new Vector2(300, -8),
                     new Vector2(150, RowH - 16), new Vector2(0, 1), new Vector2(0, 1));
                 valText.text = "";
@@ -137,7 +130,7 @@ namespace UI.Debug
                 {
                     float nv = (m_desc != null && p.get(m_desc) >= 0.5f) ? 0f : 1f;
                     Apply(p, nv);
-                    btnLabel.text = nv >= 0.5f ? "ВКЛ" : "ВЫКЛ";
+                    btnLabel.text = nv >= 0.5f ? "ON" : "OFF";
                 });
             }
             else

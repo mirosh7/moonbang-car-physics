@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Car.Models
@@ -22,33 +21,12 @@ namespace Car.Models
             m_carPrefabName = carPrefabName;
             m_carWheelName = carWheelName;
         }
-        
+
         public void LoadPrefabs()
         {
             m_carVisualPrefab = Resources.Load<GameObject>(m_carPrefabName);
             m_carWheel = Resources.Load<GameObject>(m_carWheelName);
             m_carCore = Resources.Load<GameObject>(CAR_CORE_NAME);
-        }
-
-        public List<Transform> GetWheelRoots()
-        {
-            List<Transform> wheelRoots = new List<Transform>();
-            
-            foreach (Transform child in m_carVisualPrefab.transform.GetComponentsInChildren<Transform>(true))
-            {
-                if (child.name == "wheelRoot")
-                {
-                    wheelRoots.Add(child);
-                }
-            }
-
-            return wheelRoots;
-        }
-
-        public void UnloadPrefabs()
-        {
-            Resources.UnloadAsset(m_carVisualPrefab);
-            Resources.UnloadAsset(m_carWheel);
         }
     }
 }

@@ -6,11 +6,6 @@ using UnityEngine.UI;
 
 namespace UI.Debug
 {
-    /// <summary>
-    /// A single Pacejka force graph: the theoretical per-axis Magic-Formula curve
-    /// (force vs slip) plus a live operating-point dot fed from DLL telemetry.
-    /// Built entirely in code; add via <see cref="Create"/>.
-    /// </summary>
     public class PacejkaGraphPanel : MonoBehaviour
     {
         private RectTransform m_plot;
@@ -25,7 +20,7 @@ namespace UI.Debug
         public static PacejkaGraphPanel Create(Transform parent, string title, Color accent)
         {
             var root = DebugUI.Panel("Panel_" + title, parent, new Color(0.05f, 0.05f, 0.07f, 0.85f));
-            root.raycastTarget = true; // panel eats clicks so it doesn't drive the car
+            root.raycastTarget = true;
             var panel = root.gameObject.AddComponent<PacejkaGraphPanel>();
             panel.Build(title, accent);
             return panel;
@@ -47,8 +42,8 @@ namespace UI.Debug
             m_plot = DebugUI.Container("Plot", root);
             m_plot.anchorMin = Vector2.zero;
             m_plot.anchorMax = Vector2.one;
-            m_plot.offsetMin = new Vector2(54, 40);    // left / bottom padding
-            m_plot.offsetMax = new Vector2(-16, -48);  // right / top padding
+            m_plot.offsetMin = new Vector2(54, 40);
+            m_plot.offsetMax = new Vector2(-16, -48);
 
             var bg = DebugUI.Panel("PlotBg", m_plot, new Color(1, 1, 1, 0.04f));
             DebugUI.Stretch(bg.rectTransform);
@@ -92,7 +87,6 @@ namespace UI.Debug
             m_axisY.SetPoints(new List<Vector2> { new Vector2(nx0, 0f), new Vector2(nx0, 1f) });
         }
 
-        /// <summary>Resample the theoretical curve: x in [xMin..xMax] -> force.</summary>
         public void SetCurve(Func<float, float> force)
         {
             m_curveBuf.Clear();
@@ -105,7 +99,6 @@ namespace UI.Debug
             m_curve.SetPoints(m_curveBuf);
         }
 
-        /// <summary>Move the live operating-point dot and update the numeric readout.</summary>
         public void SetOperatingPoint(float x, float force, string readout)
         {
             float nx = Mathf.Clamp01(Mathf.InverseLerp(m_xMin, m_xMax, x));

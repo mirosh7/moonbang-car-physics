@@ -41,16 +41,16 @@ namespace UI.Debug
 
         public void SetGearValue(float data)
         {
-            const string currenGearTitle = "Current Gear";
+            const string currentGearTitle = "Current Gear";
 
             switch (data)
             {
-                case 0: m_tmpTexts[3].text = $"{currenGearTitle} = R";
+                case 0: m_tmpTexts[3].text = $"{currentGearTitle} = R";
                     break;
-                case 1: m_tmpTexts[3].text = $"{currenGearTitle} = N";
+                case 1: m_tmpTexts[3].text = $"{currentGearTitle} = N";
                     break;
                 default:
-                    m_tmpTexts[3].text = $"{currenGearTitle} = {data - 1}";
+                    m_tmpTexts[3].text = $"{currentGearTitle} = {data - 1}";
                     break;
             }
         }

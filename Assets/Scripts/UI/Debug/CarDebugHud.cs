@@ -1,5 +1,4 @@
 using Car;
-using Car.Data;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -7,15 +6,6 @@ using UnityEngine.UI;
 
 namespace UI.Debug
 {
-    /// <summary>
-    /// Self-contained debug HUD for presenting the car-physics module. Builds its
-    /// whole UI in code (Screen-Space Canvas) so the only editor step is: add this
-    /// component to a GameObject and press Play. Renders the Pacejka longitudinal
-    /// (Fx vs slip ratio) and lateral (Fy vs slip angle) force curves with a live
-    /// operating point, a top toggle menu and a per-wheel selector.
-    ///
-    /// Works under HDRP (no GL / OnPostRender): everything is uGUI mesh.
-    /// </summary>
     [AddComponentMenu("Car/Debug/Car Debug HUD")]
     public class CarDebugHud : MonoBehaviour
     {
@@ -58,7 +48,6 @@ namespace UI.Debug
 
         private void Update()
         {
-            // keyboard fallbacks (old input backend is enabled in this project)
             if (Input.GetKeyDown(KeyCode.Alpha1)) SelectWheel(0);
             if (Input.GetKeyDown(KeyCode.Alpha2)) SelectWheel(1);
             if (Input.GetKeyDown(KeyCode.Alpha3)) SelectWheel(2);
@@ -69,7 +58,6 @@ namespace UI.Debug
             RefreshGraphs();
         }
 
-        // ------------------------------------------------------------------ UI
         private void BuildUI()
         {
             var canvasGo = new GameObject("CarDebugHud_Canvas",
@@ -87,20 +75,20 @@ namespace UI.Debug
 
             BuildMenu(root);
 
-            m_panelFx = PacejkaGraphPanel.Create(root, "Pacejka  Fx (продольная сила)", Accent);
-            PlaceBottomLeft((RectTransform)m_panelFx.transform, new Vector2(20, 20), new Vector2(780, 440));
-            m_panelFx.SetLabels("slip ratio  κ", "Fx, Н");
+            m_panelFx = PacejkaGraphPanel.Create(root, "Pacejka  Fx (longitudinal force)", Accent);
+            PlaceBottomLeft((RectTransform)m_panelFx.transform, new Vector2(20, 20), new Vector2(630, 430));
+            m_panelFx.SetLabels("slip ratio  κ", "Fx, N");
 
-            m_panelFy = PacejkaGraphPanel.Create(root, "Pacejka  Fy (поперечная сила)", AccentLat);
-            PlaceBottomRight((RectTransform)m_panelFy.transform, new Vector2(-20, 20), new Vector2(780, 440));
-            m_panelFy.SetLabels("slip angle  α, град", "Fy, Н");
+            m_panelFy = PacejkaGraphPanel.Create(root, "Pacejka  Fy (lateral force)", AccentLat);
+            PlaceBottomRight((RectTransform)m_panelFy.transform, new Vector2(-20, 20), new Vector2(630, 430));
+            m_panelFy.SetLabels("slip angle  α, deg", "Fy, N");
 
-            m_panelSusp = ScrollingGraphPanel.Create(root, "Подвеска / амортизатор (Н)", 2000f,
+            m_panelSusp = ScrollingGraphPanel.Create(root, "Suspension / damper (N)", 2000f,
                 new[]
                 {
-                    new ScrollingGraphPanel.Channel { name = "Пружина", color = new Color(0.4f, 0.8f, 1f) },
-                    new ScrollingGraphPanel.Channel { name = "Демпфер", color = new Color(1f, 0.65f, 0.2f) },
-                    new ScrollingGraphPanel.Channel { name = "Σ Fz",    color = Color.white },
+                    new ScrollingGraphPanel.Channel { name = "Spring", color = new Color(0.4f, 0.8f, 1f) },
+                    new ScrollingGraphPanel.Channel { name = "Damper", color = new Color(1f, 0.65f, 0.2f) },
+                    new ScrollingGraphPanel.Channel { name = "Σ Fz",   color = Color.white },
                 });
             PlaceTopLeft((RectTransform)m_panelSusp.transform, new Vector2(20, -84), new Vector2(820, 360));
 
@@ -138,7 +126,7 @@ namespace UI.Debug
             m_menuBar = bar.transform;
 
             m_menuX = 14f;
-            var wheelLbl = DebugUI.Text("Lbl", m_menuBar, "Колесо:", 22, TextAlignmentOptions.Left);
+            var wheelLbl = DebugUI.Text("Lbl", m_menuBar, "Wheel:", 22, TextAlignmentOptions.Left);
             DebugUI.Place(wheelLbl.rectTransform, new Vector2(m_menuX, -10), new Vector2(100, 44));
             m_menuX += 104f;
 
@@ -155,15 +143,15 @@ namespace UI.Debug
             m_btnFx.onClick.AddListener(() => { m_showFx = !m_showFx; m_panelFx.gameObject.SetActive(m_showFx); RefreshButtonTints(); });
             m_btnFy = AddMenuButton("Fy", 80);
             m_btnFy.onClick.AddListener(() => { m_showFy = !m_showFy; m_panelFy.gameObject.SetActive(m_showFy); RefreshButtonTints(); });
-            m_btnArrows = AddMenuButton("3D Силы", 130);
+            m_btnArrows = AddMenuButton("3D Forces", 140);
             m_btnArrows.onClick.AddListener(() => { m_showArrows = !m_showArrows; if (m_arrows != null) m_arrows.SetVisible(m_showArrows); RefreshButtonTints(); });
-            m_btnSusp = AddMenuButton("Подвеска", 150);
+            m_btnSusp = AddMenuButton("Suspension", 160);
             m_btnSusp.onClick.AddListener(() => { m_showSuspension = !m_showSuspension; if (m_panelSusp != null) m_panelSusp.gameObject.SetActive(m_showSuspension); RefreshButtonTints(); });
-            m_btnTelem = AddMenuButton("Телеметрия", 170);
+            m_btnTelem = AddMenuButton("Telemetry", 150);
             m_btnTelem.onClick.AddListener(() => { m_showTelemetry = !m_showTelemetry; if (m_telemetry != null) m_telemetry.SetVisible(m_showTelemetry); RefreshButtonTints(); });
-            m_btnInput = AddMenuButton("Инпут", 120);
+            m_btnInput = AddMenuButton("Input", 100);
             m_btnInput.onClick.AddListener(() => { m_showInput = !m_showInput; if (m_inputHud != null) m_inputHud.SetVisible(m_showInput); RefreshButtonTints(); });
-            m_btnEditor = AddMenuButton("Настройки", 160);
+            m_btnEditor = AddMenuButton("Tuning", 120);
             m_btnEditor.onClick.AddListener(() => { m_showEditor = !m_showEditor; if (m_editor != null) m_editor.SetVisible(m_showEditor); RefreshButtonTints(); });
         }
 
@@ -175,7 +163,6 @@ namespace UI.Debug
             return btn;
         }
 
-        // -------------------------------------------------------------- refresh
         private void RefreshGraphs()
         {
             if (m_car == null || m_car.desc == null) return;
@@ -191,7 +178,7 @@ namespace UI.Debug
                 m_panelFx.SetRanges(-1f, 1f, yMax);
                 m_panelFx.SetCurve(x => Pacejka.Fx(w, x, fz));
                 m_panelFx.SetOperatingPoint(t.slipRatio, t.fx,
-                    $"κ = {t.slipRatio:0.000}\nFx = {t.fx:0} Н\nFz = {fz:0} Н");
+                    $"κ = {t.slipRatio:0.000}\nFx = {t.fx:0} N\nFz = {fz:0} N");
             }
 
             if (m_showFy)
@@ -200,18 +187,16 @@ namespace UI.Debug
                 m_panelFy.SetRanges(-20f, 20f, yMax);
                 m_panelFy.SetCurve(a => Pacejka.Fy(w, a, fz));
                 m_panelFy.SetOperatingPoint(t.slipAngleDeg, t.fy,
-                    $"α = {t.slipAngleDeg:0.0}°\nFy = {t.fy:0} Н\nμ-исп. = {t.normalizedMag * 100f:0}%");
+                    $"α = {t.slipAngleDeg:0.0}°\nFy = {t.fy:0} N\nμ used = {t.normalizedMag * 100f:0}%");
             }
 
             if (m_showSuspension && m_panelSusp != null)
             {
-                // Spring and damper contributions, computed the same way the DLL does
-                // (Fz telemetry is their clamped sum). Travel = compression from rest.
                 float travel = w.restLength - t.suspensionLength;
                 float spring = travel * w.suspensionStiffness;
                 float damper = t.suspensionVel * w.damperStiffness;
                 m_panelSusp.Push(new[] { spring, damper, t.fz },
-                    $"ход {travel * 1000f:0} мм\nv {t.suspensionVel:0.00} м/с");
+                    $"travel {travel * 1000f:0} mm\nv {t.suspensionVel:0.00} m/s");
             }
         }
 
@@ -235,11 +220,10 @@ namespace UI.Debug
             if (m_btnEditor != null) m_btnEditor.targetGraphic.GetComponent<Image>().color = m_showEditor ? BtnOn : BtnOff;
         }
 
-        // ------------------------------------------------------------- helpers
         private static void EnsureEventSystem()
         {
             if (EventSystem.current != null) return;
-            if (FindObjectOfType<EventSystem>() != null) return;
+            if (FindAnyObjectByType<EventSystem>() != null) return;
             var go = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
             DontDestroyOnLoad(go);
         }

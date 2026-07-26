@@ -1,6 +1,3 @@
-/*
- * models.cpp - implementations ported 1:1 from the C# physics models.
- */
 #include "models.h"
 
 #include <algorithm>
@@ -8,12 +5,11 @@
 
 namespace carsim {
 
-/* ------------------------------------------------------------------ engine */
 void EngineModel::init(const CP_EngineInfo& info) {
     m_info = info;
     m_torqueCurve.assign(info.torqueCurve);
     m_rpm = 0.0f;
-    m_angularVelocity = 100.0f;  // matches the original constructor
+    m_angularVelocity = 100.0f;
 }
 
 bool EngineModel::update(float throttle, float clutchTorque, int currentGear,
@@ -24,7 +20,7 @@ bool EngineModel::update(float throttle, float clutchTorque, int currentGear,
     float engineAcceleration = (engineTorque - clutchTorque) / m_info.inertia;
 
     m_angularVelocity += engineAcceleration * dt;
-    m_rpm = m_angularVelocity * RAD_TO_RPM;  // computed before clamp, as in C#
+    m_rpm = m_angularVelocity * RAD_TO_RPM;
     m_angularVelocity = clampf(m_angularVelocity,
                                m_info.idleRpm * RPM_TO_RAD,
                                m_info.maxRpm * RPM_TO_RAD);
@@ -36,7 +32,6 @@ bool EngineModel::update(float throttle, float clutchTorque, int currentGear,
     return false;
 }
 
-/* ----------------------------------------------------------------- gearbox */
 void GearboxModel::init(const CP_GearboxInfo& info) {
     m_ratios.clear();
     if (info.ratios && info.gearCount > 0) {
@@ -54,7 +49,7 @@ void GearboxModel::requestShiftUp() {
         m_targetGear = m_currentGear + 1;
         m_isShifting = true;
         m_shiftTimer = m_shiftTime;
-        m_currentGear = 1;  // neutral while shifting, as in the original
+        m_currentGear = 1;
     }
 }
 
@@ -76,7 +71,6 @@ void GearboxModel::tick(float dt) {
     }
 }
 
-/* ------------------------------------------------------------------ clutch */
 void ClutchModel::init(const CP_ClutchInfo& info, float maxEngineTorque) {
     m_info = info;
     m_maxEngineTorque = maxEngineTorque;
@@ -93,14 +87,12 @@ void ClutchModel::update(float engineAngularVelocity, float currentGearRatio,
                        ? 0.0f
                        : mapRangeClamped(engineAngularVelocity * RAD_TO_RPM,
                                          1000.0f, 1300.0f, 0.0f, 1.0f);
-    // Manual clutch pedal disengages the drive: 0 = engaged, 1 = fully pressed.
     m_clutchLock *= clamp01(1.0f - clutchInput);
     float clt = clampf(clutchSlip * m_clutchLock * m_info.stiffness,
                        -clutchMaxTorque, clutchMaxTorque);
     m_clutchTorque = clt + ((m_clutchTorque - clt) * m_info.damping);
 }
 
-/* ------------------------------------------------------------ differential */
 void DifferentialModel::init(const CP_DifferentialInfo& info,
                              const CP_WheelInfo& wheel0) {
     m_info = info;
@@ -110,20 +102,18 @@ void DifferentialModel::init(const CP_DifferentialInfo& info,
 
 void DifferentialModel::applyAxle(int l, int r, float axleTorque,
                                   const float av[CARSIM_WHEEL_COUNT]) {
-    if (axleTorque == 0.0f) {            // axle not driven
+    if (axleTorque == 0.0f) {
         m_outputTorque[l] = 0.0f;
         m_outputTorque[r] = 0.0f;
         return;
     }
     float base = axleTorque * 0.5f;
 
-    // Bias torque toward the slower wheel to limit the speed difference. The
-    // coefficient sets how aggressively: 0 = open, large = locked/spool.
     float coeff = 0.0f;
     switch (m_info.diffType) {
-        case CP_DIFF_LOCKED: coeff = 2000.0f; break;          // rigid-ish
+        case CP_DIFF_LOCKED: coeff = 2000.0f; break;
         case CP_DIFF_LSD:    coeff = m_info.lockingCoeff; break;
-        default:             coeff = 0.0f; break;             // CP_DIFF_OPEN
+        default:             coeff = 0.0f; break;
     }
     float bias = coeff * (av[l] - av[r]);
     float maxBias = std::fabs(axleTorque) + 200.0f;
@@ -139,19 +129,17 @@ void DifferentialModel::update(float inputTorque,
     (void)dt;
     float total = inputTorque * m_info.ratio;
 
-    // Split the drive torque between the axles per the drive mode.
     float frontT, rearT;
     switch (m_info.driveMode) {
         case CP_DRIVE_FWD: frontT = total; rearT = 0.0f; break;
         case CP_DRIVE_AWD: frontT = total * m_info.torqueSplitFront;
                            rearT  = total - frontT; break;
-        default:           frontT = 0.0f; rearT = total; break;  // CP_DRIVE_RWD
+        default:           frontT = 0.0f; rearT = total; break;
     }
 
-    applyAxle(0, 1, frontT, angularVelocities);  // front axle
-    applyAxle(2, 3, rearT,  angularVelocities);  // rear axle
+    applyAxle(0, 1, frontT, angularVelocities);
+    applyAxle(2, 3, rearT,  angularVelocities);
 
-    // Input-shaft speed from the driven wheels (feeds clutch / gearbox feel).
     float sum = 0.0f;
     int count = 0;
     if (m_info.driveMode != CP_DRIVE_RWD) { sum += angularVelocities[0] + angularVelocities[1]; count += 2; }
@@ -160,7 +148,6 @@ void DifferentialModel::update(float inputTorque,
     m_inputShaftVelocity = avg * m_info.ratio;
 }
 
-/* ------------------------------------------------------------------ brakes */
 void BrakesModel::init(const CP_BrakesInfo& info) {
     m_info = info;
     m_curve.assign(info.brakeTorqueCurve);
@@ -169,8 +156,6 @@ void BrakesModel::init(const CP_BrakesInfo& info) {
 
 void BrakesModel::update(float brakeInput, float handbrakeInput,
                          const float angularVelocities[CARSIM_WHEEL_COUNT]) {
-    // Index convention: 0=FL, 1=FR, 2=RL, 3=RR. The brake-torque curve is
-    // looked up per axle from that axle's mean wheel speed.
     float frontSpeed = std::fabs((angularVelocities[0] + angularVelocities[1]) * 0.5f);
     float rearSpeed  = std::fabs((angularVelocities[2] + angularVelocities[3]) * 0.5f);
 
@@ -178,13 +163,11 @@ void BrakesModel::update(float brakeInput, float handbrakeInput,
     m_brakeTorque[1] = m_brakeTorque[0];
     m_brakeTorque[2] = brakeInput * m_info.biasRear * m_info.maxTorque * m_curve.evaluate(rearSpeed);
 
-    // Handbrake adds a strong, foot-brake-independent torque to the rear wheels.
     float hb = clamp01(handbrakeInput) * m_info.handbrakeTorque;
     m_brakeTorque[2] += hb;
     m_brakeTorque[3] = m_brakeTorque[2];
 }
 
-/* ---------------------------------------------------------------- steering */
 void SteeringModel::init(const CP_SteeringInfo& info, float wheelBase,
                          float rearTrack) {
     m_info = info;
@@ -198,7 +181,6 @@ void SteeringModel::update(float inputSteering,
                            float dt) {
     float in = inputSteering;
 
-    // Ackermann
     float denomL = in > 0 ? m_info.turnRadius + m_rearTrack / 2.0f
                           : m_info.turnRadius - m_rearTrack / 2.0f;
     float denomR = in > 0 ? m_info.turnRadius - m_rearTrack / 2.0f
@@ -206,7 +188,6 @@ void SteeringModel::update(float inputSteering,
     m_ackermannAngleL = RAD2DEG * std::atan(m_wheelBase / denomL) * in * m_info.steerForce;
     m_ackermannAngleR = RAD2DEG * std::atan(m_wheelBase / denomR) * in * m_info.steerForce;
 
-    // Correction from lateral acceleration
     float correctionFactor = m_info.correctionSpeed * dt;
     m_ackermannAngleL -= lateralAccelerations[1] * correctionFactor;
     m_ackermannAngleR -= lateralAccelerations[0] * correctionFactor;
@@ -216,10 +197,8 @@ void SteeringModel::update(float inputSteering,
     float t = m_info.correctionSpeed * dt;
     m_steerAngles[0] = lerp(m_steerAngles[0], m_ackermannAngleR, t);
     m_steerAngles[1] = lerp(m_steerAngles[1], m_ackermannAngleL, t);
-    // rear wheels (2,3) stay 0
 }
 
-/* -------------------------------------------------------------- suspension */
 Vec3 SuspensionWheel::update(const CP_WheelState& w, float dt) {
     Vec3 up(w.up);
     Vec3 pos(w.position);
@@ -235,60 +214,43 @@ Vec3 SuspensionWheel::update(const CP_WheelState& w, float dt) {
     m_linearVelocity = inverseTransformDirection(Vec3(w.pointVelocity),
                                                  Vec3(w.right), up, Vec3(w.forward));
 
-    return up * m_suspensionForce;  // force to add at hitPoint
+    return up * m_suspensionForce;
 }
 
-/* ------------------------------------------------------------ acceleration */
 void AccelerationWheel::update(float fx, float driveTorque, float brakeTorque,
                                float groundForwardSpeed, float suspensionForce,
                                float dt) {
-    // The longitudinal tire force is very stiff w.r.t. wheel speed (its slope
-    // is B*C*D, scaled up at low ground speed). Integrating it explicitly makes
-    // the wheel speed oscillate and blow up at a fixed timestep. We instead
-    // treat that dependence implicitly: linearise the tire reaction around the
-    // current wheel speed and solve for the new speed. This is unconditionally
-    // stable and lets the wheel settle on its rolling speed instead of spinning
-    // up to the clamp.
-    const float kVelFloor = 1.0f;  // m/s, keeps the slope finite near standstill
+    const float kVelFloor = 1.0f;
     float denom = std::max(std::fabs(groundForwardSpeed), kVelFloor);
 
-    float reactionTorque = fx * m_info.wheelRadius;          // last tick's tire reaction
+    float reactionTorque = fx * m_info.wheelRadius;
 
     float slipRatio = (m_angularVelocity * m_info.wheelRadius - groundForwardSpeed) / denom;
     float dLong = m_info.longitudinalCoeff * std::max(0.0f, suspensionForce);
     float forceSlope = magicFormulaSlope(slipRatio, m_bLong, m_info.pacejkaShapeLong,
                                          dLong, m_info.pacejkaCurveLong);
-    // dTorque/dOmega = R * dF/dslip * dslip/dOmega, dslip/dOmega = R/denom.
     float torqueSlope = std::max(0.0f, forceSlope) * m_info.wheelRadius * m_info.wheelRadius / denom;
 
     float deltaOmega = (driveTorque - reactionTorque) / (m_wheelInertia / dt + torqueSlope);
     m_angularVelocity += deltaOmega;
 
-    // Braking always opposes the current spin and can at most bring the wheel
-    // to a stop this tick (the min() prevents braking from reversing it).
-    float brakeDelta = brakeTorque / m_wheelInertia * dt;  // >= 0
+    float brakeDelta = brakeTorque / m_wheelInertia * dt;
     m_angularVelocity -= signf(m_angularVelocity) * std::min(std::fabs(m_angularVelocity), brakeDelta);
 
     m_angularVelocity = clampf(m_angularVelocity, -360.0f, 360.0f);
 }
 
-/* -------------------------------------------------------------------- slip */
 void SlipWheel::update(const Vec3& linearVelocity, float suspensionForce,
                        float angularVelocity, float dt) {
-    // A velocity floor keeps the slip ratio / slip angle finite near standstill
-    // (both are otherwise singular as the forward speed approaches zero).
-    const float kVelFloor = 1.0f;  // m/s
+    const float kVelFloor = 1.0f;
     float vLong = linearVelocity.z;
     float vLat  = linearVelocity.x;
     float denom = std::max(std::fabs(vLong), kVelFloor);
 
-    // longitudinal slip ratio: (wheel surface speed - ground speed) / ground speed
     float wheelSurfaceSpeed = angularVelocity * m_info.wheelRadius;
     m_slipRatio = (wheelSurfaceSpeed - vLong) / denom;
     m_slipRatio = clampf(m_slipRatio, -4.0f, 4.0f);
 
-    // lateral slip angle (radians), relaxed over the relaxation length so the
-    // tire force builds up over travelled distance rather than instantly.
     float slipAngle = std::atan(-vLat / denom);
     float relax = m_info.relaxationLength > 1e-4f
                       ? clamp01(std::fabs(vLong) * dt / m_info.relaxationLength)
@@ -300,7 +262,6 @@ void SlipWheel::update(const Vec3& linearVelocity, float suspensionForce,
     m_lateralAcceleration = (mag * mag / m_info.wheelRadius) * std::tan(m_dynamicSlipAngle);
 }
 
-/* -------------------------------------------------------------------- tire */
 void TireWheel::init(const CP_WheelInfo& info) {
     m_info = info;
     m_bLong = magicStiffnessFromPeak(info.pacejkaShapeLong, info.longSlipPeak);
@@ -314,20 +275,14 @@ Vec3 TireWheel::update(const CP_WheelState& w, float slipRatio, float slipAngleR
     Vec3 forwardProj = normalized(projectOnPlane(Vec3(w.forward), Vec3(w.hitNormal)));
     Vec3 sideProj = normalized(projectOnPlane(Vec3(w.right), Vec3(w.hitNormal)));
 
-    // Peak forces scale with normal load (friction-factor * Fz).
     float dLong = m_info.longitudinalCoeff * suspensionForce;
     float dLat  = m_info.lateralCoeff * suspensionForce;
 
     float fx0 = magicFormula(slipRatio,    m_bLong, m_info.pacejkaShapeLong, dLong, m_info.pacejkaCurveLong);
     float fy0 = magicFormula(slipAngleRad, m_bLat,  m_info.pacejkaShapeLat,  dLat,  m_info.pacejkaCurveLat);
 
-    // Camber thrust: a lateral force the tire makes from leaning, even at zero
-    // slip angle. First-order: Fy_camber = camberCoeff * sin(camber) * Fz. Added
-    // to the lateral demand so it is limited by the same friction ellipse below.
     fy0 += m_info.camberCoeff * std::sin(m_info.camber * DEG2RAD) * suspensionForce;
 
-    // Combined slip: keep the resultant inside the friction ellipse so the tire
-    // cannot deliver more than its limit when slipping in both directions.
     float gx = dLong > 1e-4f ? fx0 / dLong : 0.0f;
     float gy = dLat  > 1e-4f ? fy0 / dLat  : 0.0f;
     float g = std::sqrt(gx * gx + gy * gy);
@@ -336,13 +291,11 @@ Vec3 TireWheel::update(const CP_WheelState& w, float slipRatio, float slipAngleR
     m_fx = fx0 * scale;
     m_fy = fy0 * scale;
 
-    // Skid intensity: how close the tire is to (or beyond) its friction limit.
     m_normalizedMagnitude = clamp01(g);
 
-    return forwardProj * m_fx + sideProj * m_fy;  // force to add at hitPoint
+    return forwardProj * m_fx + sideProj * m_fy;
 }
 
-/* ------------------------------------------------------------------ visual */
 void VisualWheel::update(float angularVelocity, float steerAngle,
                          bool isOppositeSide, float dt, float& outSpinEulerX,
                          float& outSteerEulerY) {
